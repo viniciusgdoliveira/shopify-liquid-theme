@@ -28,7 +28,33 @@
     }
   },
   "collections": {
-    "title": "Collections"
+    "title": "Collections",
+    "general": {
+      "products_count": {
+        "one": "{{ count }} product",
+        "other": "{{ count }} products"
+      },
+      "sort_by": "Sort by",
+      "sort_by_manual": "Featured",
+      "sort_by_best_selling": "Best selling",
+      "sort_by_title_ascending": "A-Z",
+      "sort_by_title_descending": "Z-A",
+      "sort_by_price_ascending": "Price: Low to High",
+      "sort_by_price_descending": "Price: High to Low",
+      "sort_by_created_ascending": "Oldest first",
+      "sort_by_created_descending": "Newest first",
+      "view_grid": "Grid view",
+      "view_list": "List view",
+      "filter_by": "Filter by",
+      "clear_all": "Clear all",
+      "price": "Price",
+      "brand": "Brand",
+      "availability": "Availability",
+      "in_stock": "In stock",
+      "on_sale": "On sale",
+      "no_products": "No products found",
+      "no_products_description": "Try adjusting your filters or search terms."
+    }
   },
   "gift_card": {
     "add_to_apple_wallet": "Add to Apple Wallet",
@@ -64,6 +90,8 @@
       "sold_out": "Sold out",
       "unavailable": "Unavailable",
       "share": "Share",
+      "sale": "Sale",
+      "quick_add": "Quick Add",
       "pickup_availability": {
         "title": "Pickup availability",
         "available": "Available",
@@ -83,7 +111,9 @@
       "menu": "Menu",
       "main_navigation": "Main navigation",
       "account": "Account",
-      "cart": "Cart"
+      "cart": "Cart",
+      "previous": "Previous",
+      "next": "Next"
     },
     "navigation": {
       "home": "Home",

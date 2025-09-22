@@ -442,7 +442,7 @@
     
    </script>
    <section class="section section--flush">
-     <slide-show {% if section.settings.show_initial_transition %}reveal-on-scroll{% endif %} {% if section.settings.autoplay %}auto-play{% endif %} transition-type="{{ section.settings.transition_type | escape }}" class="slideshow slideshow--{{ section.settings.section_height }}">
+     <slide-show {% if section.settings.show_initial_transition %}reveal-on-scroll{% endif %} {% if section.settings.autoplay %}auto-play{% endif %} transition-type="{{ section.settings.transition_type | escape }}" class="slideshow slideshow--{{ section.settings.section_height }} full-width">
        <div class="slideshow__slide-list">
          {%- for block in section.blocks -%}
            {%- comment -%}

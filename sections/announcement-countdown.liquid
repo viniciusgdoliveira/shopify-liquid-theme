@@ -2,10 +2,10 @@
   #shopify-section-{{ section.id }} {
     --countdown-bg-color: {{ section.settings.background_color }};
     --countdown-text-color: {{ section.settings.text_color }};
-    padding-top: {{ section.settings.padding_top }}px;
-    padding-bottom: {{ section.settings.padding_bottom }}px;
-    margin-top: {{ section.settings.margin_top }}px;
-    margin-bottom: {{ section.settings.margin_bottom }}px;
+    padding-block-start: {{ section.settings.padding_top }}px;
+    padding-block-end: {{ section.settings.padding_bottom }}px;
+    margin-block-start: {{ section.settings.margin_top }}px;
+    margin-block-end: {{ section.settings.margin_bottom }}px;
   }
 
   .announcement-countdown {
@@ -22,7 +22,7 @@
     justify-content: space-between;
     flex-wrap: wrap;
     gap: {{ section.settings.gap }}px;
-    padding: 0 {{ section.settings.padding_sides }}px;
+    padding-inline: {{ section.settings.padding_sides }}px;
   }
 
   .countdown-text {
@@ -31,6 +31,7 @@
     flex: 1;
     min-width: 200px;
     text-align: {{ section.settings.text_align }};
+    max-width: var(--reading-line-length);
   }
 
   .countdown-text b {
@@ -57,23 +58,25 @@
   .countdown-number {
     background: var(--countdown-bg-color);
     color: var(--countdown-text-color);
-    padding: 2px 5px;
-    border-radius: 2px;
+    padding-block: 2px;
+    padding-inline: 5px;
+    border-radius: var(--border-radius-sm);
     font-size: {{ section.settings.number_size }}px;
     font-weight: 700;
+    min-height: var(--touch-target-size);
   }
 
   .countdown-label {
     font-size: {{ section.settings.label_size }}px;
-    margin-top: 2px;
+    margin-block-start: 2px;
   }
 
   .countdown-separator {
     font-size: {{ section.settings.number_size }}px;
     font-weight: 700;
-    margin: 0 5px;
+    margin-inline: 5px;
     align-self: flex-end;
-    padding-bottom: 8px;
+    padding-block-end: 8px;
   }
 
   /* Modern Coupon Button Styles */
@@ -245,7 +248,7 @@
   }
 {%- endstyle -%}
 
-<div class="announcement-countdown">
+<div class="announcement-countdown full-width">
   <div class="countdown-container">
     <div class="countdown-text">
       {{ section.settings.announcement_text | replace: '[highlight]', '<b>' | replace: '[/highlight]', '</b>' }}

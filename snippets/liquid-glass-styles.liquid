@@ -1,0 +1,68 @@
+{% comment %}
+  Liquid Glass Styles Snippet
+  
+  Apply liquid glass effects based on component settings
+  Usage: {% render 'liquid-glass-styles', enable_glass: section.settings.enable_liquid_glass, glass_intensity: section.settings.glass_intensity, glass_bg: section.settings.glass_bg_custom, glass_border: section.settings.glass_border_custom, glass_blur: section.settings.glass_blur_custom, enable_logical: section.settings.enable_logical_properties, touch_target: section.settings.custom_touch_target %}
+{% endcomment %}
+
+{% liquid
+  assign enable_glass = enable_glass | default: settings.liquid_glass_enabled
+  assign glass_intensity = glass_intensity | default: 'normal'
+  assign glass_bg = glass_bg | default: ''
+  assign glass_border = glass_border | default: ''
+  assign glass_blur = glass_blur | default: ''
+  assign enable_logical = enable_logical | default: settings.enable_logical_properties
+  assign touch_target = touch_target | default: settings.touch_target_size
+  
+  assign bg_color = glass_bg | default: 'var(--glass-bg-primary)'
+  assign border_color = glass_border | default: 'var(--glass-border)'
+  assign blur_value = glass_blur | default: 'var(--glass-blur)'
+  
+  case glass_intensity
+    when 'light'
+      assign bg_color = glass_bg | default: 'var(--glass-bg-secondary)'
+      assign border_color = glass_border | default: 'var(--glass-border-subtle)'
+      assign blur_value = glass_blur | default: 'var(--glass-blur-light)'
+      assign shadow_value = 'var(--glass-shadow-light)'
+    when 'heavy'
+      assign bg_color = glass_bg | default: 'var(--glass-bg-dark)'
+      assign border_color = glass_border | default: 'var(--glass-border)'
+      assign blur_value = glass_blur | default: 'var(--glass-blur-heavy)'
+      assign shadow_value = 'var(--glass-shadow-heavy)'
+    when 'accent'
+      assign bg_color = glass_bg | default: 'var(--glass-bg-accent)'
+      assign border_color = glass_border | default: 'rgba(0, 122, 255, 0.3)'
+      assign blur_value = glass_blur | default: 'var(--glass-blur)'
+      assign shadow_value = 'var(--glass-shadow)'
+    else
+      assign shadow_value = 'var(--glass-shadow)'
+  endcase
+%}
+
+{% if enable_glass %}
+  background: {{ bg_color }};
+  backdrop-filter: blur({{ blur_value }}) saturate(var(--glass-saturate)) brightness(var(--glass-brightness)) contrast(var(--glass-contrast));
+  -webkit-backdrop-filter: blur({{ blur_value }}) saturate(var(--glass-saturate)) brightness(var(--glass-brightness)) contrast(var(--glass-contrast));
+  border: 1px solid {{ border_color }};
+  box-shadow: {{ shadow_value }};
+{% else %}
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+{% endif %}
+
+{% if enable_logical %}
+  /* Modern CSS logical properties */
+  padding-block: var(--spacing-md);
+  padding-inline: var(--spacing-lg);
+  margin-block: var(--spacing-sm);
+  margin-inline: var(--spacing-md);
+{% else %}
+  /* Traditional properties for fallback */
+  padding: var(--spacing-md) var(--spacing-lg);
+  margin: var(--spacing-sm) var(--spacing-md);
+{% endif %}
+
+/* Accessibility improvements */
+min-height: {{ touch_target }}px;
+min-width: {{ touch_target }}px;

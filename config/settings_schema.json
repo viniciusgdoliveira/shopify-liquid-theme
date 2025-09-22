@@ -8,75 +8,982 @@
     "theme_support_url": "https://support.shopify.com/"
   },
   {
-    "name": "t:general.typography",
+    "name": "Typography",
     "settings": [
       {
         "type": "header",
-        "content": "t:general.fonts"
+        "content": "Primary Font"
       },
       {
         "type": "font_picker",
         "id": "type_primary_font",
         "default": "work_sans_n4",
-        "label": "t:general.primary"
+        "label": "Primary font"
       },
-    ]
-  },
-  {
-    "name": "t:general.layout",
-    "settings": [
       {
-        "type": "select",
-        "id": "max_page_width",
-        "label": "t:labels.page_width",
-        "options": [
-          {
-            "value": "90rem",
-            "label": "t:options.page_width.narrow"
-          },
-          {
-            "value": "110rem",
-            "label": "t:options.page_width.wide"
-          }
-        ],
-        "default": "90rem"
+        "type": "font_picker",
+        "id": "type_secondary_font",
+        "default": "work_sans_n4",
+        "label": "Secondary font"
+      },
+      {
+        "type": "header",
+        "content": "Font Sizes"
       },
       {
         "type": "range",
-        "id": "min_page_margin",
+        "id": "font_size_xs",
         "min": 10,
-        "max": 100,
+        "max": 16,
         "step": 1,
         "unit": "px",
-        "label": "t:labels.page_margin",
+        "label": "Extra small text",
+        "default": 12
+      },
+      {
+        "type": "range",
+        "id": "font_size_sm",
+        "min": 12,
+        "max": 18,
+        "step": 1,
+        "unit": "px",
+        "label": "Small text",
+        "default": 14
+      },
+      {
+        "type": "range",
+        "id": "font_size_base",
+        "min": 14,
+        "max": 20,
+        "step": 1,
+        "unit": "px",
+        "label": "Base text",
+        "default": 16
+      },
+      {
+        "type": "range",
+        "id": "font_size_lg",
+        "min": 16,
+        "max": 24,
+        "step": 1,
+        "unit": "px",
+        "label": "Large text",
+        "default": 18
+      },
+      {
+        "type": "range",
+        "id": "font_size_xl",
+        "min": 18,
+        "max": 28,
+        "step": 1,
+        "unit": "px",
+        "label": "Extra large text",
         "default": 20
+      },
+      {
+        "type": "range",
+        "id": "font_size_2xl",
+        "min": 20,
+        "max": 32,
+        "step": 1,
+        "unit": "px",
+        "label": "2X large text",
+        "default": 24
+      },
+      {
+        "type": "range",
+        "id": "font_size_3xl",
+        "min": 24,
+        "max": 40,
+        "step": 1,
+        "unit": "px",
+        "label": "3X large text",
+        "default": 30
+      },
+      {
+        "type": "range",
+        "id": "font_size_4xl",
+        "min": 28,
+        "max": 48,
+        "step": 1,
+        "unit": "px",
+        "label": "4X large text",
+        "default": 36
+      },
+      {
+        "type": "range",
+        "id": "font_size_5xl",
+        "min": 32,
+        "max": 64,
+        "step": 1,
+        "unit": "px",
+        "label": "5X large text",
+        "default": 48
+      },
+      {
+        "type": "header",
+        "content": "Line Heights"
+      },
+      {
+        "type": "range",
+        "id": "line_height_tight",
+        "min": 10,
+        "max": 15,
+        "step": 1,
+        "label": "Tight line height",
+        "default": 13
+      },
+      {
+        "type": "range",
+        "id": "line_height_normal",
+        "min": 12,
+        "max": 18,
+        "step": 1,
+        "label": "Normal line height",
+        "default": 15
+      },
+      {
+        "type": "range",
+        "id": "line_height_relaxed",
+        "min": 14,
+        "max": 20,
+        "step": 1,
+        "label": "Relaxed line height",
+        "default": 18
+      },
+      {
+        "type": "header",
+        "content": "Modern CSS Features"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_fluid_typography",
+        "default": true,
+        "label": "Enable Fluid Typography",
+        "info": "Use clamp() for responsive font sizes that scale smoothly"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_logical_properties",
+        "default": true,
+        "label": "Enable Logical Properties",
+        "info": "Use modern CSS logical properties for better internationalization"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_container_queries",
+        "default": false,
+        "label": "Enable Container Queries",
+        "info": "Use container queries for component-based responsive design"
+      },
+      {
+        "type": "header",
+        "content": "Accessibility Settings"
+      },
+      {
+        "type": "range",
+        "id": "focus_outline_width",
+        "min": 1,
+        "max": 4,
+        "step": 1,
+        "unit": "px",
+        "label": "Focus outline width",
+        "default": 2
+      },
+      {
+        "type": "range",
+        "id": "touch_target_size",
+        "min": 32,
+        "max": 56,
+        "step": 4,
+        "unit": "px",
+        "label": "Minimum touch target size",
+        "default": 44
+      },
+      {
+        "type": "range",
+        "id": "reading_line_length",
+        "min": 45,
+        "max": 75,
+        "step": 5,
+        "unit": "ch",
+        "label": "Optimal reading line length",
+        "default": 65
       }
     ]
   },
   {
-    "name": "t:general.colors",
+    "name": "Liquid Glass Effects",
     "settings": [
       {
-        "type": "color",
-        "id": "background_color",
-        "default": "#FFFFFF",
-        "label": "t:labels.background"
+        "type": "header",
+        "content": "Glass Effect Toggle"
+      },
+      {
+        "type": "checkbox",
+        "id": "liquid_glass_enabled",
+        "default": true,
+        "label": "Enable Liquid Glass Effects",
+        "info": "Toggle liquid glass effects throughout the theme"
+      },
+      {
+        "type": "header",
+        "content": "Glass Background Colors"
       },
       {
         "type": "color",
-        "id": "foreground_color",
-        "default": "#333333",
-        "label": "t:labels.foreground"
+        "id": "glass_bg_primary",
+        "default": "rgba(255, 255, 255, 0.25)",
+        "label": "Primary glass background"
+      },
+      {
+        "type": "color",
+        "id": "glass_bg_secondary",
+        "default": "rgba(255, 255, 255, 0.15)",
+        "label": "Secondary glass background"
+      },
+      {
+        "type": "color",
+        "id": "glass_bg_tertiary",
+        "default": "rgba(255, 255, 255, 0.08)",
+        "label": "Tertiary glass background"
+      },
+      {
+        "type": "color",
+        "id": "glass_bg_dark",
+        "default": "rgba(0, 0, 0, 0.25)",
+        "label": "Dark glass background"
+      },
+      {
+        "type": "color",
+        "id": "glass_bg_accent",
+        "default": "rgba(0, 122, 255, 0.1)",
+        "label": "Accent glass background"
+      },
+      {
+        "type": "header",
+        "content": "Glass Border Colors"
+      },
+      {
+        "type": "color",
+        "id": "glass_border",
+        "default": "rgba(255, 255, 255, 0.3)",
+        "label": "Glass border color"
+      },
+      {
+        "type": "color",
+        "id": "glass_border_subtle",
+        "default": "rgba(255, 255, 255, 0.15)",
+        "label": "Subtle glass border color"
+      },
+      {
+        "type": "header",
+        "content": "Glass Effect Intensity"
       },
       {
         "type": "range",
-        "id": "input_corner_radius",
+        "id": "glass_blur",
         "min": 0,
-        "max": 10,
+        "max": 30,
         "step": 1,
         "unit": "px",
-        "label": "t:labels.input_corner_radius",
+        "label": "Glass blur intensity",
+        "default": 10
+      },
+      {
+        "type": "range",
+        "id": "glass_blur_light",
+        "min": 0,
+        "max": 20,
+        "step": 1,
+        "unit": "px",
+        "label": "Light glass blur intensity",
+        "default": 5
+      },
+      {
+        "type": "range",
+        "id": "glass_blur_heavy",
+        "min": 10,
+        "max": 50,
+        "step": 1,
+        "unit": "px",
+        "label": "Heavy glass blur intensity",
+        "default": 20
+      },
+      {
+        "type": "range",
+        "id": "glass_saturate",
+        "min": 100,
+        "max": 300,
+        "step": 10,
+        "unit": "%",
+        "label": "Glass saturation",
+        "default": 180
+      },
+      {
+        "type": "range",
+        "id": "glass_brightness",
+        "min": 90,
+        "max": 130,
+        "step": 5,
+        "unit": "%",
+        "label": "Glass brightness",
+        "default": 110
+      },
+      {
+        "type": "range",
+        "id": "glass_contrast",
+        "min": 90,
+        "max": 150,
+        "step": 5,
+        "unit": "%",
+        "label": "Glass contrast",
+        "default": 120
+      },
+      {
+        "type": "header",
+        "content": "Glass Shadows"
+      },
+      {
+        "type": "text",
+        "id": "glass_shadow",
+        "label": "Glass shadow",
+        "default": "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
+        "info": "CSS box-shadow value for glass effect"
+      },
+      {
+        "type": "text",
+        "id": "glass_shadow_light",
+        "label": "Light glass shadow",
+        "default": "0 4px 16px 0 rgba(31, 38, 135, 0.2)",
+        "info": "CSS box-shadow value for light glass effect"
+      },
+      {
+        "type": "text",
+        "id": "glass_shadow_heavy",
+        "label": "Heavy glass shadow",
+        "default": "0 16px 48px 0 rgba(31, 38, 135, 0.5)",
+        "info": "CSS box-shadow value for heavy glass effect"
+      }
+    ]
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Brand Colors"
+      },
+      {
+        "type": "color",
+        "id": "colors_primary",
+        "default": "#FF6B35",
+        "label": "Primary color"
+      },
+      {
+        "type": "color",
+        "id": "colors_secondary",
+        "default": "#28a745",
+        "label": "Secondary color"
+      },
+      {
+        "type": "color",
+        "id": "colors_accent",
+        "default": "#f8f9fa",
+        "label": "Accent color"
+      },
+      {
+        "type": "header",
+        "content": "Status Colors"
+      },
+      {
+        "type": "color",
+        "id": "colors_success",
+        "default": "#28a745",
+        "label": "Success color"
+      },
+      {
+        "type": "color",
+        "id": "colors_warning",
+        "default": "#ffc107",
+        "label": "Warning color"
+      },
+      {
+        "type": "color",
+        "id": "colors_error",
+        "default": "#dc3545",
+        "label": "Error color"
+      },
+      {
+        "type": "color",
+        "id": "colors_sale",
+        "default": "#e74c3c",
+        "label": "Sale color"
+      },
+      {
+        "type": "header",
+        "content": "Background Colors"
+      },
+      {
+        "type": "color",
+        "id": "colors_background",
+        "default": "#FFFFFF",
+        "label": "Background color"
+      },
+      {
+        "type": "color",
+        "id": "colors_background_dark",
+        "default": "#1a1a1a",
+        "label": "Dark background color"
+      },
+      {
+        "type": "header",
+        "content": "Text Colors"
+      },
+      {
+        "type": "color",
+        "id": "colors_text_primary",
+        "default": "#333333",
+        "label": "Primary text color"
+      },
+      {
+        "type": "color",
+        "id": "colors_text_secondary",
+        "default": "#666666",
+        "label": "Secondary text color"
+      },
+      {
+        "type": "color",
+        "id": "colors_text_tertiary",
+        "default": "#999999",
+        "label": "Tertiary text color"
+      },
+      {
+        "type": "color",
+        "id": "colors_text_inverse",
+        "default": "#FFFFFF",
+        "label": "Inverse text color"
+      },
+      {
+        "type": "color",
+        "id": "colors_text_muted",
+        "default": "#CCCCCC",
+        "label": "Muted text color"
+      },
+      {
+        "type": "color",
+        "id": "colors_text_primary_dark",
+        "default": "#ffffff",
+        "label": "Primary text color (dark mode)"
+      },
+      {
+        "type": "color",
+        "id": "colors_text_secondary_dark",
+        "default": "#cccccc",
+        "label": "Secondary text color (dark mode)"
+      },
+      {
+        "type": "header",
+        "content": "Border Colors"
+      },
+      {
+        "type": "color",
+        "id": "colors_border",
+        "default": "#E5E5E5",
+        "label": "Border color"
+      },
+      {
+        "type": "color",
+        "id": "colors_border_dark",
+        "default": "#333333",
+        "label": "Border color (dark mode)"
+      }
+    ]
+  },
+  {
+    "name": "Layout",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Container"
+      },
+      {
+        "type": "select",
+        "id": "container_max_width",
+        "label": "Container max width",
+        "options": [
+          {
+            "value": "1200px",
+            "label": "Standard (1200px)"
+          },
+          {
+            "value": "1400px",
+            "label": "Wide (1400px)"
+          },
+          {
+            "value": "1600px",
+            "label": "Extra wide (1600px)"
+          },
+          {
+            "value": "100%",
+            "label": "Full width"
+          }
+        ],
+        "default": "1200px"
+      },
+      {
+        "type": "range",
+        "id": "container_padding",
+        "min": 8,
+        "max": 32,
+        "step": 2,
+        "unit": "px",
+        "label": "Container padding",
+        "default": 16
+      },
+      {
+        "type": "header",
+        "content": "Spacing Scale"
+      },
+      {
+        "type": "range",
+        "id": "spacing_xs",
+        "min": 2,
+        "max": 8,
+        "step": 1,
+        "unit": "px",
+        "label": "Extra small spacing",
         "default": 4
+      },
+      {
+        "type": "range",
+        "id": "spacing_sm",
+        "min": 4,
+        "max": 16,
+        "step": 2,
+        "unit": "px",
+        "label": "Small spacing",
+        "default": 8
+      },
+      {
+        "type": "range",
+        "id": "spacing_md",
+        "min": 8,
+        "max": 32,
+        "step": 2,
+        "unit": "px",
+        "label": "Medium spacing",
+        "default": 16
+      },
+      {
+        "type": "range",
+        "id": "spacing_lg",
+        "min": 16,
+        "max": 48,
+        "step": 4,
+        "unit": "px",
+        "label": "Large spacing",
+        "default": 24
+      },
+      {
+        "type": "range",
+        "id": "spacing_xl",
+        "min": 24,
+        "max": 64,
+        "step": 4,
+        "unit": "px",
+        "label": "Extra large spacing",
+        "default": 32
+      },
+      {
+        "type": "range",
+        "id": "spacing_2xl",
+        "min": 32,
+        "max": 96,
+        "step": 8,
+        "unit": "px",
+        "label": "2X large spacing",
+        "default": 48
+      },
+      {
+        "type": "range",
+        "id": "spacing_3xl",
+        "min": 48,
+        "max": 128,
+        "step": 8,
+        "unit": "px",
+        "label": "3X large spacing",
+        "default": 64
+      },
+      {
+        "type": "range",
+        "id": "spacing_4xl",
+        "min": 64,
+        "max": 192,
+        "step": 16,
+        "unit": "px",
+        "label": "4X large spacing",
+        "default": 96
+      }
+    ]
+  },
+  {
+    "name": "Border & Radius",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Border Radius"
+      },
+      {
+        "type": "range",
+        "id": "border_radius_sm",
+        "min": 0,
+        "max": 16,
+        "step": 1,
+        "unit": "px",
+        "label": "Small border radius",
+        "default": 4
+      },
+      {
+        "type": "range",
+        "id": "border_radius_md",
+        "min": 0,
+        "max": 24,
+        "step": 1,
+        "unit": "px",
+        "label": "Medium border radius",
+        "default": 8
+      },
+      {
+        "type": "range",
+        "id": "border_radius_lg",
+        "min": 0,
+        "max": 32,
+        "step": 1,
+        "unit": "px",
+        "label": "Large border radius",
+        "default": 12
+      },
+      {
+        "type": "range",
+        "id": "border_radius_xl",
+        "min": 0,
+        "max": 48,
+        "step": 1,
+        "unit": "px",
+        "label": "Extra large border radius",
+        "default": 16
+      },
+      {
+        "type": "range",
+        "id": "border_radius_full",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "px",
+        "label": "Full border radius",
+        "default": 100
+      }
+    ]
+  },
+  {
+    "name": "Shadows",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Box Shadows"
+      },
+      {
+        "type": "text",
+        "id": "shadow_sm",
+        "label": "Small shadow",
+        "default": "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+        "info": "CSS box-shadow value"
+      },
+      {
+        "type": "text",
+        "id": "shadow_md",
+        "label": "Medium shadow",
+        "default": "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+        "info": "CSS box-shadow value"
+      },
+      {
+        "type": "text",
+        "id": "shadow_lg",
+        "label": "Large shadow",
+        "default": "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+        "info": "CSS box-shadow value"
+      },
+      {
+        "type": "text",
+        "id": "shadow_xl",
+        "label": "Extra large shadow",
+        "default": "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+        "info": "CSS box-shadow value"
+      }
+    ]
+  },
+  {
+    "name": "Transitions & Animations",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Transition Duration"
+      },
+      {
+        "type": "range",
+        "id": "transition_fast",
+        "min": 50,
+        "max": 300,
+        "step": 25,
+        "unit": "ms",
+        "label": "Fast transition",
+        "default": 150
+      },
+      {
+        "type": "range",
+        "id": "transition_normal",
+        "min": 100,
+        "max": 500,
+        "step": 25,
+        "unit": "ms",
+        "label": "Normal transition",
+        "default": 300
+      },
+      {
+        "type": "range",
+        "id": "transition_slow",
+        "min": 200,
+        "max": 1000,
+        "step": 50,
+        "unit": "ms",
+        "label": "Slow transition",
+        "default": 500
+      },
+      {
+        "type": "header",
+        "content": "Animation Duration"
+      },
+      {
+        "type": "range",
+        "id": "animation_duration_fast",
+        "min": 50,
+        "max": 300,
+        "step": 25,
+        "unit": "ms",
+        "label": "Fast animation",
+        "default": 150
+      },
+      {
+        "type": "range",
+        "id": "animation_duration_normal",
+        "min": 100,
+        "max": 500,
+        "step": 25,
+        "unit": "ms",
+        "label": "Normal animation",
+        "default": 300
+      },
+      {
+        "type": "range",
+        "id": "animation_duration_slow",
+        "min": 200,
+        "max": 1000,
+        "step": 50,
+        "unit": "ms",
+        "label": "Slow animation",
+        "default": 500
+      },
+      {
+        "type": "select",
+        "id": "animation_easing",
+        "label": "Animation easing",
+        "options": [
+          {
+            "value": "linear",
+            "label": "Linear"
+          },
+          {
+            "value": "ease",
+            "label": "Ease"
+          },
+          {
+            "value": "ease-in",
+            "label": "Ease in"
+          },
+          {
+            "value": "ease-out",
+            "label": "Ease out"
+          },
+          {
+            "value": "ease-in-out",
+            "label": "Ease in-out"
+          },
+          {
+            "value": "cubic-bezier(0.4, 0, 0.2, 1)",
+            "label": "Custom (Material Design)"
+          }
+        ],
+        "default": "cubic-bezier(0.4, 0, 0.2, 1)"
+      }
+    ]
+  },
+  {
+    "name": "Z-Index Scale",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Z-Index Values"
+      },
+      {
+        "type": "range",
+        "id": "z_dropdown",
+        "min": 1000,
+        "max": 2000,
+        "step": 10,
+        "label": "Dropdown z-index",
+        "default": 1000
+      },
+      {
+        "type": "range",
+        "id": "z_sticky",
+        "min": 1000,
+        "max": 2000,
+        "step": 10,
+        "label": "Sticky z-index",
+        "default": 1020
+      },
+      {
+        "type": "range",
+        "id": "z_fixed",
+        "min": 1000,
+        "max": 2000,
+        "step": 10,
+        "label": "Fixed z-index",
+        "default": 1030
+      },
+      {
+        "type": "range",
+        "id": "z_modal_backdrop",
+        "min": 1000,
+        "max": 2000,
+        "step": 10,
+        "label": "Modal backdrop z-index",
+        "default": 1040
+      },
+      {
+        "type": "range",
+        "id": "z_modal",
+        "min": 1000,
+        "max": 2000,
+        "step": 10,
+        "label": "Modal z-index",
+        "default": 1050
+      },
+      {
+        "type": "range",
+        "id": "z_popover",
+        "min": 1000,
+        "max": 2000,
+        "step": 10,
+        "label": "Popover z-index",
+        "default": 1060
+      },
+      {
+        "type": "range",
+        "id": "z_tooltip",
+        "min": 1000,
+        "max": 2000,
+        "step": 10,
+        "label": "Tooltip z-index",
+        "default": 1070
+      }
+    ]
+  },
+  {
+    "name": "Breakpoints",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Responsive Breakpoints"
+      },
+      {
+        "type": "range",
+        "id": "breakpoint_sm",
+        "min": 480,
+        "max": 768,
+        "step": 16,
+        "unit": "px",
+        "label": "Small breakpoint",
+        "default": 640
+      },
+      {
+        "type": "range",
+        "id": "breakpoint_md",
+        "min": 640,
+        "max": 1024,
+        "step": 16,
+        "unit": "px",
+        "label": "Medium breakpoint",
+        "default": 768
+      },
+      {
+        "type": "range",
+        "id": "breakpoint_lg",
+        "min": 768,
+        "max": 1280,
+        "step": 16,
+        "unit": "px",
+        "label": "Large breakpoint",
+        "default": 1024
+      },
+      {
+        "type": "range",
+        "id": "breakpoint_xl",
+        "min": 1024,
+        "max": 1536,
+        "step": 16,
+        "unit": "px",
+        "label": "Extra large breakpoint",
+        "default": 1280
+      },
+      {
+        "type": "range",
+        "id": "breakpoint_2xl",
+        "min": 1280,
+        "max": 1920,
+        "step": 16,
+        "unit": "px",
+        "label": "2X large breakpoint",
+        "default": 1536
+      }
+    ]
+  },
+  {
+    "name": "Grid System",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Grid Configuration"
+      },
+      {
+        "type": "range",
+        "id": "grid_columns",
+        "min": 6,
+        "max": 24,
+        "step": 2,
+        "label": "Grid columns",
+        "default": 12
+      },
+      {
+        "type": "range",
+        "id": "grid_gap",
+        "min": 4,
+        "max": 32,
+        "step": 2,
+        "unit": "px",
+        "label": "Grid gap",
+        "default": 16
       }
     ]
   }

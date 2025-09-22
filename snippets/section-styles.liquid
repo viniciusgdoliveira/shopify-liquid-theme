@@ -1,0 +1,188 @@
+{% comment %}
+  Dynamic section styles snippet
+  Usage: {% render 'section-styles', section: section %}
+{% endcomment %}
+
+{% liquid
+  assign section_id = section.id
+  assign padding_top = section.settings.padding_top | default: 36
+  assign padding_bottom = section.settings.padding_bottom | default: 36
+  assign padding_left = section.settings.padding_left | default: 0
+  assign padding_right = section.settings.padding_right | default: 0
+  assign margin_top = section.settings.margin_top | default: 0
+  assign margin_bottom = section.settings.margin_bottom | default: 0
+  assign background_color = section.settings.background_color | default: '#FFFFFF'
+  assign text_color = section.settings.text_color | default: '#333333'
+  assign heading_color = section.settings.heading_color | default: '#333333'
+  assign accent_color = section.settings.accent_color | default: '#FF6B35'
+  assign background_type = section.settings.background_type | default: 'color'
+  assign background_image = section.settings.background_image
+  assign background_position = section.settings.background_position | default: 'center'
+  assign background_size = section.settings.background_size | default: 'cover'
+  assign background_parallax = section.settings.background_parallax | default: false
+  assign background_overlay_opacity = section.settings.background_overlay_opacity | default: 0
+  assign background_overlay_color = section.settings.background_overlay_color | default: '#000000'
+  assign enable_animation = section.settings.enable_animation | default: true
+  assign animation_type = section.settings.animation_type | default: 'fade'
+  assign animation_delay = section.settings.animation_delay | default: 0
+  assign animation_duration = section.settings.animation_duration | default: 600
+  assign container_width = section.settings.container_width | default: 'standard'
+  assign enable_sticky = section.settings.enable_sticky | default: false
+  assign z_index = section.settings.z_index | default: 1
+%}
+
+{% style %}
+  #shopify-section-{{ section_id }} {
+    {% if padding_top > 0 %}
+      padding-top: {{ padding_top }}px;
+    {% endif %}
+    
+    {% if padding_bottom > 0 %}
+      padding-bottom: {{ padding_bottom }}px;
+    {% endif %}
+    
+    {% if padding_left > 0 %}
+      padding-left: {{ padding_left }}px;
+    {% endif %}
+    
+    {% if padding_right > 0 %}
+      padding-right: {{ padding_right }}px;
+    {% endif %}
+    
+    {% if margin_top > 0 %}
+      margin-top: {{ margin_top }}px;
+    {% endif %}
+    
+    {% if margin_bottom > 0 %}
+      margin-bottom: {{ margin_bottom }}px;
+    {% endif %}
+    
+    color: {{ text_color }};
+    background-color: {{ background_color }};
+    
+    {% if enable_sticky %}
+      position: sticky;
+      top: 0;
+    {% endif %}
+    
+    z-index: {{ z_index }};
+    
+    {% if background_type == 'image' and background_image %}
+      background-image: url('{{ background_image | image_url: width: 1920 }}');
+      background-position: {{ background_position }};
+      background-size: {{ background_size }};
+      background-repeat: no-repeat;
+      
+      {% if background_parallax %}
+        background-attachment: fixed;
+      {% endif %}
+    {% endif %}
+    
+    {% if background_overlay_opacity > 0 %}
+      position: relative;
+    {% endif %}
+    
+    {% if enable_animation and animation_type != 'none' %}
+      opacity: 0;
+      transform: 
+        {% if animation_type == 'slide-up' %}translateY(30px)
+        {% elsif animation_type == 'slide-down' %}translateY(-30px)
+        {% elsif animation_type == 'slide-left' %}translateX(30px)
+        {% elsif animation_type == 'slide-right' %}translateX(-30px)
+        {% elsif animation_type == 'zoom' %}scale(0.9)
+        {% else %}none{% endif %};
+      transition: all {{ animation_duration }}ms ease-out;
+      transition-delay: {{ animation_delay }}ms;
+    {% endif %}
+  }
+  
+  {% if background_overlay_opacity > 0 %}
+    #shopify-section-{{ section_id }}::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: {{ background_overlay_color }};
+      opacity: {{ background_overlay_opacity | divided_by: 100.0 }};
+      z-index: 1;
+    }
+    
+    #shopify-section-{{ section_id }} > * {
+      position: relative;
+      z-index: 2;
+    }
+  {% endif %}
+  
+  #shopify-section-{{ section_id }} h1,
+  #shopify-section-{{ section_id }} h2,
+  #shopify-section-{{ section_id }} h3,
+  #shopify-section-{{ section_id }} h4,
+  #shopify-section-{{ section_id }} h5,
+  #shopify-section-{{ section_id }} h6 {
+    color: {{ heading_color }};
+  }
+  
+  #shopify-section-{{ section_id }} .btn-primary,
+  #shopify-section-{{ section_id }} .btn-secondary {
+    background-color: {{ accent_color }};
+    border-color: {{ accent_color }};
+  }
+  
+  #shopify-section-{{ section_id }} .btn-outline {
+    color: {{ accent_color }};
+    border-color: {{ accent_color }};
+  }
+  
+  #shopify-section-{{ section_id }} .btn-outline:hover {
+    background-color: {{ accent_color }};
+  }
+  
+  {% if container_width == 'full' %}
+    #shopify-section-{{ section_id }} .container,
+    #shopify-section-{{ section_id }} .page-width {
+      max-width: 100%;
+      padding-left: 0;
+      padding-right: 0;
+    }
+  {% elsif container_width == 'wide' %}
+    #shopify-section-{{ section_id }} .container,
+    #shopify-section-{{ section_id }} .page-width {
+      max-width: 1400px;
+    }
+  {% elsif container_width == 'narrow' %}
+    #shopify-section-{{ section_id }} .container,
+    #shopify-section-{{ section_id }} .page-width {
+      max-width: 800px;
+    }
+  {% endif %}
+  
+  {% if enable_animation and animation_type != 'none' %}
+    #shopify-section-{{ section_id }}.animate-in {
+      opacity: 1;
+      transform: none;
+    }
+  {% endif %}
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    #shopify-section-{{ section_id }} {
+      {% if padding_top > 20 %}
+        padding-top: {{ padding_top | divided_by: 2 }}px;
+      {% endif %}
+      
+      {% if padding_bottom > 20 %}
+        padding-bottom: {{ padding_bottom | divided_by: 2 }}px;
+      {% endif %}
+      
+      {% if padding_left > 10 %}
+        padding-left: {{ padding_left | divided_by: 2 }}px;
+      {% endif %}
+      
+      {% if padding_right > 10 %}
+        padding-right: {{ padding_right | divided_by: 2 }}px;
+      {% endif %}
+    }
+  }
+{% endstyle %}

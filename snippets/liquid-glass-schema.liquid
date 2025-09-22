@@ -1,0 +1,95 @@
+{% comment %}
+  Liquid Glass Schema Snippet
+  
+  Include this snippet in your component schemas to add liquid glass customization options
+  Usage: {% render 'liquid-glass-schema' %}
+{% endcomment %}
+
+{
+  "type": "header",
+  "content": "Liquid Glass Effects"
+},
+{
+  "type": "checkbox",
+  "id": "enable_liquid_glass",
+  "label": "Enable liquid glass effect",
+  "default": true,
+  "info": "Override global liquid glass setting for this component"
+},
+{
+  "type": "select",
+  "id": "glass_intensity",
+  "label": "Glass effect intensity",
+  "options": [
+    {
+      "value": "light",
+      "label": "Light"
+    },
+    {
+      "value": "normal",
+      "label": "Normal"
+    },
+    {
+      "value": "heavy",
+      "label": "Heavy"
+    },
+    {
+      "value": "accent",
+      "label": "Accent"
+    }
+  ],
+  "default": "normal",
+  "info": "Choose the intensity of the glass effect"
+},
+{
+  "type": "color",
+  "id": "glass_bg_custom",
+  "label": "Custom glass background color",
+  "info": "Leave empty to use theme default"
+},
+{
+  "type": "color",
+  "id": "glass_border_custom",
+  "label": "Custom glass border color",
+  "info": "Leave empty to use theme default"
+},
+{
+  "type": "range",
+  "id": "glass_blur_custom",
+  "min": 0,
+  "max": 30,
+  "step": 1,
+  "unit": "px",
+  "label": "Custom glass blur intensity",
+  "default": 10,
+  "info": "Override the blur intensity for this component"
+},
+{
+  "type": "header",
+  "content": "Modern CSS Features"
+},
+{
+  "type": "checkbox",
+  "id": "enable_fluid_typography",
+  "label": "Enable fluid typography",
+  "default": true,
+  "info": "Use responsive font scaling for this component"
+},
+{
+  "type": "checkbox",
+  "id": "enable_logical_properties",
+  "label": "Enable logical properties",
+  "default": true,
+  "info": "Use modern CSS logical properties for better internationalization"
+},
+{
+  "type": "range",
+  "id": "custom_touch_target",
+  "min": 32,
+  "max": 56,
+  "step": 4,
+  "unit": "px",
+  "label": "Custom touch target size",
+  "default": 44,
+  "info": "Override touch target size for this component"
+}

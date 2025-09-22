@@ -1,18 +1,17 @@
 {%- style -%}
   .section-{{ section.id }}-padding {
-    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
-    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+    padding-block-start: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-block-end: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
   }
-
 
   @media screen and (min-width: 750px) {
     .section-{{ section.id }}-padding {
-      padding-top: {{ section.settings.padding_top }}px;
-      padding-bottom: {{ section.settings.padding_bottom }}px;
+      padding-block-start: {{ section.settings.padding_top }}px;
+      padding-block-end: {{ section.settings.padding_bottom }}px;
     }
   }
   .image-with-text .grid {
-    margin-bottom: 0;
+    margin-block-end: 0;
   }
 
 
@@ -531,7 +530,7 @@
 -%}
 
 
-<div class="multirow section-{{ section.id }}-padding gradient color-{{ section.settings.section_color_scheme }}">
+<div class="multirow section-{{ section.id }}-padding gradient color-{{ section.settings.section_color_scheme }} full-width">
   <div class="multirow__inner page-width">
     {%- for block in section.blocks -%}
       <div

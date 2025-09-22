@@ -74,8 +74,14 @@ p:empty {
 /** Theme styles below */
 body {
   font-family: var(--font-primary--family);
+  {% if settings.liquid_glass_enabled %}
+  background: linear-gradient(135deg, var(--color-background) 0%, var(--color-background-secondary) 100%);
+  {% else %}
   background-color: var(--color-background);
+  {% endif %}
   color: var(--color-foreground);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /** Section layout utilities */
@@ -115,3 +121,23 @@ body {
 .shopify-section > .full-width {
   grid-column: 1 / -1;
 }
+
+/* Critical Liquid Glass Utilities */
+{% if settings.liquid_glass_enabled %}
+.liquid-glass {
+  background: var(--glass-bg-primary);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness)) contrast(var(--glass-contrast));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness)) contrast(var(--glass-contrast));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--glass-shadow);
+}
+
+.liquid-glass-light {
+  background: var(--glass-bg-secondary);
+  backdrop-filter: blur(var(--glass-blur-light)) saturate(150%) brightness(105%) contrast(110%);
+  -webkit-backdrop-filter: blur(var(--glass-blur-light)) saturate(150%) brightness(105%) contrast(110%);
+  border: 1px solid var(--glass-border-subtle);
+  box-shadow: var(--glass-shadow-light);
+}
+{% endif %}

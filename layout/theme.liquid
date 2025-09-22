@@ -6,6 +6,15 @@
 
     {% # Load and preload the critical CSS %}
     {{ 'critical.css' | asset_url | stylesheet_tag: preload: true }}
+    
+    {% # Load base CSS with design tokens %}
+    {{ 'base.css' | asset_url | stylesheet_tag }}
+    
+    {% # Load component styles %}
+    {{ 'components.css' | asset_url | stylesheet_tag }}
+    
+    {% # Load utility classes %}
+    {{ 'utilities.css' | asset_url | stylesheet_tag }}
 
     {% # Social, title, etc. %}
     {% render 'meta-tags' %}

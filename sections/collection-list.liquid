@@ -263,13 +263,13 @@
   
   
         {%- if section.settings.layout == 'grid' or section.settings.layout == 'collage' -%}
-          <collection-list {% if section.settings.reveal_on_scroll %}reveal-on-scroll{% endif %} class="list-collections list-collections--{{ section.settings.layout }}">
+          <collection-list {% if section.settings.reveal_on_scroll %}reveal-on-scroll{% endif %} class="list-collections list-collections--{{ section.settings.layout }} full-width">
             <div class="container">
               {{- section_content -}}
             </div>
           </collection-list>
         {%- elsif section.settings.layout == 'carousel' -%}
-          <collection-list scrollable {% if section.settings.reveal_on_scroll %}reveal-on-scroll{% endif %} class="list-collections list-collections--carousel">
+          <collection-list scrollable {% if section.settings.reveal_on_scroll %}reveal-on-scroll{% endif %} class="list-collections list-collections--carousel full-width">
             <scrollable-content class="list-collections__scroller hide-scrollbar">
               {{- section_content -}}
             </scrollable-content>
@@ -278,13 +278,13 @@
             <prev-next-buttons class="list-collections__prev-next prev-next-buttons hidden-pocket">
               <button class="list-collections__arrow prev-next-button prev-next-button--prev">
                 <span class="visually-hidden">{{ 'general.accessibility.previous' | t }}</span>
-                {%- render 'icon' with 'nav-arrow-left', block: true, direction_aware: true -%}
+                {%- render 'icon-arrow-left' -%}
               </button>
   
   
               <button class="list-collections__arrow prev-next-button prev-next-button--next">
                 <span class="visually-hidden">{{ 'general.accessibility.next' | t }}</span>
-                {%- render 'icon' with 'nav-arrow-right', block: true, direction_aware: true -%}
+                {%- render 'icon-arrow-right' -%}
               </button>
             </prev-next-buttons>
           </collection-list>
