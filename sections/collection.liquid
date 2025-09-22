@@ -107,10 +107,10 @@
       {% if show_view_toggle %}
         <div class="collection__view-toggle">
           <button type="button" class="collection__view-btn collection__view-btn--grid{% if default_view == 'grid' %} active{% endif %}" data-view="grid" aria-label="{{ 'collections.general.view_grid' | t }}">
-            {% render 'icon-grid' %}
+            {% render 'icons', icon: 'grid' %}
           </button>
           <button type="button" class="collection__view-btn collection__view-btn--list{% if default_view == 'list' %} active{% endif %}" data-view="list" aria-label="{{ 'collections.general.view_list' | t }}">
-            {% render 'icon-list' %}
+            {% render 'icons', icon: 'list' %}
           </button>
         </div>
       {% endif %}
@@ -331,7 +331,7 @@
             {% comment %} Previous Page {% endcomment %}
             {% if paginate.previous %}
               <a href="{{ paginate.previous.url }}" class="collection__pagination-btn collection__pagination-btn--prev" data-pagination="prev">
-                {% render 'icon-arrow-left' %}
+                {% render 'icons', icon: 'arrow-left' %}
                 <span>{{ 'collections.general.previous' | t }}</span>
               </a>
             {% endif %}
@@ -359,7 +359,7 @@
             {% if paginate.next %}
               <a href="{{ paginate.next.url }}" class="collection__pagination-btn collection__pagination-btn--next" data-pagination="next">
                 <span>{{ 'collections.general.next' | t }}</span>
-                {% render 'icon-arrow-right' %}
+                {% render 'icons', icon: 'arrow-right' %}
               </a>
             {% endif %}
           </div>
@@ -370,7 +370,7 @@
               <button type="button" class="collection__load-more-btn" data-load-more="{{ paginate.next.url }}">
                 <span class="collection__load-more-text">{{ 'collections.general.load_more' | t }}</span>
                 <span class="collection__load-more-spinner" style="display: none;">
-                  {% render 'icon-spinner' %}
+                  {% render 'icons', icon: 'spinner' %}
                 </span>
               </button>
             </div>

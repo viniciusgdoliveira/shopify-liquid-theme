@@ -228,7 +228,7 @@
           <div class="v-collection__pagination">
             {% if paginate.previous %}
               <a href="{{ paginate.previous.url }}" class="v-collection__pagination-btn v-collection__pagination-btn--prev">
-                {% render 'icon-arrow-left' %}
+                {% render 'icons', icon: 'arrow-left' %}
                 Previous
               </a>
             {% endif %}
@@ -248,7 +248,7 @@
             {% if paginate.next %}
               <a href="{{ paginate.next.url }}" class="v-collection__pagination-btn v-collection__pagination-btn--next">
                 Next
-                {% render 'icon-arrow-right' %}
+                {% render 'icons', icon: 'arrow-right' %}
               </a>
             {% endif %}
           </div>

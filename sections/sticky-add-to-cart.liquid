@@ -67,7 +67,7 @@
         {% if section.settings.show_quantity_selector %}
           <div class="sticky-add-to-cart__quantity">
             <button type="button" class="sticky-add-to-cart__qty-btn sticky-add-to-cart__qty-btn--minus" aria-label="{{ 'products.product.quantity.decrease' | t }}">
-              {% render 'icon-minus' %}
+              {% render 'icons', icon: 'minus' %}
             </button>
             <input 
               type="number" 
@@ -78,7 +78,7 @@
               form="{{ product_form_id }}"
             >
             <button type="button" class="sticky-add-to-cart__qty-btn sticky-add-to-cart__qty-btn--plus" aria-label="{{ 'products.product.quantity.increase' | t }}">
-              {% render 'icon-plus' %}
+              {% render 'icons', icon: 'plus' %}
             </button>
           </div>
         {% endif %}

@@ -157,7 +157,7 @@
           <label for="Quantity-{{ section.id }}" class="visually-hidden">{{ 'products.product.quantity.label' | t }}</label>
           <div class="quantity-input">
             <button type="button" class="quantity-input__button quantity-input__button--minus" aria-label="{{ 'products.product.quantity.decrease' | t: product: product.title | escape }}">
-              {% render 'icon-minus' %}
+              {% render 'icons', icon: 'minus' %}
             </button>
             <input 
               type="number" 
@@ -169,7 +169,7 @@
               form="{{ product_form_id }}"
             >
             <button type="button" class="quantity-input__button quantity-input__button--plus" aria-label="{{ 'products.product.quantity.increase' | t: product: product.title | escape }}">
-              {% render 'icon-plus' %}
+              {% render 'icons', icon: 'plus' %}
             </button>
           </div>
         </div>
@@ -189,7 +189,7 @@
               {% endif %}
             </span>
             <div class="loading-overlay__spinner hidden">
-              {% render 'icon-spinner' %}
+              {% render 'icons', icon: 'spinner' %}
             </div>
           </button>
 

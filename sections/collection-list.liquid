@@ -234,13 +234,13 @@
               <prev-next-buttons class="list-collections__prev-next prev-next-buttons hidden-pocket">
                 <button class="list-collections__arrow prev-next-button prev-next-button--prev">
                   <span class="visually-hidden">{{ 'general.accessibility.previous' | t }}</span>
-                  {%- render 'icon-arrow-left' -%}
+                  {%- render 'icons', icon: 'arrow-left' -%}
                 </button>
   
   
                 <button class="list-collections__arrow prev-next-button prev-next-button--next">
                   <span class="visually-hidden">{{ 'general.accessibility.next' | t }}</span>
-                  {%- render 'icon-arrow-right' -%}
+                  {%- render 'icons', icon: 'arrow-right' -%}
                 </button>
               </prev-next-buttons>
             </collection-list>

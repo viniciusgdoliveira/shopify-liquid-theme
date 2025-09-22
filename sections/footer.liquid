@@ -23,22 +23,22 @@
           <div class="footer__social">
             {% if settings.social_twitter_link != blank %}
               <a href="{{ settings.social_twitter_link }}" class="footer__social-link" aria-label="{{ 'general.social.twitter' | t }}">
-                {% render 'icon-twitter' %}
+                {% render 'icons', icon: 'twitter' %}
               </a>
             {% endif %}
             {% if settings.social_facebook_link != blank %}
               <a href="{{ settings.social_facebook_link }}" class="footer__social-link" aria-label="{{ 'general.social.facebook' | t }}">
-                {% render 'icon-facebook' %}
+                {% render 'icons', icon: 'facebook' %}
               </a>
             {% endif %}
             {% if settings.social_instagram_link != blank %}
               <a href="{{ settings.social_instagram_link }}" class="footer__social-link" aria-label="{{ 'general.social.instagram' | t }}">
-                {% render 'icon-instagram' %}
+                {% render 'icons', icon: 'instagram' %}
               </a>
             {% endif %}
             {% if settings.social_youtube_link != blank %}
               <a href="{{ settings.social_youtube_link }}" class="footer__social-link" aria-label="{{ 'general.social.youtube' | t }}">
-                {% render 'icon-youtube' %}
+                {% render 'icons', icon: 'youtube' %}
               </a>
             {% endif %}
           </div>

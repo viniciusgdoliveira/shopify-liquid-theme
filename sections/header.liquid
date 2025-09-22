@@ -71,7 +71,7 @@
       {% if section.settings.enable_search %}
         <div class="header__search">
           <button class="header__search-toggle" aria-label="{{ 'general.search.search' | t }}">
-            {% render 'icon-search' %}
+            {% render 'icons', icon: 'search' %}
           </button>
           <div class="header__search-form">
             {% render 'search-form' %}
@@ -83,7 +83,7 @@
       {% if shop.customer_accounts_enabled %}
         <div class="header__account">
           <a href="{{ routes.account_url }}" class="header__account-link" aria-label="{{ 'general.accessibility.account' | t }}">
-            {% render 'icon-account' %}
+            {% render 'icons', icon: 'user' %}
             <span class="header__account-text">{{ 'general.accessibility.account' | t }}</span>
           </a>
         </div>
@@ -92,7 +92,7 @@
       <!-- Cart -->
       <div class="header__cart">
         <a href="{{ routes.cart_url }}" class="header__cart-link" aria-label="{{ 'general.accessibility.cart' | t }}">
-          {% render 'icon-cart' %}
+          {% render 'icons', icon: 'cart' %}
           <span class="header__cart-count" data-cart-count>
             {{ cart.item_count }}
           </span>
