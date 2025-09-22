@@ -113,6 +113,12 @@
         },
         "media_size": {
           "label": "Tamanho da mídia",
+          "options__1": {
+            "label": "Pequeno"
+          },
+          "options__2": {
+            "label": "Médio"
+          },
           "options__3": {
             "label": "Grande"
           }
@@ -121,30 +127,51 @@
           "label": "Ajuste da mídia",
           "options__1": {
             "label": "Conter"
+          },
+          "options__2": {
+            "label": "Cobrir"
           }
         },
         "gallery_layout": {
           "label": "Layout da galeria",
           "options__1": {
+            "label": "Empilhado"
+          },
+          "options__2": {
             "label": "Miniaturas"
+          },
+          "options__3": {
+            "label": "Slider de miniaturas"
           }
         },
         "media_position": {
           "label": "Posição da mídia",
           "options__1": {
             "label": "Esquerda"
+          },
+          "options__2": {
+            "label": "Direita"
           }
         },
         "image_zoom": {
           "label": "Zoom da imagem",
           "options__1": {
+            "label": "Lightbox"
+          },
+          "options__2": {
             "label": "Hover"
+          },
+          "options__3": {
+            "label": "Nenhum"
           }
         },
         "mobile_thumbnails": {
           "label": "Miniaturas móveis",
+          "options__1": {
+            "label": "Mostrar"
+          },
           "options__2": {
-            "label": "Mostrar miniaturas"
+            "label": "Ocultar"
           }
         },
         "hide_variants": {
