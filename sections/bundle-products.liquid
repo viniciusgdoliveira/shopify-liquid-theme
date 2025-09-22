@@ -187,7 +187,7 @@
    {% comment %} Debug: Show what metafields are available {% endcomment %}
    {% if section.settings.show_debug %}
     <div class="debug-info">
-      <strong>Debug Info:</strong><br>
+      <strong>{{ 'sections.bundle_products.debug_info' | t }}</strong><br>
       Product ID: {{ product.id }}<br>
       Product Handle: {{ product.handle }}<br>
       Bundle 1 Metafield: {{ product.metafields.custom.bundle_with_1 | json }}<br>
@@ -240,7 +240,7 @@
       <div class="bundle-products">
         <!-- Main Product Card -->
         <div class="product-card main-product">
-          <div class="product-badge">Main Product</div>
+          <div class="product-badge">{{ 'sections.bundle_products.main_product' | t }}</div>
           <img src="{{ product.featured_image | image_url: width: section.settings.product_image_size }}" alt="{{ product.title }}">
          
           <h4 class="product-title">{{ product.title }}</h4>
@@ -285,7 +285,7 @@
         <!-- Bundle Product 1 Card -->
         {% if bundle_product_1.available %}
           <div class="product-card bundle-product">
-            <div class="product-badge">Bundle Item</div>
+            <div class="product-badge">{{ 'sections.bundle_products.bundle_item' | t }}</div>
             <img src="{{ bundle_product_1.featured_image | image_url: width: section.settings.product_image_size }}" alt="{{ bundle_product_1.title }}">
            
             <h4 class="product-title">{{ bundle_product_1.title }}</h4>
@@ -331,7 +331,7 @@
         <!-- Bundle Product 2 Card -->
         {% if bundle_product_2.available %}
           <div class="product-card bundle-product">
-            <div class="product-badge">Bundle Item</div>
+            <div class="product-badge">{{ 'sections.bundle_products.bundle_item' | t }}</div>
             <img src="{{ bundle_product_2.featured_image | image_url: width: section.settings.product_image_size }}" alt="{{ bundle_product_2.title }}">
            
             <h4 class="product-title">{{ bundle_product_2.title }}</h4>
@@ -448,7 +448,7 @@
    
    {% elsif section.settings.show_debug %}
     <div class="debug-info">
-      <strong>Bundle not showing because:</strong><br>
+      <strong>{{ 'sections.bundle_products.bundle_not_showing' | t }}</strong><br>
       Bundle Product 1:
       {% if bundle_product_1 %}
         Found ({{ bundle_product_1.title }})

@@ -40,12 +40,12 @@
             </div>
           {% endfor %}
         </div>
-        <button class="carousel-nav-button prev-button" aria-label="Previous slide">&#10094;</button>
-        <button class="carousel-nav-button next-button" aria-label="Next slide">&#10095;</button>
+        <button class="carousel-nav-button prev-button" aria-label="{{ 'general.accessibility.previous_slide' | t }}">&#10094;</button>
+        <button class="carousel-nav-button next-button" aria-label="{{ 'general.accessibility.next_slide' | t }}">&#10095;</button>
       </div>
     {% else %}
       <div class="placeholder-content">
-        <p>Please select a collection in the theme editor to display products.</p>
+        <p>{{ 'sections.collection_product_icons.select_collection' | t }}</p>
       </div>
     {% endif %}
   </div>

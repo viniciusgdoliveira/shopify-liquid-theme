@@ -49,28 +49,58 @@
     "text_style": "Text style",
     "text": "Text"
   },
-  "options": {
-    "alignment": {
-      "left": "Left",
-      "center": "Center",
-      "right": "Right"
+  "sections": {
+    "hello_world": {
+      "name": "Hello World",
+      "settings": {}
     },
-    "direction": {
-      "horizontal": "Horizontal",
-      "vertical": "Vertical"
+    "bundle_products": {
+      "name": "Product Bundle Cards",
+      "settings": {
+        "bundle_title": "Bundle Title",
+        "bundle_subtitle": "Bundle Subtitle"
+      }
     },
-    "page_width": {
-      "narrow": "Narrow",
-      "wide": "Wide"
+    "collection_product_icons": {
+      "name": "Collection Icons Carousel",
+      "settings": {
+        "selected_collection": "Select Collection to Display"
+      }
     },
-    "size": {
-      "large": "Large",
-      "small": "Small"
+    "video_carousel": {
+      "name": "Video Hover Grid",
+      "settings": {
+        "section_title": "Section title"
+      }
     },
-    "text_style": {
-      "title": "Title",
-      "subtitle": "Subtitle",
-      "normal": "Normal text"
+    "scrolling_banner": {
+      "name": "Scrolling Banner",
+      "settings": {
+        "banner_text": "Banner Text"
+      }
     },
+    "category_scroller": {
+      "name": "Category Scroller",
+      "settings": {
+        "heading": "Heading",
+        "category_title": "Title"
+      }
+    },
+    "slideshow": {
+      "name": "Slideshow",
+      "settings": {
+        "subheading": "Subheading",
+        "heading": "Heading",
+        "button_1_text": "Button 1 text",
+        "button_2_text": "Button 2 text"
+      }
+    },
+    "multirow": {
+      "name": "Image and Text Rows",
+      "settings": {
+        "heading": "Heading",
+        "text": "Text"
+      }
+    }
   }
 }
