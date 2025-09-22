@@ -1,58 +1,12 @@
-{%- if section.settings.background != settings.background and section.settings.background != 'rgba(0,0,0,0)' -%}
-    {%- assign blends_with_background = false -%}
-  {%- else -%}
-    {%- assign blends_with_background = true -%}
-  {%- endif -%}
+{%- assign blends_with_background = true -%}
   
   
   <style>
     #shopify-section-{{ section.id }} {
-      {%- if section.settings.background == 'rgba(0,0,0,0)' -%}
-        {%- assign section_background = settings.background -%}
-      {%- else -%}
-        {%- assign section_background = section.settings.background -%}
-      {%- endif -%}
-  
-  
-      {%- if section.settings.text_color == 'rgba(0,0,0,0)' -%}
-        {%- assign heading_color = settings.heading_color -%}
-        {%- assign text_color = settings.text_color -%}
-      {%- else -%}
-        {%- assign heading_color = section.settings.text_color -%}
-        {%- assign text_color = section.settings.text_color -%}
-      {%- endif -%}
-  
-  
-      --heading-color: {{ heading_color.red }}, {{ heading_color.green }}, {{ heading_color.blue }};
-      --text-color: {{ text_color.red }}, {{ text_color.green }}, {{ text_color.blue }};
-      --prev-next-button-background: var(--text-color);
-      --prev-next-button-color: var(--section-background);
-  
-  
-      --section-background: {{ section_background.red }}, {{ section_background.green }}, {{ section_background.blue }};
-  
-  
       {%- if section.settings.layout == 'collage' -%}
         --section-collage-column: {{ section.blocks.size | at_most: 2 }};
       {%- endif -%}
     }
-  
-  
-    {%- for block in section.blocks -%}
-      #block-{{ section.id }}-{{ block.id }} {
-        {% if block.settings.text_color == 'rgba(0,0,0,0)' %}
-          {%- assign text_color_rgb = '255, 255, 255' -%}
-        {%- else -%}
-          {%- capture text_color_rgb -%}{{ block.settings.text_color.red }}, {{ block.settings.text_color.green }}, {{ block.settings.text_color.blue }}{%- endcapture -%}
-        {%- endif -%}
-  
-  
-        --heading-color: {{ text_color_rgb }};
-        --text-color: {{ text_color_rgb }};
-        --section-block-overlay: {{ block.settings.overlay_color.red }}, {{ block.settings.overlay_color.green }}, {{ block.settings.overlay_color.blue }};
-        --section-block-overlay-opacity: {{ block.settings.overlay_opacity | divided_by: 100.0 }};
-      }
-    {%- endfor -%}
   .list-collections__video-wrapper {
     width: 100%;
     height: 100%;
@@ -86,7 +40,6 @@
     .list-collections--carousel .list-collections__item-info {
       padding: 15px 10px;
       text-align: center;
-      background: rgba(var(--section-background), 1);
       border-top: none;
       position: relative;
       z-index: 2;
@@ -263,31 +216,35 @@
   
   
         {%- if section.settings.layout == 'grid' or section.settings.layout == 'collage' -%}
-          <collection-list {% if section.settings.reveal_on_scroll %}reveal-on-scroll{% endif %} class="list-collections list-collections--{{ section.settings.layout }} full-width">
-            <div class="container">
-              {{- section_content -}}
-            </div>
-          </collection-list>
+          <div class="full-width">
+            <collection-list {% if section.settings.reveal_on_scroll %}reveal-on-scroll{% endif %} class="list-collections list-collections--{{ section.settings.layout }}">
+              <div class="container">
+                {{- section_content -}}
+              </div>
+            </collection-list>
+          </div>
         {%- elsif section.settings.layout == 'carousel' -%}
-          <collection-list scrollable {% if section.settings.reveal_on_scroll %}reveal-on-scroll{% endif %} class="list-collections list-collections--carousel full-width">
-            <scrollable-content class="list-collections__scroller hide-scrollbar">
-              {{- section_content -}}
-            </scrollable-content>
+          <div class="full-width">
+            <collection-list scrollable {% if section.settings.reveal_on_scroll %}reveal-on-scroll{% endif %} class="list-collections list-collections--carousel">
+              <scrollable-content class="list-collections__scroller hide-scrollbar">
+                {{- section_content -}}
+              </scrollable-content>
   
   
-            <prev-next-buttons class="list-collections__prev-next prev-next-buttons hidden-pocket">
-              <button class="list-collections__arrow prev-next-button prev-next-button--prev">
-                <span class="visually-hidden">{{ 'general.accessibility.previous' | t }}</span>
-                {%- render 'icon-arrow-left' -%}
-              </button>
+              <prev-next-buttons class="list-collections__prev-next prev-next-buttons hidden-pocket">
+                <button class="list-collections__arrow prev-next-button prev-next-button--prev">
+                  <span class="visually-hidden">{{ 'general.accessibility.previous' | t }}</span>
+                  {%- render 'icon-arrow-left' -%}
+                </button>
   
   
-              <button class="list-collections__arrow prev-next-button prev-next-button--next">
-                <span class="visually-hidden">{{ 'general.accessibility.next' | t }}</span>
-                {%- render 'icon-arrow-right' -%}
-              </button>
-            </prev-next-buttons>
-          </collection-list>
+                <button class="list-collections__arrow prev-next-button prev-next-button--next">
+                  <span class="visually-hidden">{{ 'general.accessibility.next' | t }}</span>
+                  {%- render 'icon-arrow-right' -%}
+                </button>
+              </prev-next-buttons>
+            </collection-list>
+          </div>
         {%- endif -%}
       </div>
     </div>
@@ -372,32 +329,6 @@
             "label": "Link URL",
             "info": "If none is set, collection URL is used."
           },
-          {
-            "type": "header",
-            "content": "Colors"
-          },
-          {
-            "type": "color",
-            "id": "text_color",
-            "label": "Text",
-            "default": "rgba(0,0,0,0)"
-          },
-          {
-            "type": "color",
-            "id": "overlay_color",
-            "label": "Overlay",
-            "default": "#000000"
-          },
-          {
-            "type": "range",
-            "id": "overlay_opacity",
-            "label": "Overlay opacity",
-            "min": 0,
-            "max": 100,
-            "step": 1,
-            "unit": "%",
-            "default": 30
-          }
         ]
       }
     ],
@@ -442,22 +373,6 @@
         "label": "Heading",
         "default": "Collection list"
       },
-      {
-        "type": "header",
-        "content": "Colors"
-      },
-      {
-        "type": "color",
-        "id": "background",
-        "label": "Background",
-        "default": "rgba(0,0,0,0)"
-      },
-      {
-        "type": "color",
-        "id": "text_color",
-        "label": "Text color",
-        "default": "rgba(0,0,0,0)"
-      }
     ],
     "presets": [
       {
