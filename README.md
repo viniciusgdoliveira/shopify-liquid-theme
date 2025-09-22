@@ -7,6 +7,8 @@
 
 A minimal, carefully structured Shopify theme designed to help you quickly get started. Designed with modularity, maintainability, and Shopify's best practices in mind.
 
+**Design Reference:** This theme follows the design principles and visual style of [V.com](https://www.v.com/), emphasizing clean simplicity, natural materials, sustainability focus, and comfort-first user experience. See [DESIGN_REFERENCE.md](./DESIGN_REFERENCE.md) for detailed design guidelines.
+
 <p align="center">
   <a href="./LICENSE.md"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License"></a>
   <a href="./actions/workflows/ci.yml"><img alt="CI" src="https://github.com/viniciusgdoliveira/mush-theme/actions/workflows/ci.yml/badge.svg"></a>

@@ -1,54 +1,16 @@
 {
   "sections": {
-    "breadcrumbs": {
-      "type": "multirow",
-      "settings": {
-        "heading": "Breadcrumbs",
-        "layout": "breadcrumbs",
-        "show_breadcrumbs": true
-      }
-    },
-    "collection_header": {
-      "type": "multirow",
-      "settings": {
-        "heading": "Collection Header",
-        "layout": "collection_header",
-        "show_collection_image": true,
-        "show_collection_description": true
-      }
-    },
-    "collection_main": {
-      "type": "collection",
+    "v_collection_main": {
+      "type": "v-collection",
       "settings": {
         "products_per_page": 20,
-        "columns_desktop": "4",
-        "columns_mobile": "2",
-        "default_view": "grid",
-        "show_collection_banner": true,
-        "show_collection_description": true,
-        "show_product_count": true,
-        "show_sorting": true,
-        "show_view_toggle": true,
         "show_filtering": true,
-        "show_vendor": false,
-        "show_rating": true,
-        "show_quick_add": true
-      }
-    },
-    "collection_footer": {
-      "type": "multirow",
-      "settings": {
-        "heading": "Collection Footer",
-        "layout": "collection_footer",
-        "show_collection_tags": true,
-        "show_related_collections": true
+        "show_sorting": true,
+        "show_product_count": true
       }
     }
   },
   "order": [
-    "breadcrumbs",
-    "collection_header",
-    "collection_main",
-    "collection_footer"
+    "v_collection_main"
   ]
 }

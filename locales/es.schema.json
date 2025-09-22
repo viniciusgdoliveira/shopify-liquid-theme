@@ -1,0 +1,106 @@
+{
+  "general": {
+    "404": "No encontrado",
+    "article": "Artículo",
+    "block": "Bloque",
+    "blog": "Blog",
+    "cart": "Carrito",
+    "collection": "Colección",
+    "collections": "Colecciones",
+    "collection_card": "Tarjeta de colección",
+    "collections_grid": "Cuadrícula de colecciones",
+    "colors": "Colores",
+    "column": "Columna",
+    "content": "Contenido",
+    "custom_section": "Sección personalizada",
+    "fonts": "Fuentes",
+    "footer": "Pie de página",
+    "group": "Grupo",
+    "header": "Encabezado",
+    "layout": "Diseño",
+    "main": "Principal",
+    "page": "Página",
+    "password": "Contraseña",
+    "primary": "Primario",
+    "product": "Producto",
+    "row": "Fila",
+    "search": "Búsqueda",
+    "secondary": "Secundario",
+    "section": "Sección",
+    "settings": "Configuraciones",
+    "sidebar": "Barra lateral",
+    "text": "Texto",
+    "theme": "Tema",
+    "typography": "Tipografía"
+  },
+  "labels": {
+    "alignment": "Alineación",
+    "background": "Fondo",
+    "foreground": "Primer plano",
+    "grid_gap": "Espaciado de cuadrícula",
+    "grid_item_width": "Ancho del elemento de cuadrícula",
+    "input_corner_radius": "Radio de esquina del input",
+    "layout_direction": "Dirección del diseño",
+    "menu": "Menú",
+    "padding": "Relleno",
+    "page_margin": "Margen de página",
+    "page_width": "Ancho de página",
+    "show_payment_icons": "Mostrar iconos de pago",
+    "text_style": "Estilo del texto",
+    "text": "Texto"
+  },
+  "sections": {
+    "hello_world": {
+      "name": "Hola Mundo",
+      "settings": {}
+    },
+    "bundle_products": {
+      "name": "Tarjetas de Paquete de Productos",
+      "settings": {
+        "bundle_title": "Título del Paquete",
+        "bundle_subtitle": "Subtítulo del Paquete"
+      }
+    },
+    "collection_product_icons": {
+      "name": "Carrusel de Iconos de Colección",
+      "settings": {
+        "selected_collection": "Seleccionar Colección para Mostrar"
+      }
+    },
+    "video_carousel": {
+      "name": "Cuadrícula de Video con Hover",
+      "settings": {
+        "section_title": "Título de la sección"
+      }
+    },
+    "scrolling_banner": {
+      "name": "Banner de Desplazamiento",
+      "settings": {
+        "banner_text": "Texto del Banner"
+      }
+    },
+    "category_scroller": {
+      "name": "Desplazador de Categoría",
+      "settings": {
+        "heading": "Encabezado",
+        "category_title": "Título"
+      }
+    },
+    "slideshow": {
+      "name": "Presentación de diapositivas",
+      "settings": {
+        "subheading": "Subtítulo",
+        "heading": "Encabezado",
+        "button_1_text": "Texto del botón 1",
+        "button_2_text": "Texto del botón 2"
+      }
+    },
+    "multirow": {
+      "name": "Filas de Imagen y Texto",
+      "settings": {
+        "heading": "Encabezado",
+        "text": "Texto"
+      }
+    }
+  }
+}

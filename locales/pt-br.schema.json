@@ -1,0 +1,106 @@
+{
+  "general": {
+    "404": "Não encontrado",
+    "article": "Artigo",
+    "block": "Bloco",
+    "blog": "Blog",
+    "cart": "Carrinho",
+    "collection": "Coleção",
+    "collections": "Coleções",
+    "collection_card": "Card de coleção",
+    "collections_grid": "Grade de coleções",
+    "colors": "Cores",
+    "column": "Coluna",
+    "content": "Conteúdo",
+    "custom_section": "Seção personalizada",
+    "fonts": "Fontes",
+    "footer": "Rodapé",
+    "group": "Grupo",
+    "header": "Cabeçalho",
+    "layout": "Layout",
+    "main": "Principal",
+    "page": "Página",
+    "password": "Senha",
+    "primary": "Primário",
+    "product": "Produto",
+    "row": "Linha",
+    "search": "Pesquisa",
+    "secondary": "Secundário",
+    "section": "Seção",
+    "settings": "Configurações",
+    "sidebar": "Barra lateral",
+    "text": "Texto",
+    "theme": "Tema",
+    "typography": "Tipografia"
+  },
+  "labels": {
+    "alignment": "Alinhamento",
+    "background": "Fundo",
+    "foreground": "Primeiro plano",
+    "grid_gap": "Espaçamento da grade",
+    "grid_item_width": "Largura do item da grade",
+    "input_corner_radius": "Raio da borda do input",
+    "layout_direction": "Direção do layout",
+    "menu": "Menu",
+    "padding": "Preenchimento",
+    "page_margin": "Margem da página",
+    "page_width": "Largura da página",
+    "show_payment_icons": "Mostrar ícones de pagamento",
+    "text_style": "Estilo do texto",
+    "text": "Texto"
+  },
+  "sections": {
+    "hello_world": {
+      "name": "Olá Mundo",
+      "settings": {}
+    },
+    "bundle_products": {
+      "name": "Cards de Pacote de Produtos",
+      "settings": {
+        "bundle_title": "Título do Pacote",
+        "bundle_subtitle": "Subtítulo do Pacote"
+      }
+    },
+    "collection_product_icons": {
+      "name": "Carrossel de Ícones de Coleção",
+      "settings": {
+        "selected_collection": "Selecionar Coleção para Exibir"
+      }
+    },
+    "video_carousel": {
+      "name": "Grade de Vídeo com Hover",
+      "settings": {
+        "section_title": "Título da seção"
+      }
+    },
+    "scrolling_banner": {
+      "name": "Banner de Rolagem",
+      "settings": {
+        "banner_text": "Texto do Banner"
+      }
+    },
+    "category_scroller": {
+      "name": "Rolagem de Categoria",
+      "settings": {
+        "heading": "Cabeçalho",
+        "category_title": "Título"
+      }
+    },
+    "slideshow": {
+      "name": "Apresentação de slides",
+      "settings": {
+        "subheading": "Subtítulo",
+        "heading": "Cabeçalho",
+        "button_1_text": "Texto do botão 1",
+        "button_2_text": "Texto do botão 2"
+      }
+    },
+    "multirow": {
+      "name": "Linhas de Imagem e Texto",
+      "settings": {
+        "heading": "Cabeçalho",
+        "text": "Texto"
+      }
+    }
+  }
+}

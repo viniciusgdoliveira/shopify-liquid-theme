@@ -1,0 +1,1072 @@
+{% comment %}
+  V-inspired Collection Section
+  Clean, minimal design matching V.com collection pages
+{% endcomment %}
+
+<div class="v-collection" id="shopify-section-{{ section.id }}">
+  <div class="v-collection__container">
+    {% comment %} Breadcrumbs {% endcomment %}
+    {% render 'breadcrumbs', collection: collection, class: 'v-collection__breadcrumbs' %}
+    
+    {% comment %} Collection Header {% endcomment %}
+    <div class="v-collection__header">
+      <h1 class="v-collection__title">{{ collection.title | escape }}</h1>
+      {% if collection.description != blank %}
+        <p class="v-collection__description">{{ collection.description }}</p>
+      {% endif %}
+    </div>
+
+    {% comment %} Collection Controls {% endcomment %}
+    <div class="v-collection__controls">
+      <div class="v-collection__count">
+        <span class="v-collection__count-text">
+          {{ collection.products_count }} products
+        </span>
+      </div>
+      
+      <div class="v-collection__filters-sort">
+        {% comment %} Mobile Burger Filter Menu {% endcomment %}
+        <div class="v-collection__mobile-filter">
+          <button type="button" class="v-collection__burger-btn" data-mobile-filter-toggle aria-label="Open filters">
+            <span class="v-collection__burger-line"></span>
+            <span class="v-collection__burger-line"></span>
+            <span class="v-collection__burger-line"></span>
+            <span class="v-collection__filter-text">Filter</span>
+          </button>
+        </div>
+        
+        {% comment %} Desktop Filter Toggle {% endcomment %}
+        <div class="v-collection__filter-toggle">
+          <button type="button" class="v-collection__filter-btn" data-filter-toggle>
+            Filter and Sort
+          </button>
+        </div>
+        
+        <div class="v-collection__sort">
+          <select class="v-collection__sort-select" data-collection-sort>
+            <option value="manual">Featured</option>
+            <option value="best-selling">Best selling</option>
+            <option value="title-ascending">Alphabetically, A-Z</option>
+            <option value="title-descending">Alphabetically, Z-A</option>
+            <option value="price-ascending">Price, low to high</option>
+            <option value="price-descending">Price, high to low</option>
+            <option value="created-descending">Date, new to old</option>
+            <option value="created-ascending">Date, old to new</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    {% comment %} Mobile Filter Overlay {% endcomment %}
+    <div class="v-collection__mobile-overlay" data-mobile-filter-overlay>
+      <div class="v-collection__mobile-panel">
+        <div class="v-collection__mobile-header">
+          <h3 class="v-collection__mobile-title">Filter and Sort</h3>
+          <button type="button" class="v-collection__mobile-close" data-mobile-filter-close aria-label="Close filters">
+            <span>&times;</span>
+          </button>
+        </div>
+        <div class="v-collection__mobile-content" data-mobile-filter-content>
+          <!-- Mobile filter content will be populated here -->
+        </div>
+      </div>
+    </div>
+
+    {% comment %} Filter Panel {% endcomment %}
+    <div class="v-collection__filter-panel" data-filter-panel>
+      <div class="v-collection__filter-content">
+        {% comment %} Size Filter {% endcomment %}
+        <div class="v-collection__filter-group">
+          <h3 class="v-collection__filter-title">Size</h3>
+          <div class="v-collection__filter-options">
+            <span class="v-collection__filter-note">Most of our shoes only come in full sizes. If you're a half size, select your nearest whole size too.</span>
+            <div class="v-collection__size-grid">
+              {% assign sizes = '8,8.5,9,9.5,10,10.5,11,11.5,12,12.5,13,13.5,14,15' | split: ',' %}
+              {% for size in sizes %}
+                <button type="button" class="v-collection__size-btn" data-size="{{ size }}">
+                  {{ size }}
+                </button>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+
+        {% comment %} Product Types Filter {% endcomment %}
+        <div class="v-collection__filter-group">
+          <h3 class="v-collection__filter-title">Product Types</h3>
+          <div class="v-collection__filter-options">
+            {% assign product_types = 'Everyday Sneakers,Fluffs,Golf,High Tops,Hiking Shoes,Running Shoes,Sandals,Slip Ons,Water-Repellent Shoes' | split: ',' %}
+            {% for type in product_types %}
+              <label class="v-collection__filter-option">
+                <input type="checkbox" value="{{ type | downcase | replace: ' ', '-' }}" data-filter="type">
+                <span class="v-collection__filter-option-text">{{ type }}</span>
+              </label>
+            {% endfor %}
+          </div>
+        </div>
+
+        {% comment %} Material Filter {% endcomment %}
+        <div class="v-collection__filter-group">
+          <h3 class="v-collection__filter-title">Material</h3>
+          <div class="v-collection__filter-options">
+            {% assign materials = 'canvas,corduroy,cotton,fluff-collection,sugar,tree,wool' | split: ',' %}
+            {% for material in materials %}
+              <label class="v-collection__filter-option">
+                <input type="checkbox" value="{{ material }}" data-filter="material">
+                <span class="v-collection__filter-option-text">{{ material | capitalize }}</span>
+              </label>
+            {% endfor %}
+          </div>
+        </div>
+
+        {% comment %} Color Filter {% endcomment %}
+        <div class="v-collection__filter-group">
+          <h3 class="v-collection__filter-title">Color</h3>
+          <div class="v-collection__filter-options">
+            {% assign colors = 'beige,black,blue,brown,green,grey,orange,pink,red,white,yellow' | split: ',' %}
+            {% for color in colors %}
+              <label class="v-collection__filter-option">
+                <input type="checkbox" value="{{ color }}" data-filter="color">
+                <span class="v-collection__filter-color-swatch" style="background-color: {{ color }};"></span>
+                <span class="v-collection__filter-option-text">{{ color | capitalize }}</span>
+              </label>
+            {% endfor %}
+          </div>
+        </div>
+
+        {% comment %} Price Filter {% endcomment %}
+        <div class="v-collection__filter-group">
+          <h3 class="v-collection__filter-title">Price</h3>
+          <div class="v-collection__filter-price">
+            <div class="v-collection__price-inputs">
+              <input type="number" placeholder="From" class="v-collection__price-input" data-price-min>
+              <span class="v-collection__price-separator">-</span>
+              <input type="number" placeholder="To" class="v-collection__price-input" data-price-max>
+            </div>
+            <button type="button" class="v-collection__apply-btn" data-apply-filters>Apply</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% comment %} Products Grid {% endcomment %}
+    <div class="v-collection__products" data-collection-products>
+      {% paginate collection.products by section.settings.products_per_page %}
+        <div class="v-collection__grid">
+          {% for product in collection.products %}
+            <div class="v-collection__product" data-product-id="{{ product.id }}">
+              <div class="v-collection__product-card">
+                {% if product.featured_image %}
+                  <div class="v-collection__product-image">
+                    <a href="{{ product.url }}" class="v-collection__product-link">
+                      {% render 'image', 
+                        image: product.featured_image, 
+                        class: 'v-collection__product-img',
+                        width: 400,
+                        height: 400
+                      %}
+                    </a>
+                    
+                    {% comment %} Product Badges {% endcomment %}
+                    {% if product.compare_at_price > product.price %}
+                      <div class="v-collection__badge v-collection__badge--sale">Sale</div>
+                    {% endif %}
+                    
+                    {% assign product_age = product.created_at | date: '%s' %}
+                    {% assign current_time = 'now' | date: '%s' %}
+                    {% assign age_in_days = current_time | minus: product_age | divided_by: 86400 %}
+                    {% if age_in_days <= 30 %}
+                      <div class="v-collection__badge v-collection__badge--new">NEW</div>
+                    {% endif %}
+                    
+                    {% if product.tags contains 'bestseller' %}
+                      <div class="v-collection__badge v-collection__badge--bestseller">BESTSELLER</div>
+                    {% endif %}
+                    
+                    {% if product.tags contains 'lightweight' %}
+                      <div class="v-collection__badge v-collection__badge--feature">Lightweight</div>
+                    {% endif %}
+                    
+                    {% if product.tags contains 'water-repellent' %}
+                      <div class="v-collection__badge v-collection__badge--feature">WATER-REPELLENT</div>
+                    {% endif %}
+                  </div>
+                {% endif %}
+
+                <div class="v-collection__product-content">
+                  <h3 class="v-collection__product-title">
+                    <a href="{{ product.url }}">{{ product.title | escape }}</a>
+                  </h3>
+                  
+                  <div class="v-collection__product-price">
+                    {% if product.compare_at_price > product.price %}
+                      <span class="v-collection__price-sale">{{ product.price | money }}</span>
+                      <span class="v-collection__price-original">{{ product.compare_at_price | money }}</span>
+                    {% else %}
+                      <span class="v-collection__price-regular">{{ product.price | money }}</span>
+                    {% endif %}
+                  </div>
+                  
+                  <div class="v-collection__product-actions">
+                    <button type="button" class="v-collection__select-size" data-product-id="{{ product.id }}">
+                      Select Size
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% else %}
+            <div class="v-collection__empty">
+              <h2 class="v-collection__empty-title">No products found</h2>
+              <p class="v-collection__empty-text">Try adjusting your filters or browse our other collections.</p>
+            </div>
+          {% endfor %}
+        </div>
+
+        {% comment %} Pagination {% endcomment %}
+        {% if paginate.pages > 1 %}
+          <div class="v-collection__pagination">
+            {% if paginate.previous %}
+              <a href="{{ paginate.previous.url }}" class="v-collection__pagination-btn v-collection__pagination-btn--prev">
+                {% render 'icon-arrow-left' %}
+                Previous
+              </a>
+            {% endif %}
+            
+            <div class="v-collection__pagination-numbers">
+              {% for part in paginate.parts %}
+                {% if part.is_link %}
+                  <a href="{{ part.url }}" class="v-collection__pagination-number">{{ part.title }}</a>
+                {% elsif part.title == paginate.current_page %}
+                  <span class="v-collection__pagination-number v-collection__pagination-number--current">{{ part.title }}</span>
+                {% else %}
+                  <span class="v-collection__pagination-number v-collection__pagination-number--dots">{{ part.title }}</span>
+                {% endif %}
+              {% endfor %}
+            </div>
+            
+            {% if paginate.next %}
+              <a href="{{ paginate.next.url }}" class="v-collection__pagination-btn v-collection__pagination-btn--next">
+                Next
+                {% render 'icon-arrow-right' %}
+              </a>
+            {% endif %}
+          </div>
+        {% endif %}
+      {% endpaginate %}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+.v-collection {
+  padding: var(--space-8) 0;
+  background: var(--color-background);
+}
+
+.v-collection__container {
+  max-width: var(--container-xl);
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+}
+
+.v-collection__breadcrumbs {
+  margin-bottom: var(--space-6);
+}
+
+.v-collection__breadcrumbs .breadcrumbs__list {
+  display: inline;
+}
+
+.v-collection__header {
+  text-align: center;
+  margin-bottom: var(--space-8);
+}
+
+.v-collection__title {
+  font-size: clamp(var(--font-size-4xl), 6vw, var(--font-size-6xl));
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-4) 0;
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+.v-collection__description {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-secondary);
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: var(--line-height-relaxed);
+}
+
+.v-collection__controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-6);
+  padding: var(--space-4) 0;
+  border-bottom: var(--border-width-1) solid var(--color-border-light);
+}
+
+.v-collection__count-text {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+}
+
+.v-collection__filters-sort {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.v-collection__mobile-filter {
+  display: none;
+}
+
+.v-collection__burger-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  border: var(--border-width-1) solid var(--color-border);
+  background: var(--color-background);
+  color: var(--color-text-primary);
+  border-radius: var(--radius-base);
+  cursor: pointer;
+  transition: var(--transition-base);
+  min-width: 60px;
+}
+
+.v-collection__burger-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.v-collection__burger-line {
+  width: 18px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 1px;
+  transition: var(--transition-base);
+}
+
+.v-collection__filter-text {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+.v-collection__filter-btn {
+  padding: var(--space-3) var(--space-6);
+  border: var(--border-width-1) solid var(--color-border);
+  background: var(--color-background);
+  color: var(--color-text-primary);
+  border-radius: var(--radius-base);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: var(--transition-base);
+}
+
+.v-collection__filter-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.v-collection__sort-select {
+  padding: var(--space-3) var(--space-4);
+  border: var(--border-width-1) solid var(--color-border);
+  background: var(--color-background);
+  color: var(--color-text-primary);
+  border-radius: var(--radius-base);
+  font-weight: var(--font-weight-medium);
+  min-width: 200px;
+}
+
+.v-collection__filter-panel {
+  display: none;
+  margin-bottom: var(--space-8);
+  padding: var(--space-6);
+  border: var(--border-width-1) solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+  background: var(--color-background);
+}
+
+.v-collection__filter-panel.active {
+  display: block;
+}
+
+/* Mobile Filter Overlay */
+.v-collection__mobile-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: var(--z-modal);
+  display: none;
+  opacity: 0;
+  transition: var(--transition-base);
+}
+
+.v-collection__mobile-overlay.active {
+  display: flex;
+  opacity: 1;
+}
+
+.v-collection__mobile-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  max-width: 400px;
+  height: 100%;
+  background: var(--color-background);
+  transform: translateX(100%);
+  transition: var(--transition-base);
+  overflow-y: auto;
+}
+
+.v-collection__mobile-overlay.active .v-collection__mobile-panel {
+  transform: translateX(0);
+}
+
+.v-collection__mobile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-4);
+  border-bottom: var(--border-width-1) solid var(--color-border-light);
+  position: sticky;
+  top: 0;
+  background: var(--color-background);
+  z-index: 1;
+}
+
+.v-collection__mobile-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.v-collection__mobile-close {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: var(--color-background);
+  color: var(--color-text-primary);
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-base);
+}
+
+.v-collection__mobile-close:hover {
+  background: var(--color-background-secondary);
+  color: var(--color-primary);
+}
+
+.v-collection__mobile-content {
+  padding: var(--space-4);
+}
+
+.v-collection__filter-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-6);
+}
+
+.v-collection__filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.v-collection__filter-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.v-collection__filter-note {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-3);
+}
+
+.v-collection__size-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+  gap: var(--space-2);
+}
+
+.v-collection__size-btn {
+  padding: var(--space-2) var(--space-3);
+  border: var(--border-width-1) solid var(--color-border);
+  background: var(--color-background);
+  color: var(--color-text-primary);
+  border-radius: var(--radius-base);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: var(--transition-base);
+  text-align: center;
+}
+
+.v-collection__size-btn:hover,
+.v-collection__size-btn.active {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+}
+
+.v-collection__filter-options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.v-collection__filter-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+}
+
+.v-collection__filter-color-swatch {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: var(--border-width-2) solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.v-collection__filter-price {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.v-collection__price-inputs {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.v-collection__price-input {
+  flex: 1;
+  padding: var(--space-2) var(--space-3);
+  border: var(--border-width-1) solid var(--color-border);
+  border-radius: var(--radius-base);
+  font-weight: var(--font-weight-medium);
+}
+
+.v-collection__price-separator {
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+}
+
+.v-collection__apply-btn {
+  padding: var(--space-2) var(--space-4);
+  border: var(--border-width-1) solid var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  border-radius: var(--radius-base);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: var(--transition-base);
+}
+
+.v-collection__apply-btn:hover {
+  background: var(--color-primary-hover);
+}
+
+.v-collection__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-6);
+  margin-bottom: var(--space-8);
+}
+
+.v-collection__product-card {
+  background: var(--color-background);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: var(--transition-base);
+  border: var(--border-width-1) solid var(--color-border-light);
+}
+
+.v-collection__product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.v-collection__product-image {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+}
+
+.v-collection__product-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: var(--transition-base);
+}
+
+.v-collection__product-card:hover .v-collection__product-img {
+  transform: scale(1.05);
+}
+
+.v-collection__badge {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-3);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+  color: var(--color-text-inverse);
+}
+
+.v-collection__badge--sale {
+  background: var(--color-error);
+}
+
+.v-collection__badge--new {
+  background: var(--color-accent-green);
+}
+
+.v-collection__badge--bestseller {
+  background: var(--color-primary);
+}
+
+.v-collection__badge--feature {
+  background: var(--color-text-secondary);
+}
+
+.v-collection__product-content {
+  padding: var(--space-4);
+  text-align: center;
+}
+
+.v-collection__product-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-3) 0;
+  line-height: var(--line-height-snug);
+}
+
+.v-collection__product-title a {
+  color: var(--color-text-primary);
+  text-decoration: none;
+  transition: var(--transition-base);
+}
+
+.v-collection__product-title a:hover {
+  color: var(--color-accent-green);
+}
+
+.v-collection__product-price {
+  margin-bottom: var(--space-4);
+}
+
+.v-collection__price-regular,
+.v-collection__price-sale {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+.v-collection__price-original {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  text-decoration: line-through;
+  margin-left: var(--space-2);
+}
+
+.v-collection__select-size {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border: var(--border-width-2) solid var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  border-radius: var(--radius-base);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: var(--transition-base);
+}
+
+.v-collection__select-size:hover {
+  background: var(--color-text-inverse);
+  color: var(--color-primary);
+}
+
+.v-collection__empty {
+  text-align: center;
+  padding: var(--space-16) var(--space-4);
+}
+
+.v-collection__empty-title {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-4) 0;
+}
+
+.v-collection__empty-text {
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.v-collection__pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-4);
+  margin-top: var(--space-8);
+}
+
+.v-collection__pagination-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border: var(--border-width-1) solid var(--color-border);
+  background: var(--color-background);
+  color: var(--color-text-primary);
+  text-decoration: none;
+  border-radius: var(--radius-base);
+  font-weight: var(--font-weight-medium);
+  transition: var(--transition-base);
+}
+
+.v-collection__pagination-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.v-collection__pagination-numbers {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.v-collection__pagination-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 40px;
+  padding: var(--space-2);
+  border: var(--border-width-1) solid var(--color-border);
+  border-radius: var(--radius-base);
+  background: var(--color-background);
+  color: var(--color-text-primary);
+  text-decoration: none;
+  font-weight: var(--font-weight-medium);
+  transition: var(--transition-base);
+}
+
+.v-collection__pagination-number:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.v-collection__pagination-number--current {
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  border-color: var(--color-primary);
+}
+
+.v-collection__pagination-number--dots {
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: default;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .v-collection {
+    padding: var(--space-6) 0;
+  }
+  
+  .v-collection__container {
+    padding: 0 var(--space-3);
+  }
+  
+  .v-collection__controls {
+    flex-direction: column;
+    gap: var(--space-4);
+    align-items: stretch;
+  }
+  
+  .v-collection__filters-sort {
+    justify-content: space-between;
+  }
+  
+  /* Show mobile filter, hide desktop filter */
+  .v-collection__mobile-filter {
+    display: block;
+  }
+  
+  .v-collection__filter-toggle {
+    display: none;
+  }
+  
+  .v-collection__filter-content {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+  
+  .v-collection__grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--space-4);
+  }
+  
+  .v-collection__pagination {
+    flex-wrap: wrap;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .v-collection__grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .v-collection__size-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+{% endstylesheet %}
+
+{% javascript %}
+class VCollection extends HTMLElement {
+  constructor() {
+    super();
+    this.filterToggle = this.querySelector('[data-filter-toggle]');
+    this.filterPanel = this.querySelector('[data-filter-panel]');
+    this.mobileFilterToggle = this.querySelector('[data-mobile-filter-toggle]');
+    this.mobileFilterOverlay = this.querySelector('[data-mobile-filter-overlay]');
+    this.mobileFilterClose = this.querySelector('[data-mobile-filter-close]');
+    this.mobileFilterContent = this.querySelector('[data-mobile-filter-content]');
+    this.sortSelect = this.querySelector('[data-collection-sort]');
+    this.sizeButtons = this.querySelectorAll('[data-size]');
+    this.filterInputs = this.querySelectorAll('[data-filter]');
+    this.priceInputs = this.querySelectorAll('[data-price-min], [data-price-max]');
+    this.applyBtn = this.querySelector('[data-apply-filters]');
+    
+    this.init();
+  }
+
+  init() {
+    if (this.filterToggle) {
+      this.filterToggle.addEventListener('click', this.toggleFilters.bind(this));
+    }
+
+    if (this.mobileFilterToggle) {
+      this.mobileFilterToggle.addEventListener('click', this.toggleMobileFilters.bind(this));
+    }
+
+    if (this.mobileFilterClose) {
+      this.mobileFilterClose.addEventListener('click', this.closeMobileFilters.bind(this));
+    }
+
+    if (this.mobileFilterOverlay) {
+      this.mobileFilterOverlay.addEventListener('click', (e) => {
+        if (e.target === this.mobileFilterOverlay) {
+          this.closeMobileFilters();
+        }
+      });
+    }
+
+    if (this.sortSelect) {
+      this.sortSelect.addEventListener('change', this.handleSort.bind(this));
+    }
+
+    if (this.sizeButtons.length) {
+      this.sizeButtons.forEach(btn => {
+        btn.addEventListener('click', this.handleSizeSelect.bind(this));
+      });
+    }
+
+    if (this.applyBtn) {
+      this.applyBtn.addEventListener('click', this.applyFilters.bind(this));
+    }
+
+    // Copy filter content to mobile panel
+    this.copyFilterContentToMobile();
+  }
+
+  toggleFilters() {
+    this.filterPanel.classList.toggle('active');
+  }
+
+  toggleMobileFilters() {
+    this.mobileFilterOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  closeMobileFilters() {
+    this.mobileFilterOverlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  copyFilterContentToMobile() {
+    if (this.mobileFilterContent && this.filterPanel) {
+      const filterContent = this.filterPanel.querySelector('.v-collection__filter-content');
+      if (filterContent) {
+        this.mobileFilterContent.innerHTML = filterContent.outerHTML;
+        
+        // Re-initialize event listeners for mobile content
+        this.initMobileFilterEvents();
+      }
+    }
+  }
+
+  initMobileFilterEvents() {
+    // Re-initialize size buttons in mobile panel
+    const mobileSizeButtons = this.mobileFilterContent.querySelectorAll('[data-size]');
+    mobileSizeButtons.forEach(btn => {
+      btn.addEventListener('click', this.handleSizeSelect.bind(this));
+    });
+
+    // Re-initialize filter inputs in mobile panel
+    const mobileFilterInputs = this.mobileFilterContent.querySelectorAll('[data-filter]');
+    mobileFilterInputs.forEach(input => {
+      input.addEventListener('change', this.applyFilters.bind(this));
+    });
+
+    // Re-initialize price inputs in mobile panel
+    const mobilePriceInputs = this.mobileFilterContent.querySelectorAll('[data-price-min], [data-price-max]');
+    mobilePriceInputs.forEach(input => {
+      input.addEventListener('input', this.applyFilters.bind(this));
+    });
+
+    // Re-initialize apply button in mobile panel
+    const mobileApplyBtn = this.mobileFilterContent.querySelector('[data-apply-filters]');
+    if (mobileApplyBtn) {
+      mobileApplyBtn.addEventListener('click', () => {
+        this.applyFilters();
+        this.closeMobileFilters();
+      });
+    }
+  }
+
+  handleSort(event) {
+    const sortValue = event.target.value;
+    const url = new URL(window.location);
+    url.searchParams.set('sort_by', sortValue);
+    window.location.href = url.toString();
+  }
+
+  handleSizeSelect(event) {
+    const button = event.target;
+    const isActive = button.classList.contains('active');
+    
+    // Remove active class from all size buttons
+    this.sizeButtons.forEach(btn => btn.classList.remove('active'));
+    
+    // Add active class to clicked button if it wasn't active
+    if (!isActive) {
+      button.classList.add('active');
+    }
+    
+    this.applyFilters();
+  }
+
+  applyFilters() {
+    const url = new URL(window.location);
+    
+    // Clear existing filters
+    url.searchParams.delete('filter.v.price.gte');
+    url.searchParams.delete('filter.v.price.lte');
+    url.searchParams.delete('filter.v.tag');
+    
+    // Apply price filters
+    const priceMin = this.querySelector('[data-price-min]').value;
+    const priceMax = this.querySelector('[data-price-max]').value;
+    
+    if (priceMin) {
+      url.searchParams.set('filter.v.price.gte', priceMin * 100);
+    }
+    if (priceMax) {
+      url.searchParams.set('filter.v.price.lte', priceMax * 100);
+    }
+    
+    // Apply tag filters
+    const checkedFilters = this.querySelectorAll('[data-filter]:checked');
+    checkedFilters.forEach(filter => {
+      url.searchParams.append('filter.v.tag', filter.value);
+    });
+    
+    // Apply size filter
+    const activeSize = this.querySelector('[data-size].active');
+    if (activeSize) {
+      url.searchParams.append('filter.v.tag', `size-${activeSize.dataset.size}`);
+    }
+    
+    window.location.href = url.toString();
+  }
+}
+
+customElements.define('v-collection', VCollection);
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "V Collection",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Collection Display"
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 12,
+      "max": 48,
+      "step": 4,
+      "default": 20,
+      "label": "Products per page"
+    },
+    {
+      "type": "header",
+      "content": "Collection Features"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_filtering",
+      "default": true,
+      "label": "Show filtering options"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sorting",
+      "default": true,
+      "label": "Show sorting options"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_product_count",
+      "default": true,
+      "label": "Show product count"
+    }
+  ],
+  "presets": [
+    {
+      "name": "V Collection"
+    }
+  ]
+}
+{% endschema %}

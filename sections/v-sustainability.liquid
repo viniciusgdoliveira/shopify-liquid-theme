@@ -1,0 +1,447 @@
+{% comment %}
+  V-inspired Sustainability Section
+  Clean messaging about environmental impact and sustainable materials
+{% endcomment %}
+
+<div class="v-sustainability" id="shopify-section-{{ section.id }}">
+  <div class="v-sustainability__container">
+    {% if section.settings.heading != blank %}
+      <div class="v-sustainability__header">
+        <h2 class="v-sustainability__title">{{ section.settings.heading }}</h2>
+        {% if section.settings.subheading != blank %}
+          <p class="v-sustainability__subtitle">{{ section.settings.subheading }}</p>
+        {% endif %}
+      </div>
+    {% endif %}
+    
+    <div class="v-sustainability__content">
+      {% if section.settings.image %}
+        <div class="v-sustainability__image">
+          {% render 'image', 
+            image: section.settings.image, 
+            class: 'v-sustainability__img',
+            width: 600,
+            height: 400
+          %}
+        </div>
+      {% endif %}
+      
+      <div class="v-sustainability__text">
+        {% if section.settings.description != blank %}
+          <div class="v-sustainability__description">
+            {{ section.settings.description }}
+          </div>
+        {% endif %}
+        
+        <div class="v-sustainability__stats">
+          {% for block in section.blocks %}
+            {% case block.type %}
+              {% when 'stat' %}
+                <div class="v-sustainability__stat" {{ block.shopify_attributes }}>
+                  <div class="v-sustainability__stat-number">
+                    {{ block.settings.number }}
+                  </div>
+                  <div class="v-sustainability__stat-label">
+                    {{ block.settings.label }}
+                  </div>
+                </div>
+            {% endcase %}
+          {% endfor %}
+        </div>
+        
+        {% if section.settings.button_text != blank and section.settings.button_url != blank %}
+          <div class="v-sustainability__actions">
+            <a href="{{ section.settings.button_url }}" class="v-sustainability__button btn btn-primary">
+              {{ section.settings.button_text }}
+            </a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+    
+    {% if section.settings.features_heading != blank %}
+      <div class="v-sustainability__features">
+        <h3 class="v-sustainability__features-title">{{ section.settings.features_heading }}</h3>
+        <div class="v-sustainability__features-grid">
+          {% for block in section.blocks %}
+            {% case block.type %}
+              {% when 'feature' %}
+                <div class="v-sustainability__feature" {{ block.shopify_attributes }}>
+                  <div class="v-sustainability__feature-icon">
+                    {{ block.settings.icon }}
+                  </div>
+                  <h4 class="v-sustainability__feature-title">
+                    {{ block.settings.title }}
+                  </h4>
+                  <p class="v-sustainability__feature-description">
+                    {{ block.settings.description }}
+                  </p>
+                </div>
+            {% endcase %}
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% stylesheet %}
+.v-sustainability {
+  padding: 4rem 0;
+  background: var(--color-background-secondary, #F5F5F5);
+}
+
+.v-sustainability__container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.v-sustainability__header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.v-sustainability__title {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  color: var(--color-text-primary, #000000);
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+}
+
+.v-sustainability__subtitle {
+  font-size: 1.125rem;
+  color: var(--color-text-secondary, #6C6C6C);
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+.v-sustainability__content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  margin-bottom: 4rem;
+}
+
+.v-sustainability__image {
+  order: 1;
+}
+
+.v-sustainability__img {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+}
+
+.v-sustainability__text {
+  order: 2;
+}
+
+.v-sustainability__description {
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: var(--color-text-primary, #000000);
+  margin-bottom: 2rem;
+}
+
+.v-sustainability__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.v-sustainability__stat {
+  text-align: center;
+  padding: 1.5rem 1rem;
+  background: var(--color-background, #ffffff);
+  border-radius: 12px;
+  border: 1px solid var(--color-border-light, #F0F0F0);
+}
+
+.v-sustainability__stat-number {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--color-accent, #28A745);
+  margin-bottom: 0.5rem;
+}
+
+.v-sustainability__stat-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-secondary, #6C6C6C);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.v-sustainability__button {
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 50px;
+  background: var(--color-accent, #28A745);
+  color: var(--color-text-inverse, #ffffff);
+  border: 2px solid var(--color-accent, #28A745);
+  transition: all 0.3s ease;
+}
+
+.v-sustainability__button:hover {
+  background: var(--color-text-inverse, #ffffff);
+  color: var(--color-accent, #28A745);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(40, 167, 69, 0.25);
+}
+
+.v-sustainability__features {
+  background: var(--color-background, #ffffff);
+  padding: 3rem;
+  border-radius: 16px;
+  border: 1px solid var(--color-border-light, #F0F0F0);
+}
+
+.v-sustainability__features-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text-primary, #000000);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.v-sustainability__features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.v-sustainability__feature {
+  text-align: center;
+  padding: 1.5rem;
+}
+
+.v-sustainability__feature-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.v-sustainability__feature-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text-primary, #000000);
+  margin-bottom: 0.75rem;
+}
+
+.v-sustainability__feature-description {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary, #6C6C6C);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .v-sustainability {
+    padding: 2rem 0;
+  }
+  
+  .v-sustainability__container {
+    padding: 0 1rem;
+  }
+  
+  .v-sustainability__header {
+    margin-bottom: 2rem;
+  }
+  
+  .v-sustainability__content {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  .v-sustainability__image {
+    order: 1;
+  }
+  
+  .v-sustainability__text {
+    order: 2;
+  }
+  
+  .v-sustainability__stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+  
+  .v-sustainability__features {
+    padding: 2rem 1rem;
+  }
+  
+  .v-sustainability__features-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .v-sustainability__stats {
+    grid-template-columns: 1fr;
+  }
+  
+  .v-sustainability__stat {
+    padding: 1rem;
+  }
+  
+  .v-sustainability__stat-number {
+    font-size: 1.5rem;
+  }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "V Sustainability",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Section Heading",
+      "default": "Sustainability In Every Step"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Section Subheading",
+      "default": "From materials to transport, we're working to reduce our carbon footprint to near zero."
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Sustainability Image",
+      "info": "Recommended size: 600x400px"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>We replace petroleum-based synthetics with natural alternatives wherever we can. Like using wool, tree fiber, and sugarcane. They're soft, breathable, and better for the planet—win, win, win.</p>"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Learn More About Our Impact"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "Button URL"
+    },
+    {
+      "type": "text",
+      "id": "features_heading",
+      "label": "Features Heading",
+      "default": "Materials From The Earth"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "stat",
+      "name": "Statistic",
+      "settings": [
+        {
+          "type": "text",
+          "id": "number",
+          "label": "Number",
+          "default": "50%"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Less Carbon"
+        }
+      ]
+    },
+    {
+      "type": "feature",
+      "name": "Feature",
+      "settings": [
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Icon (Emoji)",
+          "default": "🌱"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Natural Materials"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description",
+          "default": "Made from renewable materials like wool, tree fiber, and sugarcane."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "V Sustainability",
+      "blocks": [
+        {
+          "type": "stat",
+          "settings": {
+            "number": "50%",
+            "label": "Less Carbon"
+          }
+        },
+        {
+          "type": "stat",
+          "settings": {
+            "number": "100%",
+            "label": "Renewable"
+          }
+        },
+        {
+          "type": "stat",
+          "settings": {
+            "number": "0",
+            "label": "Waste Goal"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "icon": "🌱",
+            "title": "Natural Materials",
+            "description": "Made from renewable materials like wool, tree fiber, and sugarcane."
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "icon": "♻️",
+            "title": "Recycled Content",
+            "description": "Using recycled materials wherever possible to reduce waste."
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "icon": "🌍",
+            "title": "Carbon Neutral",
+            "description": "Working towards carbon neutrality in all our operations."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

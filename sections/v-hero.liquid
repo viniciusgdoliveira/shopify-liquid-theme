@@ -1,0 +1,306 @@
+{% comment %}
+  V-inspired Hero Section
+  Clean, minimal design with bold imagery and sustainability messaging
+{% endcomment %}
+
+<div class="v-hero" id="shopify-section-{{ section.id }}">
+  <div class="v-hero__container">
+    {% if section.settings.image %}
+      <div class="v-hero__image">
+        {% render 'image', 
+          image: section.settings.image, 
+          class: 'v-hero__img',
+          width: 1920,
+          height: 800
+        %}
+      </div>
+    {% endif %}
+    
+    <div class="v-hero__content">
+      <div class="v-hero__text">
+        {% if section.settings.heading != blank %}
+          <h1 class="v-hero__heading">{{ section.settings.heading }}</h1>
+        {% endif %}
+        
+        {% if section.settings.subheading != blank %}
+          <p class="v-hero__subheading">{{ section.settings.subheading }}</p>
+        {% endif %}
+        
+        {% if section.settings.sustainability_text != blank %}
+          <div class="v-hero__sustainability">
+            <span class="v-hero__sustainability-icon">🌱</span>
+            <span class="v-hero__sustainability-text">{{ section.settings.sustainability_text }}</span>
+          </div>
+        {% endif %}
+        
+        {% if section.settings.button_text != blank and section.settings.button_url != blank %}
+          <div class="v-hero__actions">
+            <a href="{{ section.settings.button_url }}" class="v-hero__button btn btn-primary">
+              {{ section.settings.button_text }}
+            </a>
+            {% if section.settings.secondary_button_text != blank and section.settings.secondary_button_url != blank %}
+              <a href="{{ section.settings.secondary_button_url }}" class="v-hero__button btn btn-outline">
+                {{ section.settings.secondary_button_text }}
+              </a>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+.v-hero {
+  position: relative;
+  width: 100%;
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--color-natural-white);
+}
+
+.v-hero__container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.v-hero__image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.v-hero__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.v-hero__content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: var(--container-xl);
+  padding-inline: var(--spacing-lg);
+  text-align: center;
+}
+
+.v-hero__text {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.v-hero__heading {
+  font-size: clamp(var(--font-size-4xl), 6vw, var(--font-size-7xl));
+  font-weight: var(--font-weight-extrabold);
+  line-height: var(--line-height-tight);
+  color: var(--color-natural-black);
+  margin-bottom: var(--spacing-lg);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+.v-hero__subheading {
+  font-size: clamp(var(--font-size-lg), 2.5vw, var(--font-size-2xl));
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-warm-gray);
+  margin-bottom: var(--spacing-xl);
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.v-hero__sustainability {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  background: var(--color-sustainability-bg);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-full);
+  margin-bottom: var(--spacing-2xl);
+  border: var(--border-width-1) solid var(--color-sustainability-border);
+}
+
+.v-hero__sustainability-icon {
+  font-size: 1.25rem;
+}
+
+.v-hero__sustainability-text {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-sustainability-text);
+}
+
+.v-hero__actions {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.v-hero__button {
+  min-width: 160px;
+  padding: var(--spacing-md) var(--spacing-xl);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  text-decoration: none;
+  border-radius: var(--radius-full);
+  transition: var(--transition-button-hover);
+}
+
+.v-hero__button.btn-primary {
+  background: var(--color-natural-black);
+  color: var(--color-natural-white);
+  border: var(--border-width-2) solid var(--color-natural-black);
+}
+
+.v-hero__button.btn-primary:hover {
+  background: var(--color-natural-white);
+  color: var(--color-natural-black);
+  transform: translateY(calc(-1 * var(--hover-lift-distance)));
+  box-shadow: var(--shadow-card-hover);
+}
+
+.v-hero__button.btn-outline {
+  background: transparent;
+  color: var(--color-natural-black);
+  border: var(--border-width-2) solid var(--color-natural-black);
+}
+
+.v-hero__button.btn-outline:hover {
+  background: var(--color-natural-black);
+  color: var(--color-natural-white);
+  transform: translateY(calc(-1 * var(--hover-lift-distance)));
+  box-shadow: var(--shadow-card-hover);
+}
+
+/* Dark overlay for better text readability */
+.v-hero__image::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.1);
+  z-index: 1;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .v-hero {
+    min-height: 70vh;
+  }
+  
+  .v-hero__content {
+    padding-inline: var(--spacing-md);
+  }
+  
+  .v-hero__heading {
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .v-hero__subheading {
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  .v-hero__sustainability {
+    margin-bottom: var(--spacing-xl);
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+  
+  .v-hero__actions {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .v-hero__button {
+    width: 100%;
+    max-width: 280px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .v-hero {
+    min-height: 60vh;
+  }
+  
+  .v-hero__sustainability {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--spacing-xs);
+  }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "V Hero",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Hero Image",
+      "info": "Recommended size: 1920x800px"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Comfort by Nature"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Lightweight, bouncy, and wildly comfortable shoes made from natural materials."
+    },
+    {
+      "type": "text",
+      "id": "sustainability_text",
+      "label": "Sustainability Message",
+      "default": "Made with sustainable materials"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Primary Button Text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "Primary Button URL"
+    },
+    {
+      "type": "text",
+      "id": "secondary_button_text",
+      "label": "Secondary Button Text",
+      "default": "Learn More"
+    },
+    {
+      "type": "url",
+      "id": "secondary_button_url",
+      "label": "Secondary Button URL"
+    }
+  ],
+  "presets": [
+    {
+      "name": "V Hero"
+    }
+  ]
+}
+{% endschema %}

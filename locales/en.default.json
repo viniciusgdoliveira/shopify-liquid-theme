@@ -48,12 +48,18 @@
       "filter_by": "Filter by",
       "clear_all": "Clear all",
       "price": "Price",
+      "color": "Color",
+      "size": "Size",
       "brand": "Brand",
       "availability": "Availability",
       "in_stock": "In stock",
       "on_sale": "On sale",
       "no_products": "No products found",
-      "no_products_description": "Try adjusting your filters or search terms."
+      "no_products_description": "Try adjusting your filters or search terms.",
+      "pagination_info": "Page {{ current_page }} of {{ total_pages }} ({{ total_products }} products)",
+      "previous": "Previous",
+      "next": "Next",
+      "load_more": "Load more products"
     }
   },
   "gift_card": {
@@ -92,6 +98,8 @@
       "share": "Share",
       "sale": "Sale",
       "quick_add": "Quick Add",
+    "quick_view": "Quick View",
+    "close_modal": "Close modal",
       "pickup_availability": {
         "title": "Pickup availability",
         "available": "Available",
@@ -101,6 +109,13 @@
     }
   },
   "general": {
+    "breadcrumbs": {
+      "label": "Breadcrumb navigation",
+      "home": "Home",
+      "collections": "Collections",
+      "blog": "Blog",
+      "separator": "›"
+    },
     "social": {
       "share_on_facebook": "Share on Facebook",
       "share_on_twitter": "Share on Twitter",

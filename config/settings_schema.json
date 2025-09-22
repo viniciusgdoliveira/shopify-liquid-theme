@@ -368,6 +368,89 @@
     ]
   },
   {
+    "name": "V Brand Colors",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Core V Colors"
+      },
+      {
+        "type": "color",
+        "id": "v_natural_white",
+        "default": "#ffffff",
+        "label": "Natural White",
+        "info": "Primary background color - clean and minimal"
+      },
+      {
+        "type": "color",
+        "id": "v_natural_black",
+        "default": "#000000",
+        "label": "Natural Black",
+        "info": "Primary text and accent color"
+      },
+      {
+        "type": "color",
+        "id": "v_stony_cream",
+        "default": "#f5f5f0",
+        "label": "Stony Cream",
+        "info": "Secondary background - warm neutral"
+      },
+      {
+        "type": "color",
+        "id": "v_taupe_blush",
+        "default": "#d4c4a8",
+        "label": "Taupe Blush",
+        "info": "Accent color for subtle highlights"
+      },
+      {
+        "type": "color",
+        "id": "v_thunder_green",
+        "default": "#2d5016",
+        "label": "Thunder Green",
+        "info": "Sustainability and nature accent"
+      },
+      {
+        "type": "color",
+        "id": "v_navy_night",
+        "default": "#1a1a2e",
+        "label": "Navy Night",
+        "info": "Dark accent for contrast"
+      },
+      {
+        "type": "color",
+        "id": "v_warm_gray",
+        "default": "#6c6c6c",
+        "label": "Warm Gray",
+        "info": "Secondary text color"
+      },
+      {
+        "type": "header",
+        "content": "Sustainability Colors"
+      },
+      {
+        "type": "color",
+        "id": "v_sustainability_green",
+        "default": "#28a745",
+        "label": "Sustainability Green",
+        "info": "Primary sustainability accent"
+      },
+      {
+        "type": "color",
+        "id": "v_sustainability_bg",
+        "default": "rgba(40, 167, 69, 0.1)",
+        "label": "Sustainability Background",
+        "info": "Subtle background for sustainability badges"
+      },
+      {
+        "type": "color",
+        "id": "v_sustainability_border",
+        "default": "rgba(40, 167, 69, 0.2)",
+        "label": "Sustainability Border",
+        "info": "Border color for sustainability elements"
+      }
+    ]
+  },
+  {
     "name": "Colors",
     "settings": [
       {
@@ -377,20 +460,23 @@
       {
         "type": "color",
         "id": "colors_primary",
-        "default": "#FF6B35",
-        "label": "Primary color"
+        "default": "#000000",
+        "label": "Primary color",
+        "info": "Main brand color (defaults to V Natural Black)"
       },
       {
         "type": "color",
         "id": "colors_secondary",
-        "default": "#28a745",
-        "label": "Secondary color"
+        "default": "#ffffff",
+        "label": "Secondary color",
+        "info": "Secondary brand color (defaults to V Natural White)"
       },
       {
         "type": "color",
         "id": "colors_accent",
-        "default": "#f8f9fa",
-        "label": "Accent color"
+        "default": "#28a745",
+        "label": "Accent color",
+        "info": "Accent color (defaults to V Sustainability Green)"
       },
       {
         "type": "header",
@@ -825,6 +911,46 @@
           }
         ],
         "default": "cubic-bezier(0.4, 0, 0.2, 1)"
+      },
+      {
+        "type": "header",
+        "content": "V-Specific Animations"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_hover_animations",
+        "default": true,
+        "label": "Enable Hover Animations",
+        "info": "Smooth hover effects on cards and buttons"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_scroll_animations",
+        "default": true,
+        "label": "Enable Scroll Animations",
+        "info": "Fade-in animations as elements come into view"
+      },
+      {
+        "type": "range",
+        "id": "hover_lift_distance",
+        "min": 0,
+        "max": 20,
+        "step": 1,
+        "unit": "px",
+        "label": "Hover Lift Distance",
+        "default": 4,
+        "info": "How much elements lift on hover"
+      },
+      {
+        "type": "range",
+        "id": "card_hover_scale",
+        "min": 100,
+        "max": 110,
+        "step": 1,
+        "unit": "%",
+        "label": "Card Hover Scale",
+        "default": 102,
+        "info": "Scale effect on card hover"
       }
     ]
   },

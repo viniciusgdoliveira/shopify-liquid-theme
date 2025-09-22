@@ -1,0 +1,584 @@
+{% comment %}
+  V-style breadcrumb navigation for all page types.
+  
+  @param {collection} collection - The current collection (optional)
+  @param {product} product - The current product (optional)
+  @param {article} article - The current article (optional)
+  @param {blog} blog - The current blog (optional)
+  @param {page} page - The current page (optional)
+  @param {string} [class] - Optional class to be added to the breadcrumb wrapper
+{% endcomment %}
+
+{% liquid
+  assign breadcrumb_class = class | default: 'breadcrumbs'
+%}
+
+<nav class="{{ breadcrumb_class }}" aria-label="{{ 'general.breadcrumbs.label' | t }}">
+  <div class="{{ breadcrumb_class }}__list">
+    <span class="{{ breadcrumb_class }}__item">
+      <a href="{{ routes.root_url }}" class="{{ breadcrumb_class }}__link">
+        {{ 'general.breadcrumbs.home' | t }}
+      </a>
+    </span>
+    
+    {% comment %} Collection breadcrumbs {% endcomment %}
+    {% if collection %}
+      <span class="{{ breadcrumb_class }}__separator" aria-hidden="true">
+        {{ 'general.breadcrumbs.separator' | t }}
+      </span>
+      <span class="{{ breadcrumb_class }}__item">
+        <a href="{{ routes.collections_url }}" class="{{ breadcrumb_class }}__link">
+          {{ 'general.breadcrumbs.collections' | t }}
+        </a>
+      </span>
+      
+      {% if product %}
+        {% comment %} Product in collection {% endcomment %}
+        <span class="{{ breadcrumb_class }}__separator" aria-hidden="true">
+          {{ 'general.breadcrumbs.separator' | t }}
+        </span>
+        <span class="{{ breadcrumb_class }}__item">
+          <a href="{{ collection.url }}" class="{{ breadcrumb_class }}__link">
+            {{ collection.title | escape }}
+          </a>
+        </span>
+        
+        <span class="{{ breadcrumb_class }}__separator" aria-hidden="true">
+          {{ 'general.breadcrumbs.separator' | t }}
+        </span>
+        <span class="{{ breadcrumb_class }}__item {{ breadcrumb_class }}__item--current">
+          <span class="{{ breadcrumb_class }}__current" aria-current="page">
+            {{ product.title | escape }}
+          </span>
+        </span>
+      {% else %}
+        {% comment %} Collection page {% endcomment %}
+        <span class="{{ breadcrumb_class }}__separator" aria-hidden="true">
+          {{ 'general.breadcrumbs.separator' | t }}
+        </span>
+        <span class="{{ breadcrumb_class }}__item {{ breadcrumb_class }}__item--current">
+          <span class="{{ breadcrumb_class }}__current" aria-current="page">
+            {{ collection.title | escape }}
+          </span>
+        </span>
+      {% endif %}
+    
+    {% comment %} Product breadcrumbs (without collection context) {% endcomment %}
+    {% elsif product %}
+      <span class="{{ breadcrumb_class }}__separator" aria-hidden="true">
+        {{ 'general.breadcrumbs.separator' | t }}
+      </span>
+      <span class="{{ breadcrumb_class }}__item">
+        <a href="{{ routes.collections_url }}" class="{{ breadcrumb_class }}__link">
+          {{ 'general.breadcrumbs.collections' | t }}
+        </a>
+      </span>
+      
+      <span class="{{ breadcrumb_class }}__separator" aria-hidden="true">
+        {{ 'general.breadcrumbs.separator' | t }}
+      </span>
+      <span class="{{ breadcrumb_class }}__item {{ breadcrumb_class }}__item--current">
+        <span class="{{ breadcrumb_class }}__current" aria-current="page">
+          {{ product.title | escape }}
+        </span>
+      </span>
+    
+    {% comment %} Blog breadcrumbs {% endcomment %}
+    {% elsif blog %}
+      <span class="{{ breadcrumb_class }}__separator" aria-hidden="true">
+        {{ 'general.breadcrumbs.separator' | t }}
+      </span>
+      <span class="{{ breadcrumb_class }}__item">
+        <a href="{{ routes.blogs_url }}" class="{{ breadcrumb_class }}__link">
+          {{ 'general.breadcrumbs.blog' | t }}
+        </a>
+      </span>
+      
+      {% if article %}
+        {% comment %} Article in blog {% endcomment %}
+        <span class="{{ breadcrumb_class }}__separator" aria-hidden="true">
+          {{ 'general.breadcrumbs.separator' | t }}
+        </span>
+        <span class="{{ breadcrumb_class }}__item">
+          <a href="{{ blog.url }}" class="{{ breadcrumb_class }}__link">
+            {{ blog.title | escape }}
+          </a>
+        </span>
+        
+        <span class="{{ breadcrumb_class }}__separator" aria-hidden="true">
+          {{ 'general.breadcrumbs.separator' | t }}
+        </span>
+        <span class="{{ breadcrumb_class }}__item {{ breadcrumb_class }}__item--current">
+          <span class="{{ breadcrumb_class }}__current" aria-current="page">
+            {{ article.title | escape }}
+          </span>
+        </span>
+      {% else %}
+        {% comment %} Blog page {% endcomment %}
+        <span class="{{ breadcrumb_class }}__separator" aria-hidden="true">
+          {{ 'general.breadcrumbs.separator' | t }}
+        </span>
+        <span class="{{ breadcrumb_class }}__item {{ breadcrumb_class }}__item--current">
+          <span class="{{ breadcrumb_class }}__current" aria-current="page">
+            {{ blog.title | escape }}
+          </span>
+        </span>
+      {% endif %}
+    
+    {% comment %} Article breadcrumbs (without blog context) {% endcomment %}
+    {% elsif article %}
+      <span class="{{ breadcrumb_class }}__separator" aria-hidden="true">
+        {{ 'general.breadcrumbs.separator' | t }}
+      </span>
+      <span class="{{ breadcrumb_class }}__item">
+        <a href="{{ routes.blogs_url }}" class="{{ breadcrumb_class }}__link">
+          {{ 'general.breadcrumbs.blog' | t }}
+        </a>
+      </span>
+      
+      <span class="{{ breadcrumb_class }}__separator" aria-hidden="true">
+        {{ 'general.breadcrumbs.separator' | t }}
+      </span>
+      <span class="{{ breadcrumb_class }}__item {{ breadcrumb_class }}__item--current">
+        <span class="{{ breadcrumb_class }}__current" aria-current="page">
+          {{ article.title | escape }}
+        </span>
+      </span>
+    
+    {% comment %} Page breadcrumbs {% endcomment %}
+    {% elsif page %}
+      <span class="{{ breadcrumb_class }}__separator" aria-hidden="true">
+        {{ 'general.breadcrumbs.separator' | t }}
+      </span>
+      <span class="{{ breadcrumb_class }}__item {{ breadcrumb_class }}__item--current">
+        <span class="{{ breadcrumb_class }}__current" aria-current="page">
+          {{ page.title | escape }}
+        </span>
+      </span>
+    {% endif %}
+  </div>
+</nav>
+
+{% stylesheet %}
+/* === BREADCRUMB BASE STYLES === */
+.breadcrumbs {
+  margin-bottom: var(--space-6);
+  padding: var(--space-3) 0;
+  font-family: var(--font-family-primary);
+}
+
+.breadcrumbs__list {
+  display: inline;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-normal);
+}
+
+.breadcrumbs__item {
+  display: inline;
+  white-space: nowrap;
+}
+
+.breadcrumbs__item:not(:last-child) {
+  margin-right: var(--space-1);
+}
+
+.breadcrumbs__item:last-child {
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+.breadcrumbs__separator {
+  margin: 0 var(--space-2);
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-normal);
+  opacity: 0.7;
+  display: inline;
+  white-space: nowrap;
+}
+
+.breadcrumbs__link {
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: color 0.2s ease-in-out;
+  font-weight: var(--font-weight-normal);
+  padding: var(--space-1) 0;
+  border-radius: var(--border-radius-sm);
+  display: inline;
+  white-space: nowrap;
+}
+
+.breadcrumbs__link:hover {
+  color: var(--color-accent-green);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+.breadcrumbs__link:focus {
+  outline: 2px solid var(--color-accent-green);
+  outline-offset: 2px;
+}
+
+.breadcrumbs__current {
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
+  padding: var(--space-1) 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+.breadcrumbs__item--current .breadcrumbs__separator {
+  display: none;
+}
+
+/* === ALLBIRDS COLLECTION BREADCRUMB STYLES === */
+.v-collection__breadcrumbs .breadcrumbs {
+  margin-bottom: var(--space-8);
+  padding: var(--space-4) 0;
+  border-bottom: 1px solid var(--color-border-light);
+  background-color: var(--color-background);
+}
+
+.v-collection__breadcrumbs .breadcrumbs__list {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-normal);
+  letter-spacing: -0.01em;
+  display: inline;
+}
+
+.v-collection__breadcrumbs .breadcrumbs__link {
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-normal);
+  transition: color 0.2s ease-in-out;
+}
+
+.v-collection__breadcrumbs .breadcrumbs__link:hover {
+  color: var(--color-accent-green);
+  text-decoration: none;
+}
+
+.v-collection__breadcrumbs .breadcrumbs__current {
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-normal);
+  opacity: 0.8;
+}
+
+.v-collection__breadcrumbs .breadcrumbs__separator {
+  color: var(--color-text-tertiary);
+  font-weight: var(--font-weight-normal);
+  opacity: 0.6;
+}
+
+/* === COLLECTION BREADCRUMB STYLES === */
+.collection__breadcrumbs .breadcrumbs {
+  margin-bottom: var(--space-6);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.collection__breadcrumbs .breadcrumbs__list {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-normal);
+  display: inline;
+}
+
+.collection__breadcrumbs .breadcrumbs__link {
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-normal);
+}
+
+.collection__breadcrumbs .breadcrumbs__link:hover {
+  color: var(--color-accent-green);
+}
+
+.collection__breadcrumbs .breadcrumbs__current {
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+.collection__breadcrumbs .breadcrumbs__separator {
+  color: var(--color-text-tertiary);
+  font-weight: var(--font-weight-normal);
+}
+
+/* === PRODUCT BREADCRUMB STYLES === */
+.product__breadcrumbs .breadcrumbs {
+  margin-bottom: var(--space-6);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.product__breadcrumbs .breadcrumbs__list {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-normal);
+}
+
+.product__breadcrumbs .breadcrumbs__link {
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-normal);
+}
+
+.product__breadcrumbs .breadcrumbs__link:hover {
+  color: var(--color-accent-green);
+}
+
+.product__breadcrumbs .breadcrumbs__current {
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+.product__breadcrumbs .breadcrumbs__separator {
+  color: var(--color-text-tertiary);
+  font-weight: var(--font-weight-normal);
+}
+
+/* === BLOG BREADCRUMB STYLES === */
+.blog__breadcrumbs .breadcrumbs {
+  margin-bottom: var(--space-6);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.blog__breadcrumbs .breadcrumbs__list {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-normal);
+}
+
+.blog__breadcrumbs .breadcrumbs__link {
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-normal);
+}
+
+.blog__breadcrumbs .breadcrumbs__link:hover {
+  color: var(--color-accent-green);
+}
+
+.blog__breadcrumbs .breadcrumbs__current {
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+.blog__breadcrumbs .breadcrumbs__separator {
+  color: var(--color-text-tertiary);
+  font-weight: var(--font-weight-normal);
+}
+
+/* === ARTICLE BREADCRUMB STYLES === */
+.article__breadcrumbs .breadcrumbs {
+  margin-bottom: var(--space-6);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.article__breadcrumbs .breadcrumbs__list {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-normal);
+}
+
+.article__breadcrumbs .breadcrumbs__link {
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-normal);
+}
+
+.article__breadcrumbs .breadcrumbs__link:hover {
+  color: var(--color-accent-green);
+}
+
+.article__breadcrumbs .breadcrumbs__current {
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+.article__breadcrumbs .breadcrumbs__separator {
+  color: var(--color-text-tertiary);
+  font-weight: var(--font-weight-normal);
+}
+
+/* === PAGE BREADCRUMB STYLES === */
+.page__breadcrumbs .breadcrumbs {
+  margin-bottom: var(--space-6);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.page__breadcrumbs .breadcrumbs__list {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-normal);
+}
+
+.page__breadcrumbs .breadcrumbs__link {
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-normal);
+}
+
+.page__breadcrumbs .breadcrumbs__link:hover {
+  color: var(--color-accent-green);
+}
+
+.page__breadcrumbs .breadcrumbs__current {
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+.page__breadcrumbs .breadcrumbs__separator {
+  color: var(--color-text-tertiary);
+  font-weight: var(--font-weight-normal);
+}
+
+/* === RESPONSIVE DESIGN === */
+@media screen and (max-width: 768px) {
+  .breadcrumbs {
+    margin-bottom: var(--space-4);
+    padding: var(--space-2) 0;
+  }
+  
+  .breadcrumbs__list {
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-snug);
+    flex-wrap: wrap;
+    overflow: visible;
+  }
+  
+  .breadcrumbs__separator {
+    margin: 0 var(--space-1);
+    font-size: var(--font-size-xs);
+  }
+  
+  .breadcrumbs__link {
+    padding: var(--space-1) 0;
+  }
+  
+  .breadcrumbs__current {
+    padding: var(--space-1) 0;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+    max-width: none;
+  }
+  
+  /* V collection mobile styles */
+  .v-collection__breadcrumbs .breadcrumbs {
+    margin-bottom: var(--space-6);
+    padding: var(--space-3) 0;
+  }
+  
+  .v-collection__breadcrumbs .breadcrumbs__list {
+    font-size: var(--font-size-sm);
+  }
+  
+  /* Collection mobile styles */
+  .collection__breadcrumbs .breadcrumbs {
+    margin-bottom: var(--space-4);
+    padding: var(--space-2) 0;
+  }
+  
+  .collection__breadcrumbs .breadcrumbs__list {
+    font-size: var(--font-size-xs);
+  }
+  
+  /* Product mobile styles */
+  .product__breadcrumbs .breadcrumbs {
+    margin-bottom: var(--space-4);
+    padding: var(--space-2) 0;
+  }
+  
+  .product__breadcrumbs .breadcrumbs__list {
+    font-size: var(--font-size-xs);
+  }
+  
+  /* Blog mobile styles */
+  .blog__breadcrumbs .breadcrumbs {
+    margin-bottom: var(--space-4);
+    padding: var(--space-2) 0;
+  }
+  
+  .blog__breadcrumbs .breadcrumbs__list {
+    font-size: var(--font-size-xs);
+  }
+  
+  /* Article mobile styles */
+  .article__breadcrumbs .breadcrumbs {
+    margin-bottom: var(--space-4);
+    padding: var(--space-2) 0;
+  }
+  
+  .article__breadcrumbs .breadcrumbs__list {
+    font-size: var(--font-size-xs);
+  }
+  
+  /* Page mobile styles */
+  .page__breadcrumbs .breadcrumbs {
+    margin-bottom: var(--space-4);
+    padding: var(--space-2) 0;
+  }
+  
+  .page__breadcrumbs .breadcrumbs__list {
+    font-size: var(--font-size-xs);
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .breadcrumbs__list {
+    font-size: var(--font-size-xs);
+  }
+  
+  .breadcrumbs__separator {
+    margin: 0 var(--space-1);
+  }
+  
+  .v-collection__breadcrumbs .breadcrumbs__list {
+    font-size: var(--font-size-xs);
+  }
+  
+  .collection__breadcrumbs .breadcrumbs__list {
+    font-size: var(--font-size-xs);
+  }
+  
+  .product__breadcrumbs .breadcrumbs__list {
+    font-size: var(--font-size-xs);
+  }
+  
+  .blog__breadcrumbs .breadcrumbs__list {
+    font-size: var(--font-size-xs);
+  }
+  
+  .article__breadcrumbs .breadcrumbs__list {
+    font-size: var(--font-size-xs);
+  }
+  
+  .page__breadcrumbs .breadcrumbs__list {
+    font-size: var(--font-size-xs);
+  }
+}
+
+/* === ACCESSIBILITY IMPROVEMENTS === */
+@media (prefers-reduced-motion: reduce) {
+  .breadcrumbs__link {
+    transition: none;
+  }
+}
+
+/* === HIGH CONTRAST MODE SUPPORT === */
+@media (prefers-contrast: high) {
+  .breadcrumbs__link {
+    color: var(--color-text-primary);
+  }
+  
+  .breadcrumbs__link:hover {
+    color: var(--color-accent-green);
+    text-decoration: underline;
+  }
+  
+  .breadcrumbs__separator {
+    color: var(--color-text-primary);
+    opacity: 1;
+  }
+}
+{% endstylesheet %}

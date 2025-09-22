@@ -1,0 +1,282 @@
+/* V Design System - CSS Variables */
+/* Based on https://www.v.com/ design principles */
+
+:root {
+  /* === COLOR PALETTE === */
+  
+  /* Primary Colors - Natural & Earthy */
+  --color-natural-white: var(--color-natural-white, #ffffff);
+  --color-natural-black: var(--color-natural-black, #000000);
+  --color-stony-cream: var(--color-stony-cream, #f5f5f0);
+  --color-taupe-blush: var(--color-taupe-blush, #d4c4a8);
+  --color-thunder-green: var(--color-thunder-green, #2d5016);
+  --color-navy-night: var(--color-navy-night, #1a1a2e);
+  --color-blizzard: var(--color-natural-white, #ffffff);
+  
+  /* Secondary Colors - Warm Neutrals */
+  --color-warm-gray: var(--color-warm-gray, #6c6c6c);
+  --color-light-gray: #f0f0f0;
+  --color-medium-gray: #e0e0e0;
+  --color-dark-gray: #333333;
+  
+  /* Accent Colors - Wool Cruiser Collection Inspired */
+  --color-accent-green: var(--color-sustainability-green, #28a745);
+  --color-accent-blue: #007bff;
+  --color-accent-orange: #fd7e14;
+  --color-accent-red: #dc3545;
+  --color-accent-purple: #6f42c1;
+  
+  /* Sustainability Colors */
+  --color-sustainability-bg: var(--color-sustainability-bg, rgba(40, 167, 69, 0.1));
+  --color-sustainability-border: var(--color-sustainability-border, rgba(40, 167, 69, 0.2));
+  --color-sustainability-text: var(--color-sustainability-green, #28a745);
+  
+  /* === SEMANTIC COLORS === */
+  
+  /* Background Colors */
+  --color-background: var(--color-natural-white);
+  --color-background-secondary: var(--color-stony-cream);
+  --color-background-tertiary: var(--color-light-gray);
+  
+  /* Text Colors */
+  --color-text-primary: var(--color-natural-black);
+  --color-text-secondary: var(--color-warm-gray);
+  --color-text-tertiary: #999999;
+  --color-text-inverse: var(--color-natural-white);
+  --color-text-accent: var(--color-accent-green);
+  
+  /* Border Colors */
+  --color-border: var(--color-medium-gray);
+  --color-border-light: var(--color-light-gray);
+  --color-border-dark: var(--color-dark-gray);
+  
+  /* Interactive Colors */
+  --color-primary: var(--color-natural-black);
+  --color-primary-hover: var(--color-dark-gray);
+  --color-secondary: var(--color-warm-gray);
+  --color-secondary-hover: var(--color-dark-gray);
+  
+  /* Status Colors */
+  --color-success: var(--color-accent-green);
+  --color-warning: var(--color-accent-orange);
+  --color-error: var(--color-accent-red);
+  --color-info: var(--color-accent-blue);
+  
+  /* === TYPOGRAPHY === */
+  
+  /* Font Families */
+  --font-family-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  --font-family-secondary: Georgia, 'Times New Roman', serif;
+  --font-family-mono: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+  
+  /* Font Sizes - Responsive Scale */
+  --font-size-xs: 0.75rem;    /* 12px */
+  --font-size-sm: 0.875rem;   /* 14px */
+  --font-size-base: 1rem;     /* 16px */
+  --font-size-lg: 1.125rem;   /* 18px */
+  --font-size-xl: 1.25rem;    /* 20px */
+  --font-size-2xl: 1.5rem;    /* 24px */
+  --font-size-3xl: 1.875rem;  /* 30px */
+  --font-size-4xl: 2.25rem;   /* 36px */
+  --font-size-5xl: 3rem;      /* 48px */
+  --font-size-6xl: 3.75rem;   /* 60px */
+  --font-size-7xl: 4.5rem;    /* 72px */
+  
+  /* Font Weights */
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+  --font-weight-black: 900;
+  
+  /* Line Heights */
+  --line-height-tight: 1.1;
+  --line-height-snug: 1.3;
+  --line-height-normal: 1.4;
+  --line-height-relaxed: 1.5;
+  --line-height-loose: 1.6;
+  
+  /* Letter Spacing */
+  --letter-spacing-tight: -0.03em;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide: 0.025em;
+  --letter-spacing-wider: 0.05em;
+  
+  /* === SPACING === */
+  
+  /* Spacing Scale */
+  --space-0: 0;
+  --space-1: 0.25rem;   /* 4px */
+  --space-2: 0.5rem;    /* 8px */
+  --space-3: 0.75rem;   /* 12px */
+  --space-4: 1rem;      /* 16px */
+  --space-5: 1.25rem;   /* 20px */
+  --space-6: 1.5rem;    /* 24px */
+  --space-8: 2rem;      /* 32px */
+  --space-10: 2.5rem;   /* 40px */
+  --space-12: 3rem;     /* 48px */
+  --space-16: 4rem;     /* 64px */
+  --space-20: 5rem;     /* 80px */
+  --space-24: 6rem;     /* 96px */
+  --space-32: 8rem;     /* 128px */
+  
+  /* === BORDERS & RADIUS === */
+  
+  /* Border Radius */
+  --radius-none: 0;
+  --radius-sm: 0.25rem;   /* 4px */
+  --radius-base: 0.5rem;  /* 8px */
+  --radius-md: 0.75rem;   /* 12px */
+  --radius-lg: 1rem;      /* 16px */
+  --radius-xl: 1.5rem;    /* 24px */
+  --radius-2xl: 2rem;     /* 32px */
+  --radius-full: 50px;    /* 50px - V signature rounded buttons */
+  
+  /* Border Widths */
+  --border-width-0: 0;
+  --border-width-1: 1px;
+  --border-width-2: 2px;
+  --border-width-4: 4px;
+  
+  /* === SHADOWS === */
+  
+  /* Box Shadows - Subtle & Natural */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-base: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.04);
+  --shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.25);
+  
+  /* V-specific shadows */
+  --shadow-card: 0 12px 40px rgba(0, 0, 0, 0.08);
+  --shadow-card-hover: 0 8px 25px rgba(0, 0, 0, 0.15);
+  --shadow-button: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-button-hover: 0 8px 25px rgba(0, 0, 0, 0.15);
+  
+  /* === TRANSITIONS === */
+  
+  /* Transition Durations */
+  --duration-75: 75ms;
+  --duration-100: 100ms;
+  --duration-150: 150ms;
+  --duration-200: 200ms;
+  --duration-300: 300ms;
+  --duration-500: 500ms;
+  --duration-700: 700ms;
+  --duration-1000: 1000ms;
+  
+  /* Transition Timing Functions */
+  --ease-linear: linear;
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  
+  /* Common Transitions */
+  --transition-fast: all var(--duration-150) var(--ease-out);
+  --transition-base: all var(--duration-300) var(--ease-out);
+  --transition-slow: all var(--duration-500) var(--ease-out);
+  
+  /* === BREAKPOINTS === */
+  
+  /* Container Max Widths */
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+  --container-2xl: 1536px;
+  
+  /* === Z-INDEX === */
+  
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+  --z-toast: 1080;
+  
+  /* === ANIMATIONS & INTERACTIONS === */
+  
+  /* Hover Effects */
+  --hover-lift-distance: var(--hover-lift-distance, 4px);
+  --card-hover-scale: var(--card-hover-scale, 102%);
+  --enable-hover-animations: var(--enable-hover-animations, 1);
+  --enable-scroll-animations: var(--enable-scroll-animations, 1);
+  
+  /* V-specific hover transitions */
+  --transition-hover: all var(--duration-300) var(--ease-out);
+  --transition-card-hover: transform var(--duration-300) var(--ease-out), box-shadow var(--duration-300) var(--ease-out);
+  --transition-button-hover: all var(--duration-200) var(--ease-out);
+  
+  /* Scroll animations */
+  --scroll-fade-duration: var(--duration-500);
+  --scroll-slide-duration: var(--duration-700);
+  
+  /* === COMPONENT SPECIFIC === */
+  
+  /* Button Styles */
+  --button-height-sm: 2rem;
+  --button-height-base: 2.5rem;
+  --button-height-lg: 3rem;
+  --button-padding-x-sm: 1rem;
+  --button-padding-x-base: 1.5rem;
+  --button-padding-x-lg: 2rem;
+  
+  /* Card Styles */
+  --card-padding: 1.5rem;
+  --card-padding-sm: 1rem;
+  --card-padding-lg: 2rem;
+  
+  /* Form Styles */
+  --input-height: 2.5rem;
+  --input-padding-x: 1rem;
+  --input-border-radius: var(--radius-base);
+  
+  /* === SUSTAINABILITY THEME === */
+  
+  /* Sustainability Badge */
+  --sustainability-badge-bg: var(--color-sustainability-bg);
+  --sustainability-badge-border: var(--color-sustainability-border);
+  --sustainability-badge-text: var(--color-sustainability-text);
+  
+  /* Natural Material Colors */
+  --color-wool: #f5f5f0;
+  --color-tree-fiber: #8fbc8f;
+  --color-sugarcane: #f0e68c;
+  --color-recycled: #d3d3d3;
+}
+
+/* === DARK MODE SUPPORT === */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background: var(--color-natural-black);
+    --color-background-secondary: var(--color-dark-gray);
+    --color-background-tertiary: var(--color-navy-night);
+    
+    --color-text-primary: var(--color-natural-white);
+    --color-text-secondary: var(--color-light-gray);
+    --color-text-tertiary: var(--color-warm-gray);
+    
+    --color-border: var(--color-dark-gray);
+    --color-border-light: var(--color-navy-night);
+    
+    --color-primary: var(--color-natural-white);
+    --color-primary-hover: var(--color-light-gray);
+  }
+}
+
+/* === PRINT STYLES === */
+@media print {
+  :root {
+    --color-background: white;
+    --color-text-primary: black;
+    --color-text-secondary: black;
+    --shadow-card: none;
+    --shadow-button: none;
+  }
+}

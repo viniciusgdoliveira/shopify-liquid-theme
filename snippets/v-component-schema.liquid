@@ -1,0 +1,276 @@
+{% comment %}
+  Enhanced V Component Schema Snippet
+  
+  Comprehensive schema options for V-inspired components
+  Usage: {% render 'v-component-schema', component_type: 'hero', custom_settings: [...] %}
+{% endcomment %}
+
+{% liquid
+  assign component_type = component_type | default: 'generic'
+  assign custom_settings = custom_settings | default: blank
+  assign show_v_styling = show_v_styling | default: true
+  assign show_sustainability = show_sustainability | default: true
+  assign show_animations = show_animations | default: true
+  assign show_responsive = show_responsive | default: true
+%}
+
+{% if custom_settings != blank %}
+  {{ custom_settings | json }}
+{% else %}
+  {
+    "name": "{{ component_name | default: 'V Component' }}",
+    "tag": "section",
+    "class": "section",
+    "settings": [
+      {% if show_v_styling %}
+      {
+        "type": "header",
+        "content": "V Styling"
+      },
+      {
+        "type": "select",
+        "id": "v_style",
+        "label": "V Style",
+        "options": [
+          {
+            "value": "minimal",
+            "label": "Minimal - Clean and simple"
+          },
+          {
+            "value": "sustainability",
+            "label": "Sustainability Focus - Green accents"
+          },
+          {
+            "value": "bold",
+            "label": "Bold Typography - Strong headlines"
+          },
+          {
+            "value": "natural",
+            "label": "Natural - Earthy tones"
+          }
+        ],
+        "default": "minimal",
+        "info": "Choose the V design style for this component"
+      },
+      {
+        "type": "color",
+        "id": "custom_primary_color",
+        "label": "Custom Primary Color",
+        "info": "Override the primary color for this component"
+      },
+      {
+        "type": "color",
+        "id": "custom_background_color",
+        "label": "Custom Background Color",
+        "info": "Override the background color for this component"
+      },
+      {% endif %}
+      
+      {% if show_sustainability %}
+      {
+        "type": "header",
+        "content": "Sustainability Features"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_sustainability_badge",
+        "label": "Show Sustainability Badge",
+        "default": true,
+        "info": "Display sustainability messaging"
+      },
+      {
+        "type": "text",
+        "id": "sustainability_text",
+        "label": "Sustainability Text",
+        "default": "Made with sustainable materials",
+        "info": "Custom sustainability message"
+      },
+      {
+        "type": "select",
+        "id": "sustainability_style",
+        "label": "Sustainability Badge Style",
+        "options": [
+          {
+            "value": "subtle",
+            "label": "Subtle - Light background"
+          },
+          {
+            "value": "prominent",
+            "label": "Prominent - Bold green"
+          },
+          {
+            "value": "minimal",
+            "label": "Minimal - Text only"
+          }
+        ],
+        "default": "subtle"
+      },
+      {% endif %}
+      
+      {% if show_animations %}
+      {
+        "type": "header",
+        "content": "Animations & Interactions"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_hover_effects",
+        "label": "Enable Hover Effects",
+        "default": true,
+        "info": "Add hover animations to interactive elements"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_scroll_animations",
+        "label": "Enable Scroll Animations",
+        "default": true,
+        "info": "Animate elements as they come into view"
+      },
+      {
+        "type": "select",
+        "id": "animation_style",
+        "label": "Animation Style",
+        "options": [
+          {
+            "value": "subtle",
+            "label": "Subtle - Gentle movements"
+          },
+          {
+            "value": "dynamic",
+            "label": "Dynamic - More pronounced effects"
+          },
+          {
+            "value": "minimal",
+            "label": "Minimal - Very subtle"
+          }
+        ],
+        "default": "subtle"
+      },
+      {
+        "type": "range",
+        "id": "animation_delay",
+        "min": 0,
+        "max": 1000,
+        "step": 50,
+        "unit": "ms",
+        "label": "Animation Delay",
+        "default": 0,
+        "info": "Delay before animations start"
+      },
+      {% endif %}
+      
+      {% if show_responsive %}
+      {
+        "type": "header",
+        "content": "Responsive Design"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_fluid_typography",
+        "label": "Enable Fluid Typography",
+        "default": true,
+        "info": "Use responsive font scaling"
+      },
+      {
+        "type": "select",
+        "id": "mobile_layout",
+        "label": "Mobile Layout",
+        "options": [
+          {
+            "value": "stack",
+            "label": "Stack - Vertical layout"
+          },
+          {
+            "value": "compact",
+            "label": "Compact - Condensed spacing"
+          },
+          {
+            "value": "full-width",
+            "label": "Full Width - Edge-to-edge"
+          }
+        ],
+        "default": "stack"
+      },
+      {
+        "type": "range",
+        "id": "mobile_padding",
+        "min": 0,
+        "max": 4,
+        "step": 0.5,
+        "unit": "rem",
+        "label": "Mobile Padding",
+        "default": 1,
+        "info": "Padding on mobile devices"
+      },
+      {% endif %}
+      
+      {
+        "type": "header",
+        "content": "Advanced Options"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_dark_mode",
+        "label": "Enable Dark Mode Support",
+        "default": true,
+        "info": "Automatic dark mode styling"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_high_contrast",
+        "label": "Enable High Contrast Mode",
+        "default": false,
+        "info": "Enhanced contrast for accessibility"
+      },
+      {
+        "type": "select",
+        "id": "container_width",
+        "label": "Container Width",
+        "options": [
+          {
+            "value": "narrow",
+            "label": "Narrow - 800px max"
+          },
+          {
+            "value": "standard",
+            "label": "Standard - 1200px max"
+          },
+          {
+            "value": "wide",
+            "label": "Wide - 1400px max"
+          },
+          {
+            "value": "full",
+            "label": "Full Width - No max"
+          }
+        ],
+        "default": "standard"
+      },
+      {
+        "type": "range",
+        "id": "section_padding_top",
+        "min": 0,
+        "max": 8,
+        "step": 0.5,
+        "unit": "rem",
+        "label": "Top Padding",
+        "default": 3
+      },
+      {
+        "type": "range",
+        "id": "section_padding_bottom",
+        "min": 0,
+        "max": 8,
+        "step": 0.5,
+        "unit": "rem",
+        "label": "Bottom Padding",
+        "default": 3
+      }
+    ],
+    "presets": [
+      {
+        "name": "{{ component_name | default: 'V Component' }}"
+      }
+    ]
+  }
+{% endif %}

@@ -1,0 +1,167 @@
+# Allbirds Design Reference Rule
+
+## Overview
+This Shopify Liquid theme project uses [Allbirds.com](https://www.allbirds.com/) as the primary design reference. All design decisions, component implementations, and styling should align with Allbirds' design principles and visual identity.
+
+## Design Philosophy
+- **Minimalism First**: Clean, uncluttered layouts with generous white space
+- **Natural Materials**: Earthy color palette and organic textures
+- **Sustainability Focus**: Prominent environmental messaging and eco-friendly badges
+- **Comfort-Driven UX**: Effortless navigation and interaction design
+- **Bold Simplicity**: Confident use of typography and strategic color application
+
+## Visual Identity Standards
+
+### Color Palette
+- **Primary**: Natural White (#ffffff), Natural Black (#000000)
+- **Secondary**: Stony Cream (#f5f5f0), Warm Gray (#6c6c6c)
+- **Accent**: Thunder Green (#2d5016), Navy Night (#1a1a2e)
+- **Sustainability**: Green accents (#28a745) with subtle backgrounds
+- **Use CSS variables**: Always reference `--color-*` variables from `allbirds-design-system.css`
+
+### Typography
+- **Headlines**: Bold, large, with tight letter spacing (-0.03em)
+- **Body Text**: Clean, readable, with relaxed line height (1.5)
+- **Buttons**: Semibold weight for clear hierarchy
+- **Responsive**: Use `clamp()` functions for fluid scaling
+
+### Layout Principles
+- **Generous Spacing**: Use `--space-*` variables consistently
+- **Clean Grids**: Structured layouts with consistent gaps
+- **Mobile-First**: Design for mobile, enhance for desktop
+- **Container Widths**: Use `--container-*` variables for responsive containers
+
+## Component Guidelines
+
+### Navigation
+- Clean header with minimal distractions
+- Mega menu with organized categories
+- Mobile-friendly hamburger navigation
+- Prominent search functionality
+
+### Product Cards
+- Large, high-quality images as primary focus
+- Minimal text overlay (name, price, sustainability badge)
+- Clean pricing display
+- Subtle hover effects with elevation
+- Consistent aspect ratios for grid layouts
+
+### Hero Sections
+- Bold, impactful messaging with large typography
+- High-quality lifestyle imagery
+- Clear call-to-action buttons with strong contrast
+- Minimal text - let visuals tell the story
+
+### Sustainability Elements
+- Prominent environmental messaging throughout
+- Material transparency information
+- Carbon footprint awareness
+- Trust-building elements (B Corp certification)
+
+## Implementation Standards
+
+### CSS Architecture
+1. **Design System First**: Always use `allbirds-design-system.css` variables
+2. **Component-Based**: Create reusable components following Allbirds patterns
+3. **Responsive Design**: Mobile-first approach with fluid typography
+4. **Performance**: Optimized images and minimal JavaScript
+
+### Content Strategy
+- **Messaging Tone**: Conversational yet professional
+- **Sustainability Focus**: Highlight environmental benefits without being preachy
+- **Comfort Emphasis**: Focus on quality and natural materials
+- **Inclusive Language**: Welcoming and accessible
+
+### Quality Assurance
+- **Color Consistency**: Use design system variables exclusively
+- **Typography Hierarchy**: Follow Allbirds' font weight and size patterns
+- **Spacing Standards**: Apply consistent spacing using `--space-*` variables
+- **Accessibility**: High contrast ratios and keyboard navigation
+- **Performance**: Fast loading times and optimized assets
+
+## Reference Files
+- `DESIGN_REFERENCE.md` - Comprehensive design guidelines
+- `ALLBIRDS_CONTEXT.md` - Implementation context and examples
+- `assets/allbirds-design-system.css` - Complete CSS variable system
+- Existing sections: `allbirds-hero.liquid`, `allbirds-product-cards.liquid`, `allbirds-sustainability.liquid`
+
+## Success Criteria
+- Visual consistency with Allbirds.com design
+- Prominent sustainability messaging
+- Clean, minimal aesthetic
+- Excellent mobile experience
+- Fast loading performance
+- Accessibility compliance
+
+## When to Reference
+- Creating new sections or components
+- Updating existing styles
+- Making design decisions
+- Implementing responsive layouts
+- Adding sustainability features
+- Optimizing user experience
+
+---
+
+## Translation Management Rule
+
+### Multi-Language Support
+This theme supports three languages: English (en), Portuguese Brazil (pt-br), and Spanish (es). When creating or modifying components, you MUST update all locale files.
+
+### Required Translation Files
+- `locales/en.default.json` - English translations (primary)
+- `locales/en.default.schema.json` - English schema translations
+- `locales/pt-br.json` - Portuguese Brazil translations
+- `locales/pt-br.schema.json` - Portuguese Brazil schema translations
+- `locales/es.json` - Spanish translations
+- `locales/es.schema.json` - Spanish schema translations
+
+### Translation Workflow
+When adding new components or text content:
+
+1. **Always add to English first** - Use clear, concise English text
+2. **Update all locale files** - Add the same key to all 6 locale files
+3. **Maintain consistent structure** - Keep the same JSON hierarchy across all files
+4. **Use appropriate translations** - Provide culturally appropriate translations, not literal word-for-word
+
+### Translation Guidelines
+
+#### Portuguese (Brazil) - pt-br
+- Use Brazilian Portuguese conventions
+- Consider cultural context for e-commerce terms
+- Use "carrinho" for cart, "finalizar compra" for checkout
+- Formal tone appropriate for business context
+
+#### Spanish - es
+- Use neutral Spanish suitable for all Spanish-speaking markets
+- Use "carrito" for cart, "finalizar compra" for checkout
+- Maintain professional business tone
+
+### Schema Translations
+For schema translations (`.schema.json` files):
+- Translate section names, setting labels, and help text
+- Keep technical terms consistent across languages
+- Maintain the same key structure as English
+
+### Quality Assurance
+- **Consistency**: All locale files must have identical key structures
+- **Completeness**: Never leave missing translations - use English as fallback
+- **Cultural Appropriateness**: Adapt content for target markets
+- **Technical Accuracy**: Maintain e-commerce terminology standards
+
+### When to Update Translations
+- Creating new sections or components
+- Adding new text content or labels
+- Modifying existing component text
+- Updating schema settings or labels
+- Adding new navigation items or menu labels
+
+### Translation Key Naming
+- Use descriptive, hierarchical keys (e.g., `sections.hero.title`)
+- Group related translations logically
+- Follow existing naming conventions
+- Use snake_case for multi-word keys
+
+---
+
+*This rule ensures all development work aligns with Allbirds' design principles and maintains visual consistency throughout the theme.*

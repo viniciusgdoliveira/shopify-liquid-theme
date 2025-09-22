@@ -7,6 +7,9 @@
     {% # Load and preload the critical CSS %}
     {{ 'critical.css' | asset_url | stylesheet_tag: preload: true }}
     
+    {% # Load V design system first %}
+    {{ 'v-design-system.css' | asset_url | stylesheet_tag }}
+    
     {% # Load base CSS with design tokens %}
     {{ 'base.css' | asset_url | stylesheet_tag }}
     

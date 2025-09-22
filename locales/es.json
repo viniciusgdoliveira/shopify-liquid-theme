@@ -1,0 +1,198 @@
+{
+  "404": {
+    "title": "404",
+    "not_found": "Página no encontrada.",
+    "back_to_shopping": "Volver a comprar"
+  },
+  "blog": {
+    "article_comments": "Comentarios",
+    "article_metadata_html": "{{ date }} por {{ author }}",
+    "comment_form_body": "Comentario",
+    "comment_form_email": "Email",
+    "comment_form_name": "Nombre",
+    "comment_form_submit": "Publicar",
+    "comment_form_title": "Agregar un comentario"
+  },
+  "cart": {
+    "checkout": "Finalizar compra",
+    "title": "Carrito",
+    "update": "Actualizar",
+    "remove": "Eliminar"
+  },
+  "customers": {
+    "login": {
+      "email": "Email",
+      "password": "Contraseña",
+      "submit": "Iniciar sesión",
+      "title": "Iniciar sesión"
+    }
+  },
+  "collections": {
+    "title": "Colecciones",
+    "general": {
+      "products_count": {
+        "one": "{{ count }} producto",
+        "other": "{{ count }} productos"
+      },
+      "sort_by": "Ordenar por",
+      "sort_by_manual": "Destacados",
+      "sort_by_best_selling": "Más vendidos",
+      "sort_by_title_ascending": "A-Z",
+      "sort_by_title_descending": "Z-A",
+      "sort_by_price_ascending": "Precio: Menor a Mayor",
+      "sort_by_price_descending": "Precio: Mayor a Menor",
+      "sort_by_created_ascending": "Más antiguos primero",
+      "sort_by_created_descending": "Más nuevos primero",
+      "view_grid": "Vista de cuadrícula",
+      "view_list": "Vista de lista",
+      "filter_by": "Filtrar por",
+      "clear_all": "Limpiar todo",
+      "price": "Precio",
+      "color": "Color",
+      "size": "Talla",
+      "brand": "Marca",
+      "availability": "Disponibilidad",
+      "in_stock": "En stock",
+      "on_sale": "En oferta",
+      "no_products": "No se encontraron productos",
+      "no_products_description": "Intenta ajustar tus filtros o términos de búsqueda.",
+      "pagination_info": "Página {{ current_page }} de {{ total_pages }} ({{ total_products }} productos)",
+      "previous": "Anterior",
+      "next": "Siguiente",
+      "load_more": "Cargar más productos"
+    }
+  },
+  "gift_card": {
+    "add_to_apple_wallet": "Agregar a Apple Wallet",
+    "card": "Tarjeta de regalo",
+    "expired": "Esta tarjeta de regalo ha expirado",
+    "expires_on": "Expira el {{ expires_on }}",
+    "use_at_checkout": "Usa esta tarjeta de regalo en el checkout"
+  },
+  "password": {
+    "title": "Esta tienda es privada",
+    "password": "Contraseña",
+    "enter": "Entrar"
+  },
+  "search": {
+    "title": "Buscar",
+    "placeholder": "Buscar artículos, páginas o productos",
+    "submit": "Buscar",
+    "no_results_html": "No se encontraron resultados para {{ terms }}",
+    "results_for_html": "{{ count }} resultados encontrados para {{ terms }}"
+  },
+  "products": {
+    "product": {
+      "vendor": "Marca",
+      "sku": "SKU",
+      "regular_price": "Precio regular",
+      "sale_price": "Precio de oferta",
+      "quantity": {
+        "label": "Cantidad",
+        "decrease": "Disminuir cantidad para {{ product }}",
+        "increase": "Aumentar cantidad para {{ product }}"
+      },
+      "add_to_cart": "Agregar al carrito",
+      "sold_out": "Agotado",
+      "unavailable": "No disponible",
+      "share": "Compartir",
+      "sale": "Oferta",
+      "quick_add": "Agregar Rápido",
+    "quick_view": "Vista Rápida",
+    "close_modal": "Cerrar modal",
+      "pickup_availability": {
+        "title": "Disponibilidad de recogida",
+        "available": "Disponible",
+        "unavailable": "No disponible",
+        "show_more": "Mostrar más ubicaciones"
+      }
+    }
+  },
+  "general": {
+    "breadcrumbs": {
+      "label": "Navegación de migas de pan",
+      "home": "Inicio",
+      "collections": "Colecciones",
+      "blog": "Blog",
+      "separator": "›"
+    },
+    "social": {
+      "share_on_facebook": "Compartir en Facebook",
+      "share_on_twitter": "Compartir en Twitter",
+      "share_on_pinterest": "Compartir en Pinterest",
+      "copy_link": "Copiar enlace",
+      "copied": "¡Copiado!",
+      "twitter": "Twitter",
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "youtube": "YouTube"
+    },
+    "accessibility": {
+      "menu": "Menú",
+      "main_navigation": "Navegación principal",
+      "account": "Cuenta",
+      "cart": "Carrito",
+      "previous": "Anterior",
+      "next": "Siguiente",
+      "previous_slide": "Diapositiva anterior",
+      "next_slide": "Siguiente diapositiva",
+      "play_video": "Reproducir video"
+    },
+    "navigation": {
+      "home": "Inicio",
+      "collections": "Colecciones",
+      "products": "Productos"
+    },
+    "header": {
+      "logo": "Logo",
+      "enable_search": "Habilitar búsqueda"
+    },
+    "search": {
+      "search": "Buscar",
+      "placeholder": "Buscar productos...",
+      "submit": "Buscar"
+    },
+    "newsletter": {
+      "title": "Newsletter",
+      "description": "Suscríbete a nuestro newsletter para recibir las últimas actualizaciones y ofertas exclusivas.",
+      "placeholder": "Ingresa tu email",
+      "submit": "Suscribirse",
+      "success": "¡Gracias por suscribirte!"
+    },
+    "contact": {
+      "title": "Contáctanos",
+      "address": "Dirección",
+      "phone": "Teléfono",
+      "email": "Email"
+    },
+    "payment": {
+      "accepted_payments": "Aceptamos"
+    }
+  },
+  "sections": {
+    "hello_world": {
+      "title": "¡Hola, Mundo!",
+      "description": "El tema Mush es un tema Shopify minimalista y cuidadosamente estructurado, diseñado para ayudarte a empezar rápidamente. Diseñado con modularidad, mantenibilidad y las mejores prácticas de Shopify en mente.",
+      "description_2": "Los temas moldean la experiencia de la tienda online para comerciantes y sus clientes. Construye temas rápidos y flexibles a escala usando Liquid, el lenguaje de plantillas de temas de Shopify, junto con HTML, CSS, JavaScript y JSON.",
+      "key_concepts": "Conceptos Clave",
+      "key_concepts_description": "Los temas Shopify son un paquete de archivos de plantilla, bloques de construcción y recursos de soporte. Usa estos bloques de construcción para crear temas modulares y personalizables.",
+      "liquid": "Liquid",
+      "liquid_description": "El lenguaje de plantillas Liquid es la columna vertebral de los temas Shopify y se usa para cargar contenido dinámico en las tiendas. Extiende objetos Liquid para almacenar y presentar datos personalizados usando metafields.",
+      "best_practices": "Mejores Prácticas",
+      "best_practices_description": "Para optimizar tu experiencia de desarrollo de temas, Shopify ha establecido un conjunto de mejores prácticas que puedes consultar al desarrollar tu tema y configurar tus herramientas y procesos.",
+      "learn_more": "Aprende más sobre conceptos clave",
+      "view_reference": "Ver la referencia Liquid",
+      "follow_practices": "Seguir mejores prácticas"
+    },
+    "bundle_products": {
+      "debug_info": "Información de Debug:",
+      "main_product": "Producto Principal",
+      "bundle_item": "Artículo del Paquete",
+      "bundle_not_showing": "Paquete no se muestra porque:",
+      "select_collection": "Por favor selecciona una colección en el editor de temas para mostrar productos."
+    },
+    "collection_product_icons": {
+      "select_collection": "Por favor selecciona una colección en el editor de temas para mostrar productos."
+    }
+  }
+}
