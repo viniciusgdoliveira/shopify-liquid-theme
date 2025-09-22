@@ -101,6 +101,83 @@
         "heading": "Cabeçalho",
         "text": "Texto"
       }
+    },
+    "main-product": {
+      "name": "Produto",
+      "settings": {
+        "enable_sticky_info": {
+          "label": "Habilitar informações fixas do produto"
+        },
+        "enable_zoom": {
+          "label": "Habilitar zoom da imagem"
+        },
+        "media_size": {
+          "label": "Tamanho da mídia",
+          "options__3": {
+            "label": "Grande"
+          }
+        },
+        "media_fit": {
+          "label": "Ajuste da mídia",
+          "options__1": {
+            "label": "Conter"
+          }
+        },
+        "gallery_layout": {
+          "label": "Layout da galeria",
+          "options__1": {
+            "label": "Miniaturas"
+          }
+        },
+        "media_position": {
+          "label": "Posição da mídia",
+          "options__1": {
+            "label": "Esquerda"
+          }
+        },
+        "image_zoom": {
+          "label": "Zoom da imagem",
+          "options__1": {
+            "label": "Hover"
+          }
+        },
+        "mobile_thumbnails": {
+          "label": "Miniaturas móveis",
+          "options__2": {
+            "label": "Mostrar miniaturas"
+          }
+        },
+        "hide_variants": {
+          "label": "Ocultar variantes"
+        },
+        "enable_video_looping": {
+          "label": "Habilitar loop do vídeo"
+        },
+        "header__1": {
+          "content": "Informações do produto"
+        },
+        "show_vendor": {
+          "label": "Mostrar fornecedor"
+        },
+        "show_sku": {
+          "label": "Mostrar SKU"
+        },
+        "show_type": {
+          "label": "Mostrar tipo"
+        },
+        "show_tags": {
+          "label": "Mostrar tags"
+        },
+        "show_share_buttons": {
+          "label": "Mostrar botões de compartilhamento"
+        },
+        "enable_pickup_availability": {
+          "label": "Habilitar disponibilidade de retirada"
+        },
+        "show_payment_button": {
+          "label": "Mostrar botão de pagamento"
+        }
+      }
     }
   },
   "settings": {

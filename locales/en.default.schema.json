@@ -101,6 +101,83 @@
         "heading": "Heading",
         "text": "Text"
       }
+    },
+    "main-product": {
+      "name": "Product",
+      "settings": {
+        "enable_sticky_info": {
+          "label": "Enable sticky product information"
+        },
+        "enable_zoom": {
+          "label": "Enable image zoom"
+        },
+        "media_size": {
+          "label": "Media size",
+          "options__3": {
+            "label": "Large"
+          }
+        },
+        "media_fit": {
+          "label": "Media fit",
+          "options__1": {
+            "label": "Contain"
+          }
+        },
+        "gallery_layout": {
+          "label": "Gallery layout",
+          "options__1": {
+            "label": "Thumbnails"
+          }
+        },
+        "media_position": {
+          "label": "Media position",
+          "options__1": {
+            "label": "Left"
+          }
+        },
+        "image_zoom": {
+          "label": "Image zoom",
+          "options__1": {
+            "label": "Hover"
+          }
+        },
+        "mobile_thumbnails": {
+          "label": "Mobile thumbnails",
+          "options__2": {
+            "label": "Show thumbnails"
+          }
+        },
+        "hide_variants": {
+          "label": "Hide variants"
+        },
+        "enable_video_looping": {
+          "label": "Enable video looping"
+        },
+        "header__1": {
+          "content": "Product information"
+        },
+        "show_vendor": {
+          "label": "Show vendor"
+        },
+        "show_sku": {
+          "label": "Show SKU"
+        },
+        "show_type": {
+          "label": "Show type"
+        },
+        "show_tags": {
+          "label": "Show tags"
+        },
+        "show_share_buttons": {
+          "label": "Show share buttons"
+        },
+        "enable_pickup_availability": {
+          "label": "Enable pickup availability"
+        },
+        "show_payment_button": {
+          "label": "Show payment button"
+        }
+      }
     }
   },
   "settings": {

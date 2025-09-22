@@ -101,6 +101,83 @@
         "heading": "Encabezado",
         "text": "Texto"
       }
+    },
+    "main-product": {
+      "name": "Producto",
+      "settings": {
+        "enable_sticky_info": {
+          "label": "Habilitar información fija del producto"
+        },
+        "enable_zoom": {
+          "label": "Habilitar zoom de imagen"
+        },
+        "media_size": {
+          "label": "Tamaño de medios",
+          "options__3": {
+            "label": "Grande"
+          }
+        },
+        "media_fit": {
+          "label": "Ajuste de medios",
+          "options__1": {
+            "label": "Contener"
+          }
+        },
+        "gallery_layout": {
+          "label": "Diseño de galería",
+          "options__1": {
+            "label": "Miniaturas"
+          }
+        },
+        "media_position": {
+          "label": "Posición de medios",
+          "options__1": {
+            "label": "Izquierda"
+          }
+        },
+        "image_zoom": {
+          "label": "Zoom de imagen",
+          "options__1": {
+            "label": "Hover"
+          }
+        },
+        "mobile_thumbnails": {
+          "label": "Miniaturas móviles",
+          "options__2": {
+            "label": "Mostrar miniaturas"
+          }
+        },
+        "hide_variants": {
+          "label": "Ocultar variantes"
+        },
+        "enable_video_looping": {
+          "label": "Habilitar bucle de video"
+        },
+        "header__1": {
+          "content": "Información del producto"
+        },
+        "show_vendor": {
+          "label": "Mostrar proveedor"
+        },
+        "show_sku": {
+          "label": "Mostrar SKU"
+        },
+        "show_type": {
+          "label": "Mostrar tipo"
+        },
+        "show_tags": {
+          "label": "Mostrar etiquetas"
+        },
+        "show_share_buttons": {
+          "label": "Mostrar botones de compartir"
+        },
+        "enable_pickup_availability": {
+          "label": "Habilitar disponibilidad de recogida"
+        },
+        "show_payment_button": {
+          "label": "Mostrar botón de pago"
+        }
+      }
     }
   },
   "settings": {
