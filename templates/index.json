@@ -1,20 +1,272 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
-    "main": {
-      "type": "hello-world",
-      "settings": {}
+    "announcement_bar": {
+      "type": "announcement-countdown",
+      "settings": {
+        "announcement_text": "<p>🎉 BLACK FRIDAY: [highlight]60% OFF[/highlight] + Free Shipping on orders over $50!</p>",
+        "show_timer": true,
+        "show_coupon": true,
+        "coupon_code": "BLACK60",
+        "show_button": true,
+        "button_text": "Shop Now",
+        "button_link": "/collections/all",
+        "background_color": "#000000",
+        "text_color": "#FFFFFF",
+        "button_bg_color": "#FF6B35",
+        "button_text_color": "#FFFFFF"
+      }
+    },
+    "hero_slideshow": {
+      "type": "slideshow",
+      "settings": {
+        "section_height": "large",
+        "transition_type": "fade",
+        "autoplay": true,
+        "cycle_speed": 6,
+        "background": "#f8f9fa"
+      },
+      "blocks": {
+        "slide_1": {
+          "type": "image",
+          "settings": {
+            "title": "New Collection Arrivals",
+            "subheading": "Discover the latest trends",
+            "button_1_text": "Shop Collection",
+            "button_1_link": "/collections/new-arrivals",
+            "text_position": "middle_center",
+            "text_color": "#FFFFFF",
+            "button_background": "#FF6B35",
+            "button_text_color": "#FFFFFF",
+            "overlay_color": "#000000",
+            "overlay_opacity": 40
+          }
+        },
+        "slide_2": {
+          "type": "image",
+          "settings": {
+            "title": "Premium Quality",
+            "subheading": "Crafted with care",
+            "button_1_text": "Learn More",
+            "button_1_link": "/pages/about",
+            "text_position": "middle_left",
+            "text_color": "#FFFFFF",
+            "button_background": "#28a745",
+            "button_text_color": "#FFFFFF",
+            "overlay_color": "#000000",
+            "overlay_opacity": 30
+          }
+        }
+      },
+      "block_order": ["slide_1", "slide_2"]
+    },
+    "category_scroller": {
+      "type": "category-scroller",
+      "settings": {
+        "heading": "Shop by Category",
+        "background_color": "#FFFFFF",
+        "heading_color": "#333333",
+        "title_color": "#666666",
+        "image_size": 120,
+        "gap_size": 16,
+        "show_arrows_mobile": true
+      },
+      "blocks": {
+        "category_1": {
+          "type": "category",
+          "settings": {
+            "title": "Electronics",
+            "link": "/collections/electronics"
+          }
+        },
+        "category_2": {
+          "type": "category",
+          "settings": {
+            "title": "Fashion",
+            "link": "/collections/fashion"
+          }
+        },
+        "category_3": {
+          "type": "category",
+          "settings": {
+            "title": "Home & Garden",
+            "link": "/collections/home-garden"
+          }
+        },
+        "category_4": {
+          "type": "category",
+          "settings": {
+            "title": "Sports",
+            "link": "/collections/sports"
+          }
+        },
+        "category_5": {
+          "type": "category",
+          "settings": {
+            "title": "Books",
+            "link": "/collections/books"
+          }
+        }
+      },
+      "block_order": ["category_1", "category_2", "category_3", "category_4", "category_5"]
+    },
+    "featured_collections": {
+      "type": "collection-list",
+      "settings": {
+        "layout": "carousel",
+        "title": "Featured Collections",
+        "subheading": "Discover our most popular categories",
+        "background": "#f8f9fa",
+        "text_color": "#333333"
+      },
+      "blocks": {
+        "collection_1": {
+          "type": "collection",
+          "settings": {
+            "title": "Best Sellers",
+            "subheading": "Customer favorites",
+            "link_text": "Shop now",
+            "text_color": "#FFFFFF",
+            "overlay_color": "#000000",
+            "overlay_opacity": 50
+          }
+        },
+        "collection_2": {
+          "type": "collection",
+          "settings": {
+            "title": "New Arrivals",
+            "subheading": "Fresh picks",
+            "link_text": "Explore",
+            "text_color": "#FFFFFF",
+            "overlay_color": "#000000",
+            "overlay_opacity": 50
+          }
+        },
+        "collection_3": {
+          "type": "collection",
+          "settings": {
+            "title": "Sale Items",
+            "subheading": "Limited time offers",
+            "link_text": "Save now",
+            "text_color": "#FFFFFF",
+            "overlay_color": "#000000",
+            "overlay_opacity": 50
+          }
+        }
+      },
+      "block_order": ["collection_1", "collection_2", "collection_3"]
+    },
+    "video_showcase": {
+      "type": "video-carousel",
+      "settings": {
+        "section_title": "Featured Products",
+        "background_color": "#FFFFFF",
+        "max_width": 1200,
+        "column_width": 280,
+        "grid_gap": 24,
+        "section_padding": 24,
+        "aspect_ratio": "9/16"
+      },
+      "blocks": {
+        "video_1": {
+          "type": "video",
+          "settings": {
+            "ref_tag": "homepage_featured"
+          }
+        },
+        "video_2": {
+          "type": "video",
+          "settings": {
+            "ref_tag": "homepage_featured"
+          }
+        },
+        "video_3": {
+          "type": "video",
+          "settings": {
+            "ref_tag": "homepage_featured"
+          }
+        }
+      },
+      "block_order": ["video_1", "video_2", "video_3"]
+    },
+    "image_text_rows": {
+      "type": "multirow",
+      "settings": {
+        "image_height": "medium",
+        "desktop_image_width": "medium",
+        "image_layout": "alternate-left",
+        "heading_size": "h1",
+        "text_style": "body",
+        "button_style": "primary",
+        "desktop_content_position": "middle",
+        "desktop_content_alignment": "left",
+        "mobile_content_alignment": "center",
+        "section_color_scheme": "scheme-1",
+        "row_color_scheme": "scheme-1",
+        "padding_top": 40,
+        "padding_bottom": 40
+      },
+      "blocks": {
+        "row_1": {
+          "type": "row",
+          "settings": {
+            "caption": "About Us",
+            "heading": "Quality Products for Every Need",
+            "text": "<p>We're committed to providing high-quality products that meet your everyday needs. From electronics to fashion, home goods to sports equipment, we have everything you need to live your best life.</p>",
+            "button_label": "Learn More",
+            "button_link": "/pages/about"
+          }
+        },
+        "row_2": {
+          "type": "row",
+          "settings": {
+            "caption": "Our Promise",
+            "heading": "Fast Shipping & Easy Returns",
+            "text": "<p>Enjoy free shipping on orders over $50 and hassle-free returns within 30 days. We make shopping easy and convenient for you.</p>",
+            "button_label": "Shop Now",
+            "button_link": "/collections/all"
+          }
+        }
+      },
+      "block_order": ["row_1", "row_2"]
+    },
+    "newsletter_signup": {
+      "type": "multirow",
+      "settings": {
+        "image_height": "small",
+        "desktop_image_width": "small",
+        "image_layout": "align-right",
+        "heading_size": "h2",
+        "text_style": "body",
+        "button_style": "primary",
+        "desktop_content_position": "middle",
+        "desktop_content_alignment": "center",
+        "mobile_content_alignment": "center",
+        "section_color_scheme": "scheme-2",
+        "row_color_scheme": "scheme-2",
+        "padding_top": 60,
+        "padding_bottom": 60
+      },
+      "blocks": {
+        "newsletter_row": {
+          "type": "row",
+          "settings": {
+            "heading": "Stay in the Loop",
+            "text": "<p>Subscribe to our newsletter and be the first to know about new products, exclusive deals, and special offers.</p>",
+            "button_label": "Subscribe",
+            "button_link": "/pages/newsletter"
+          }
+        }
+      },
+      "block_order": ["newsletter_row"]
     }
   },
   "order": [
-    "main"
+    "announcement_bar",
+    "hero_slideshow", 
+    "category_scroller",
+    "featured_collections",
+    "video_showcase",
+    "image_text_rows",
+    "newsletter_signup"
   ]
 }

@@ -1,0 +1,118 @@
+{% comment %}
+  Pickup availability snippet
+  Shows pickup availability for a specific variant
+{% endcomment %}
+
+{% liquid
+  assign variant_id = variant.id | default: ''
+  assign pickup_availability = variant.store_availabilities | where: 'pick_up_enabled', true
+%}
+
+{% if pickup_availability.size > 0 %}
+  <div class="pickup-availability" data-variant-id="{{ variant_id }}">
+    <div class="pickup-availability__header">
+      <svg class="pickup-availability__icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M8 1L10.5 5.5L15.5 6L12 9.5L13 14.5L8 12L3 14.5L4 9.5L0.5 6L5.5 5.5L8 1Z" fill="currentColor"/>
+      </svg>
+      <span class="pickup-availability__title">{{ 'products.product.pickup_availability.title' | t }}</span>
+    </div>
+    
+    <div class="pickup-availability__content">
+      {% for availability in pickup_availability limit: 3 %}
+        <div class="pickup-availability__location">
+          <div class="pickup-availability__location-name">{{ availability.location.name }}</div>
+          <div class="pickup-availability__status">
+            {% if availability.available %}
+              <span class="pickup-availability__status--available">
+                {{ 'products.product.pickup_availability.available' | t }}
+              </span>
+            {% else %}
+              <span class="pickup-availability__status--unavailable">
+                {{ 'products.product.pickup_availability.unavailable' | t }}
+              </span>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+      
+      {% if pickup_availability.size > 3 %}
+        <button class="pickup-availability__show-more" type="button">
+          {{ 'products.product.pickup_availability.show_more' | t }}
+        </button>
+      {% endif %}
+    </div>
+  </div>
+{% endif %}
+
+{% stylesheet %}
+.pickup-availability {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--color-border, #e0e0e0);
+  border-radius: 0.5rem;
+  background: var(--color-background-secondary, #f8f9fa);
+}
+
+.pickup-availability__header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.pickup-availability__icon {
+  color: var(--color-success, #28a745);
+}
+
+.pickup-availability__title {
+  font-weight: 600;
+  color: var(--color-text-primary, #333);
+}
+
+.pickup-availability__content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.pickup-availability__location {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--color-border, #e0e0e0);
+}
+
+.pickup-availability__location:last-child {
+  border-bottom: none;
+}
+
+.pickup-availability__location-name {
+  font-weight: 500;
+  color: var(--color-text-primary, #333);
+}
+
+.pickup-availability__status--available {
+  color: var(--color-success, #28a745);
+  font-weight: 500;
+}
+
+.pickup-availability__status--unavailable {
+  color: var(--color-error, #dc3545);
+  font-weight: 500;
+}
+
+.pickup-availability__show-more {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  border: none;
+  background: transparent;
+  color: var(--color-primary, #007bff);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.pickup-availability__show-more:hover {
+  color: var(--color-primary-hover, #0056b3);
+}
+{% endstylesheet %}

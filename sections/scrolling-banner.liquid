@@ -1,0 +1,165 @@
+{% schema %}
+{
+  "name": "Scrolling Banner",
+  "settings": [
+    {
+      "type": "range",
+      "id": "animation_speed",
+      "min": 10,
+      "max": 120,
+      "step": 5,
+      "unit": "s",
+      "label": "Animation Speed",
+      "default": 40
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#194052"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Font Size",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "gap_between_items",
+      "min": 20,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Gap Between Items",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "padding_top_bottom",
+      "min": 4,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Vertical Padding",
+      "default": 8
+    },
+    {
+      "type": "checkbox",
+      "id": "uppercase_text",
+      "label": "Uppercase Text",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "text",
+      "name": "Banner Text",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Content",
+          "default": "<p>Your banner text here</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Scrolling Banner",
+      "category": "Promotional",
+      "blocks": [
+        {
+          "type": "text",
+          "settings": {
+            "content": "<p>💰 15% de cashback sobre o valor da compra em todas as compras.</p>"
+          }
+        },
+        {
+          "type": "text",
+          "settings": {
+            "content": "<p>🚚 Entrega em até 24h para SP (consulte seu CEP).</p>"
+          }
+        },
+        {
+          "type": "text",
+          "settings": {
+            "content": "<p>⚡ Desconto exclusivo para pagamentos via PIX.</p>"
+          }
+        },
+        {
+          "type": "text",
+          "settings": {
+            "content": "<p>💳 Parcelamento em até 3x sem juros.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+  @keyframes scrollLeftToRight {
+    from { transform: translateX(-50%); }
+    to { transform: translateX(0); }
+  }
+
+  #shopify-section-{{ section.id }} .scroll-bar-full {
+    position: relative;
+    width: 100vw;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    overflow: hidden;
+    background-color: {{ section.settings.background_color }};
+    padding: {{ section.settings.padding_top_bottom }}px 0;
+  }
+
+  #shopify-section-{{ section.id }} .scroll-bar-track {
+    display: flex;
+    width: max-content;
+    animation: scrollLeftToRight {{ section.settings.animation_speed }}s linear infinite;
+    gap: {{ section.settings.gap_between_items }}px;
+    font-size: {{ section.settings.font_size }}px;
+    color: {{ section.settings.text_color }};
+    white-space: nowrap;
+  }
+
+  #shopify-section-{{ section.id }} .scroll-bar-track {
+    text-transform: {% if section.settings.uppercase_text %}uppercase{% else %}none{% endif %};
+  }
+
+  #shopify-section-{{ section.id }} .scroll-bar-item {
+    padding: 0 20px;
+  }
+</style>
+
+<div class="scroll-bar-full">
+  <div class="scroll-bar-track">
+    {% for block in section.blocks %}
+      <div class="scroll-bar-item" {{ block.shopify_attributes }}>
+        {{ block.settings.content }}
+      </div>
+    {% endfor %}
+    {% comment %} Duplicate items for seamless looping {% endcomment %}
+    {% for block in section.blocks %}
+      <div class="scroll-bar-item" aria-hidden="true">
+        {{ block.settings.content }}
+      </div>
+    {% endfor %}
+  </div>
+</div>
+

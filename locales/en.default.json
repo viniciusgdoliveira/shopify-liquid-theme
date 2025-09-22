@@ -48,5 +48,72 @@
     "submit": "Search",
     "no_results_html": "No results found for {{ terms }}",
     "results_for_html": "{{ count }} results found for {{ terms }}"
+  },
+  "products": {
+    "product": {
+      "vendor": "Vendor",
+      "sku": "SKU",
+      "regular_price": "Regular price",
+      "sale_price": "Sale price",
+      "quantity": {
+        "label": "Quantity",
+        "decrease": "Decrease quantity for {{ product }}",
+        "increase": "Increase quantity for {{ product }}"
+      },
+      "add_to_cart": "Add to cart",
+      "sold_out": "Sold out",
+      "unavailable": "Unavailable",
+      "share": "Share",
+      "pickup_availability": {
+        "title": "Pickup availability",
+        "available": "Available",
+        "unavailable": "Unavailable",
+        "show_more": "Show more locations"
+      }
+    }
+  },
+  "general": {
+    "social": {
+      "share_on_facebook": "Share on Facebook",
+      "share_on_twitter": "Share on Twitter",
+      "share_on_pinterest": "Share on Pinterest",
+      "copy_link": "Copy link"
+    },
+    "accessibility": {
+      "menu": "Menu",
+      "main_navigation": "Main navigation",
+      "account": "Account",
+      "cart": "Cart"
+    },
+    "navigation": {
+      "home": "Home",
+      "collections": "Collections",
+      "products": "Products"
+    },
+    "header": {
+      "logo": "Logo",
+      "enable_search": "Enable search"
+    },
+    "search": {
+      "search": "Search",
+      "placeholder": "Search products...",
+      "submit": "Search"
+    },
+    "newsletter": {
+      "title": "Newsletter",
+      "description": "Subscribe to our newsletter for the latest updates and exclusive offers.",
+      "placeholder": "Enter your email",
+      "submit": "Subscribe",
+      "success": "Thank you for subscribing!"
+    },
+    "contact": {
+      "title": "Contact Us",
+      "address": "Address",
+      "phone": "Phone",
+      "email": "Email"
+    },
+    "payment": {
+      "accepted_payments": "We accept"
+    }
   }
 }

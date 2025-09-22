@@ -1,0 +1,453 @@
+{%- schema -%}
+{
+ "name": "Category Scroller",
+ "settings": [
+   {
+     "type": "text",
+     "id": "heading",
+     "label": "Heading",
+     "default": "Shop Categories"
+   },
+   {
+     "type": "select",
+     "id": "section_alignment",
+     "label": "Section Alignment",
+     "options": [
+       {
+         "value": "center",
+         "label": "Center"
+       },
+       {
+         "value": "left",
+         "label": "Far Left"
+       },
+       {
+         "value": "right",
+         "label": "Far Right"
+       }
+     ],
+     "default": "center"
+   },
+   {
+     "type": "color",
+     "id": "background_color",
+     "label": "Background Color",
+     "default": "#ffffff"
+   },
+   {
+     "type": "color",
+     "id": "heading_color",
+     "label": "Heading Color",
+     "default": "#000000"
+   },
+   {
+     "type": "color",
+     "id": "title_color",
+     "label": "Title Color",
+     "default": "#000000"
+   },
+   {
+     "type": "color",
+     "id": "arrow_color",
+     "label": "Arrow Color",
+     "default": "#000000"
+   },
+   {
+     "type": "color",
+     "id": "arrow_bg_color",
+     "label": "Arrow Background Color",
+     "default": "#ffffff"
+   },
+   {
+     "type": "range",
+     "id": "image_size",
+     "label": "Image size (px)",
+     "min": 80,
+     "max": 400,
+     "step": 10,
+     "default": 120,
+     "unit": "px"
+   },
+   {
+     "type": "range",
+     "id": "gap_size",
+     "label": "Gap between items",
+     "min": 0,
+     "max": 30,
+     "step": 1,
+     "default": 12,
+     "unit": "px"
+   },
+   {
+     "type": "checkbox",
+     "id": "show_arrows_mobile",
+     "label": "Show arrows on mobile",
+     "default": true
+   },
+   {
+     "type": "range",
+     "id": "arrow_position",
+     "label": "Arrow Vertical Position",
+     "min": 40,
+     "max": 80,
+     "step": 1,
+     "default": 60,
+     "unit": "%"
+   }
+ ],
+ "blocks": [
+   {
+     "type": "category",
+     "name": "Category",
+     "settings": [
+       {
+         "type": "image_picker",
+         "id": "image",
+         "label": "Image (Square)"
+       },
+       {
+         "type": "text",
+         "id": "title",
+         "label": "Title",
+         "default": "Category"
+       },
+       {
+         "type": "url",
+         "id": "link",
+         "label": "Link"
+       }
+     ]
+   }
+ ],
+ "presets": [
+   {
+     "name": "Category Scroller",
+     "category": "Custom"
+   }
+ ]
+}
+{%- endschema -%}
+{%- style -%}
+.category-scroller {
+ padding: 20px 0;
+ overflow: hidden;
+ background-color: {{ section.settings.background_color }};
+ text-align: center;
+ position: relative;
+ max-width: 1200px;
+ margin: 0 auto;
+}
+
+
+.category-scroller__heading {
+ text-align: center;
+ margin-bottom: 20px;
+ font-size: 1.5rem;
+ color: {{ section.settings.heading_color }};
+}
+
+
+.category-scroller__container {
+ display: flex;
+ overflow-x: auto;
+ scroll-snap-type: x mandatory;
+ scrollbar-width: none;
+ gap: {{ section.settings.gap_size }}px;
+ padding: 0 80px;
+ scroll-behavior: smooth;
+ -webkit-overflow-scrolling: touch;
+ cursor: grab;
+}
+
+
+.category-scroller__container:active {
+ cursor: grabbing;
+}
+
+
+.category-scroller__container::-webkit-scrollbar {
+ display: none;
+}
+
+
+.category-scroller__item {
+ scroll-snap-align: start;
+ flex: 0 0 {{ section.settings.image_size }}px;
+ text-align: center;
+ transition: transform 0.3s ease;
+}
+
+
+.category-scroller__item:active {
+ transform: scale(0.98);
+}
+
+
+.category-scroller__link {
+ display: block;
+ text-decoration: none;
+ color: inherit;
+}
+
+
+.category-scroller__image {
+ width: {{ section.settings.image_size }}px;
+ height: {{ section.settings.image_size }}px;
+ object-fit: cover;
+ border-radius: 8px;
+ display: block;
+ margin-bottom: 8px;
+ transition: transform 0.3s ease;
+}
+
+
+.category-scroller__image:hover {
+ transform: scale(1.02);
+}
+
+
+.category-scroller__title {
+ font-size: 0.9rem;
+ font-weight: 500;
+ color: {{ section.settings.title_color }};
+ transition: color 0.2s ease;
+}
+
+
+/* Arrow indicators */
+.category-scroller__arrow {
+ position: absolute;
+ top: {{ section.settings.arrow_position }}%;
+ transform: translateY(-50%);
+ width: 40px;
+ height: 40px;
+ border-radius: 50%;
+ background: {{ section.settings.arrow_bg_color }};
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ cursor: pointer;
+ z-index: 1;
+ box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+ border: 1px solid rgba(0,0,0,0.05);
+ opacity: 0.9;
+ transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+
+.category-scroller__arrow:hover {
+ opacity: 1;
+ transform: translateY(-50%) scale(1.05);
+ box-shadow: 0 3px 12px rgba(0,0,0,0.15);
+}
+
+
+.category-scroller__arrow--left {
+ left: 20px;
+}
+
+
+.category-scroller__arrow--right {
+ right: 20px;
+}
+
+
+.category-scroller__arrow-icon {
+ width: 16px;
+ height: 16px;
+ color: {{ section.settings.arrow_color }};
+ transition: transform 0.2s ease;
+}
+
+
+.category-scroller__arrow:hover .category-scroller__arrow-icon {
+ transform: scale(1.1);
+}
+
+
+/* Mobile styles */
+@media (max-width: 767px) {
+ .category-scroller {
+   padding: 15px 0;
+ }
+  .category-scroller__heading {
+   font-size: 1.3rem;
+   max-width: 80%;
+   margin-left: auto;
+   margin-right: auto;
+ }
+  .category-scroller__container {
+   padding: 0 50px;
+ }
+  .category-scroller__arrow {
+   width: 36px;
+   height: 36px;
+   top: {{ section.settings.arrow_position | minus: 5 }}%;
+   {% unless section.settings.show_arrows_mobile %}
+     display: none;
+   {% endunless %}
+ }
+  .category-scroller__arrow--left {
+   left: 5px;
+ }
+  .category-scroller__arrow--right {
+   right: 5px;
+ }
+  .category-scroller__arrow-icon {
+   width: 14px;
+   height: 14px;
+ }
+}
+
+
+@media (min-width: 768px) {
+ .category-scroller__container {
+   justify-content: center;
+   margin: 0 auto;
+ }
+  .category-scroller__arrow--left {
+   left: 20px;
+ }
+  .category-scroller__arrow--right {
+   right: 20px;
+ }
+}
+{%- endstyle -%}
+
+
+<div class="category-scroller">
+ {% if section.settings.heading != blank %}
+   <h2 class="category-scroller__heading">{{ section.settings.heading }}</h2>
+ {% endif %}
+  <div class="category-scroller__container" id="category-scroller-{{ section.id }}">
+   {% for block in section.blocks %}
+     <div class="category-scroller__item" {{ block.shopify_attributes }}>
+       <a href="{{ block.settings.link }}" class="category-scroller__link">
+         {% if block.settings.image %}
+           <img
+             src="{{ block.settings.image | img_url: '300x300', crop: 'center' }}"
+             alt="{{ block.settings.title | escape }}"
+             class="category-scroller__image"
+             loading="lazy"
+             width="{{ section.settings.image_size }}"
+             height="{{ section.settings.image_size }}"
+           >
+         {% else %}
+           <div class="category-scroller__image" style="background: #eee; display: flex; align-items: center; justify-content: center;">
+             {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+           </div>
+         {% endif %}
+        
+         <span class="category-scroller__title">
+           {{ block.settings.title }}
+         </span>
+       </a>
+     </div>
+   {% endfor %}
+ </div>
+  <div class="category-scroller__arrow category-scroller__arrow--left" onclick="scrollCategoryScroller('{{ section.id }}', 'left')">
+   <svg class="category-scroller__arrow-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+     <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+   </svg>
+ </div>
+  <div class="category-scroller__arrow category-scroller__arrow--right" onclick="scrollCategoryScroller('{{ section.id }}', 'right')">
+   <svg class="category-scroller__arrow-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+     <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+   </svg>
+ </div>
+</div>
+
+
+<script>
+// Função para rolagem suave
+function scrollCategoryScroller(sectionId, direction) {
+ const scroller = document.getElementById(`category-scroller-${sectionId}`);
+ const scrollAmount = scroller.querySelector('.category-scroller__item').offsetWidth + parseInt('{{ section.settings.gap_size }}');
+  scroller.scrollBy({
+   left: direction === 'left' ? -scrollAmount : scrollAmount,
+   behavior: 'smooth'
+ });
+}
+
+
+// Configuração do drag para mobile
+function setupCategoryScrollerDrag(sectionId) {
+ const scroller = document.getElementById(`category-scroller-${sectionId}`);
+ let isDown = false;
+ let startX;
+ let scrollLeft;
+
+
+ scroller.addEventListener('mousedown', (e) => {
+   isDown = true;
+   scroller.style.cursor = 'grabbing';
+   startX = e.pageX - scroller.offsetLeft;
+   scrollLeft = scroller.scrollLeft;
+ });
+
+
+ scroller.addEventListener('mouseleave', () => {
+   isDown = false;
+   scroller.style.cursor = 'grab';
+ });
+
+
+ scroller.addEventListener('mouseup', () => {
+   isDown = false;
+   scroller.style.cursor = 'grab';
+ });
+
+
+ scroller.addEventListener('mousemove', (e) => {
+   if(!isDown) return;
+   e.preventDefault();
+   const x = e.pageX - scroller.offsetLeft;
+   const walk = (x - startX) * 2;
+   scroller.scrollLeft = scrollLeft - walk;
+ });
+
+
+ // Touch events para mobile
+ scroller.addEventListener('touchstart', (e) => {
+   isDown = true;
+   startX = e.touches[0].pageX - scroller.offsetLeft;
+   scrollLeft = scroller.scrollLeft;
+ });
+
+
+ scroller.addEventListener('touchend', () => {
+   isDown = false;
+ });
+
+
+ scroller.addEventListener('touchmove', (e) => {
+   if(!isDown) return;
+   const x = e.touches[0].pageX - scroller.offsetLeft;
+   const walk = (x - startX) * 2;
+   scroller.scrollLeft = scrollLeft - walk;
+ });
+}
+
+
+// Inicialização
+document.addEventListener('DOMContentLoaded', function() {
+ const sectionId = '{{ section.id }}';
+ const scroller = document.getElementById(`category-scroller-${sectionId}`);
+ const leftArrow = document.querySelector('.category-scroller__arrow--left');
+ const rightArrow = document.querySelector('.category-scroller__arrow--right');
+  function updateArrows() {
+   // Mostrar/ocultar setas conforme a posição do scroll
+   leftArrow.style.display = scroller.scrollLeft > 10 ? 'flex' : 'none';
+   rightArrow.style.display = scroller.scrollLeft < (scroller.scrollWidth - scroller.clientWidth - 10) ? 'flex' : 'none';
+ }
+  // Configuração inicial
+ setupCategoryScrollerDrag(sectionId);
+ updateArrows();
+  // Atualizar ao rolar
+ scroller.addEventListener('scroll', updateArrows);
+  // Atualizar ao redimensionar
+ window.addEventListener('resize', updateArrows);
+});
+</script>
+
+

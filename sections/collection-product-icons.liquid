@@ -1,0 +1,354 @@
+{% comment %}
+  Section: Collection with Metafield Icons Carousel
+  This section allows you to select a collection.
+  It displays the first image and title of each product in the selected collection.
+  The metafield icons for ALL products are visible by default.
+  The cards are designed to fill the available height and display a responsive number of cards.
+  Mobile height adjusted to better fit all icons.
+{% endcomment %}
+<div class="section-collection-meta-icons">
+    {% if section.settings.selected_collection != blank %}
+      <div class="carousel-container">
+        <div class="carousel-track">
+          {% for product in section.settings.selected_collection.products %}
+            <div class="product-item" data-product-id="{{ product.id }}">
+              <div class="product-info">
+                {% if product.featured_image %}
+                  <img src="{{ product.featured_image | img_url: 'medium' }}" alt="{{ product.featured_image.alt | escape }}">
+                {% else %}
+                  {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                {% endif %}
+                <h3>{{ product.title }}</h3>
+              </div>
+              <div class="product-metafield-icons">
+                {% comment %} Loop through your custom icon metafields {% endcomment %}
+                {% assign icon_metafields = 'icone_1,icone_2,icone_3,icone_4,icone_5' | split: ',' %}
+                {% for icon_key in icon_metafields %}
+                  {% assign icon_metafield = product.metafields.custom[icon_key] %}
+                  {% assign text_icon_key = 'texto_' | append: icon_key %}
+                  {% assign text_metafield = product.metafields.custom[text_icon_key] %}
+                  {% if icon_metafield %}
+                    <div class="icon-wrapper">
+                      <img src="{{ icon_metafield | img_url: 'small' }}" alt="{{ product.title }} icon {{ forloop.index }}">
+                      {% if text_metafield != blank %}
+                        <p class="icon-title">{{ text_metafield }}</p>
+                      {% endif %}
+                    </div>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+        <button class="carousel-nav-button prev-button" aria-label="Previous slide">&#10094;</button>
+        <button class="carousel-nav-button next-button" aria-label="Next slide">&#10095;</button>
+      </div>
+    {% else %}
+      <div class="placeholder-content">
+        <p>Please select a collection in the theme editor to display products.</p>
+      </div>
+    {% endif %}
+  </div>
+  
+  
+  <style>
+    .section-collection-meta-icons {
+      padding: 40px 0;
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative; /* For positioning nav buttons */
+    }
+  
+  
+    .carousel-container {
+      position: relative;
+      overflow: hidden;
+      padding: 0 50px; /* Space for nav buttons */
+    }
+  
+  
+    .carousel-track {
+      display: flex;
+      transition: transform 0.5s ease-in-out;
+      /* Define CSS variables for responsive items per slide */
+      --items-per-slide: 1; /* Default for mobile */
+    }
+  
+  
+    @media (min-width: 768px) {
+      .carousel-track {
+        --items-per-slide: 1; /* Still 1 card on tablet */
+      }
+    }
+  
+  
+    @media (min-width: 1024px) {
+      .carousel-track {
+        --items-per-slide: 2; /* 2 cards on desktop */
+      }
+    }
+  
+  
+    .product-item {
+      flex-shrink: 0; /* Prevents items from shrinking */
+      width: calc(100% / var(--items-per-slide) - 20px); /* Adjust for gap */
+      margin: 10px; /* Half of the desired gap on each side */
+      border: 1px solid #e0e0e0;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.2s ease-in-out;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between; /* Distributes content vertically */
+      box-sizing: border-box; /* Include padding and border in width calculation */
+  
+  
+      /* Card Height and Mobile Ratio */
+      height: 380px; /* Default height for desktop */
+    }
+  
+  
+    @media (max-width: 1023px) {
+      .product-item {
+        height: 500px; /* Adjusted height for mobile/tablet to better fit icons (was 300px) */
+      }
+    }
+  
+  
+    .product-item:hover {
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+      transform: translateY(-3px);
+    }
+  
+  
+    .product-info {
+      flex-grow: 1; /* Allows product info to take up available space */
+      display: flex;
+      flex-direction: column;
+      justify-content: center; /* Center content vertically within product-info */
+      align-items: center; /* Center content horizontally within product-info */
+    }
+  
+  
+    .product-info img {
+      max-width: 100%;
+      height: auto;
+      max-height: 150px; /* Limit image height */
+      object-fit: contain;
+      display: block;
+      margin: 0 auto 15px;
+      border-radius: 4px;
+    }
+  
+  
+    .product-info h3 {
+      font-size: 1.2em;
+      margin-bottom: 10px;
+      color: #333;
+      line-height: 1.3;
+    }
+  
+  
+    .product-metafield-icons {
+      display: flex; /* Icons are always visible */
+      justify-content: center;
+      gap: 8px; /* Gap between icon-wrappers */
+      margin-top: 15px;
+      flex-wrap: wrap;
+      padding-top: 10px;
+      border-top: 1px solid #f0f0f0;
+    }
+  
+  
+    .icon-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px; /* Gap between icon image and text */
+      text-align: center;
+    }
+  
+  
+    .product-metafield-icons img {
+      width: 45px; /* Size for your icon images */
+      height: 45px;
+      object-fit: contain;
+      border: 1px solid #ddd;
+      border-radius: 50%; /* Optional: for circular icons */
+      padding: 3px;
+      background-color: #fff;
+    }
+  
+  
+    .icon-title {
+      font-size: 0.85em;
+      color: #555;
+      margin: 0;
+      line-height: 1.2;
+      max-width: 80px; /* Constrain text width if needed */
+      word-break: break-word; /* Allow long words to break */
+    }
+  
+  
+    .placeholder-content {
+      text-align: center;
+      padding: 50px;
+      border: 2px dashed #ccc;
+      border-radius: 10px;
+      color: #777;
+      font-size: 1.1em;
+    }
+  
+  
+    /* Carousel Navigation Buttons */
+    .carousel-nav-button {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      cursor: pointer;
+      font-size: 1.5em;
+      z-index: 10;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+    }
+  
+  
+    .carousel-nav-button:hover {
+      background-color: rgba(0, 0, 0, 0.7);
+    }
+  
+  
+    .carousel-nav-button.prev-button {
+      left: 0;
+    }
+  
+  
+    .carousel-nav-button.next-button {
+      right: 0;
+    }
+  
+  
+    .carousel-nav-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  </style>
+  
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const carouselTrack = document.querySelector('.carousel-track');
+      const productItems = document.querySelectorAll('.product-item');
+      const prevButton = document.querySelector('.prev-button');
+      const nextButton = document.querySelector('.next-button');
+  
+  
+      let currentIndex = 0;
+      let itemsPerSlide = 1; // Default, will be updated based on actual width
+  
+  
+      // Function to get the number of items to display per slide based on CSS variable
+      function getItemsPerSlide() {
+        const computedStyle = getComputedStyle(carouselTrack);
+        return parseInt(computedStyle.getPropertyValue('--items-per-slide'));
+      }
+  
+  
+      // Function to update carousel position and button states
+      function updateCarousel() {
+        itemsPerSlide = getItemsPerSlide(); // Re-evaluate itemsPerSlide on each update
+  
+  
+        if (productItems.length === 0) {
+          prevButton.disabled = true;
+          nextButton.disabled = true;
+          return;
+        }
+  
+  
+        // Calculate the width of one "slot" in the carousel track
+        // This accounts for the item's own width plus its horizontal margins
+        const itemSlotWidth = productItems[0].offsetWidth + (parseFloat(getComputedStyle(productItems[0]).marginLeft) * 2);
+  
+  
+        // Apply the transform to slide the track
+        const offset = -currentIndex * itemSlotWidth;
+        carouselTrack.style.transform = `translateX(${offset}px)`;
+  
+  
+        // Disable/enable navigation buttons based on current index
+        prevButton.disabled = currentIndex === 0;
+        nextButton.disabled = currentIndex >= productItems.length - itemsPerSlide;
+      }
+  
+  
+      // Move to the next slide
+      function nextSlide() {
+        if (currentIndex < productItems.length - itemsPerSlide) {
+          currentIndex++;
+          updateCarousel();
+        }
+      }
+  
+  
+      // Move to the previous slide
+      function prevSlide() {
+        if (currentIndex > 0) {
+          currentIndex--;
+          updateCarousel();
+        }
+      }
+  
+  
+      // Initial setup when the page loads
+      if (productItems.length > 0) {
+        updateCarousel();
+      }
+  
+  
+      // Event listeners for carousel navigation buttons
+      prevButton.addEventListener('click', prevSlide);
+      nextButton.addEventListener('click', nextSlide);
+  
+  
+      // Handle window resize to re-calculate carousel position and visible items
+      let resizeTimeout;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+          // Recalculate and update the carousel, keeping the current index
+          updateCarousel();
+        }, 250); // Debounce resize event for performance
+      });
+    });
+  </script>
+  
+  
+  {% schema %}
+    {
+      "name": "Collection Icons Carousel",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "selected_collection",
+          "label": "Select Collection to Display"
+        }
+      ],
+      "presets": [
+        {
+          "name": "Collection with Meta Icons Carousel",
+          "category": "Products"
+        }
+      ]
+    }
+  {% endschema %}
+  
+  
+  
+  

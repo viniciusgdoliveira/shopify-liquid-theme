@@ -1,0 +1,549 @@
+{%- liquid
+    assign videos = section.blocks | where: "type", "video"
+    assign aspect_ratio = section.settings.aspect_ratio | default: '9/16'
+  -%}
+  <style>
+    .deep-video-hover-section {
+      background-color: {{ section.settings.background_color }};
+      padding: {{ section.settings.section_padding }}px 0;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+    .deep-video-hover-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax({{ section.settings.column_width }}px, 1fr));
+      gap: {{ section.settings.grid_gap }}px;
+      max-width: {{ section.settings.max_width }}px;
+      margin: 0 auto;
+      padding: 0 {{ section.settings.section_padding }}px;
+    }
+    .deep-video-item {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: transform 0.3s ease;
+    }
+    .deep-video-item:hover {
+      transform: translateY(-4px);
+    }
+    .deep-video-container {
+      position: relative;
+      width: 100%;
+      aspect-ratio: {{ aspect_ratio }};
+      overflow: hidden;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+      transition: box-shadow 0.3s ease;
+      background: #000;
+    }
+    .deep-video-item:hover .deep-video-container {
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+    }
+    .deep-video-player {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 1;
+      transition: opacity 0.3s ease;
+    }
+    .deep-video-player video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .deep-play-button-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.6);
+      border: none;
+      cursor: pointer;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      color: white;
+      opacity: 1;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+    .deep-play-button-overlay svg {
+      width: 24px;
+      height: 24px;
+      margin-left: 3px;
+    }
+    .deep-play-button-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .deep-product-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      padding: 16px 16px 30px 16px; /* Ajustado: Mais padding na parte inferior para evitar corte */
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    .deep-product-card:hover {
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+      transform: translateY(-2px);
+      text-decoration: none;
+      color: inherit;
+    }
+    .deep-product-card__content {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .deep-product-card__image {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      object-fit: contain;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    .deep-product-card__info {
+      flex: 1;
+      min-width: 0;
+    }
+    .deep-product-card__title {
+      font-size: {{ section.settings.product_title_font_size_desktop }}px; /* Controlado pelo painel */
+      font-weight: 400;
+      margin: 0 0 4px 0;
+      white-space: normal;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #1a1a1a;
+      line-height: 1.3;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+    .deep-product-card__price {
+      font-size: {{ section.settings.product_price_font_size_desktop }}px; /* Controlado pelo painel */
+      margin: 0;
+      font-weight: 500;
+      color: #666;
+    }
+    .deep-product-card__price--compare {
+      text-decoration: line-through;
+      opacity: 0.6;
+      margin-right: 6px;
+      color: #999;
+    }
+    .deep-product-card__price--current {
+      color: #e74c3c;
+      font-weight: 600;
+    }
+    @media (max-width: 768px) {
+      .deep-video-hover-grid {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        gap: 16px;
+        padding: 0 20px 20px;
+        scroll-padding: 0 20px;
+      }
+      .deep-video-hover-grid::-webkit-scrollbar {
+        height: 6px;
+      }
+      .deep-video-hover-grid::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 3px;
+      }
+      .deep-video-hover-grid::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 3px;
+      }
+      .deep-video-item {
+        scroll-snap-align: start;
+        flex: 0 0 calc(85% - 8px);
+        min-width: calc(85% - 8px);
+        max-width: 300px;
+      }
+      .deep-product-card {
+        padding: 12px 12px 24px 12px; /* Ajustado: Mais padding na parte inferior para mobile */
+      }
+      .deep-product-card__image {
+        width: 40px;
+        height: 40px;
+      }
+      .deep-product-card__title {
+        font-size: {{ section.settings.product_title_font_size_mobile }}px; /* Controlado pelo painel para mobile */
+      }
+      .deep-product-card__price {
+        font-size: {{ section.settings.product_price_font_size_mobile }}px; /* Controlado pelo painel para mobile */
+      }
+    }
+    .deep-section-title {
+      text-align: center;
+      margin-bottom: 32px;
+      font-size: 28px;
+      font-weight: 700;
+      color: #1a1a1a;
+    }
+    /* Remove play button styles */
+  .deep-play-button-overlay {
+    display: none !important;
+  }
+  /* Add mobile tap indicator */
+  @media (max-width: 768px) {
+    .deep-video-container {
+      cursor: pointer;
+    }
+     .deep-video-container:after {
+      content: '▶';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.6);
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+     .deep-video-container video[poster] + :after,
+    .deep-video-container video.paused + :after {
+      opacity: 1;
+    }
+  }
+  </style>
+  <div class="deep-video-hover-section">
+    {% if section.settings.section_title != blank %}
+      <h2 class="deep-section-title">{{ section.settings.section_title }}</h2>
+    {% endif %}
+    <div class="deep-video-hover-grid">
+      {% for block in videos %}
+        {%- liquid
+          assign product = block.settings.product
+          assign ref_link = product.url | default: '#'
+          if block.settings.ref_tag != blank
+            unless ref_link contains '?'
+              assign ref_link = ref_link | append: '?'
+            else
+              assign ref_link = ref_link | append: '&'
+            endunless
+            assign ref_link = ref_link | append: 'ref=' | append: block.settings.ref_tag
+          endif
+        -%}
+        <div class="deep-video-item" {{ block.shopify_attributes }}>
+          <div class="deep-video-container">
+            <div class="deep-video-player">
+              {% if block.settings.video != blank %}
+                <video preload="auto" playsinline muted loop>
+                  <source src="{{ block.settings.video }}" type="video/mp4">
+                </video>
+              {% endif %}
+            </div>
+            <button class="deep-play-button-overlay" aria-label="Play video">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </button>
+          </div>
+          {% if product %}
+            <a href="{{ ref_link }}" class="deep-product-card" target="{{ block.settings.button_target }}">
+              <div class="deep-product-card__content">
+                {% if product.featured_image %}
+                  {{
+                    product.featured_image
+                    | image_url: width: 100
+                    | image_tag: class: 'deep-product-card__image', loading: 'lazy'
+                  }}
+                {% else %}
+                  {{ 'product-1' | placeholder_svg_tag: 'deep-product-card__image' }}
+                {% endif %}
+                <div class="deep-product-card__info">
+                  <h4 class="deep-product-card__title">{{ product.title }}</h4>
+                  <p class="deep-product-card__price">
+                    {% if product.compare_at_price > product.price %}
+                      <span class="deep-product-card__price--compare">{{ product.compare_at_price | money }}</span>
+                    {% endif %}
+                    <span class="deep-product-card__price--current">{{ product.price | money }}</span>
+                  </p>
+                </div>
+              </div>
+            </a>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const containers = document.querySelectorAll('.deep-video-container');
+      containers.forEach(container => {
+        const video = container.querySelector('video');
+        if (!video) return;
+        // Remove the play button entirely
+        const playButton = container.querySelector('.deep-play-button-overlay');
+        if (playButton) playButton.remove();
+        // Set video attributes for best autoplay chances
+        video.muted = true;
+        video.playsInline = true;
+        video.setAttribute('playsinline', '');
+        video.setAttribute('webkit-playsinline', '');
+        // Try to autoplay immediately
+        const playPromise = video.play();
+        // If autoplay fails, set up click-to-play
+        if (playPromise !== undefined) {
+          playPromise.catch(error => {
+            // Autoplay was prevented - show visual cue it's clickable
+            container.style.cursor = 'pointer';
+            // Play on first tap
+            const playOnce = () => {
+              video.play();
+              container.removeEventListener('click', playOnce);
+              container.style.cursor = '';
+            };
+            container.addEventListener('click', playOnce, { once: true });
+          });
+        }
+        // For non-mobile hover behavior
+        if (!('ontouchstart' in window)) {
+          container.addEventListener('mouseenter', () => video.play());
+          container.addEventListener('mouseleave', () => {
+            video.pause();
+            video.currentTime = 0;
+          });
+        }
+      });
+    });
+  </script>
+  {% schema %}
+  {
+    "name": "Video Hover Grid",
+    "settings": [
+      {
+        "type": "text",
+        "id": "section_title",
+        "label": "Section title",
+        "default": "Produtos em Destaque"
+      },
+      {
+        "type": "color",
+        "id": "background_color",
+        "label": "Background color",
+        "default": "#ffffff"
+      },
+      {
+        "type": "range",
+        "id": "max_width",
+        "min": 800,
+        "max": 1600,
+        "step": 50,
+        "unit": "px",
+        "label": "Maximum width",
+        "default": 1200
+      },
+      {
+        "type": "range",
+        "id": "column_width",
+        "min": 100,
+        "max": 300,
+        "step": 10,
+        "unit": "px",
+        "label": "Column width",
+        "default": 280
+      },
+      {
+        "type": "range",
+        "id": "grid_gap",
+        "min": 0,
+        "max": 50,
+        "step": 1,
+        "unit": "px",
+        "label": "Grid gap",
+        "default": 24
+      },
+      {
+        "type": "range",
+        "id": "section_padding",
+        "min": 0,
+        "max": 50,
+        "step": 1,
+        "unit": "px",
+        "label": "Section padding",
+        "default": 24
+      },
+      {
+        "type": "range",
+        "id": "border_radius",
+        "min": 0,
+        "max": 30,
+        "step": 1,
+        "unit": "px",
+        "label": "Border radius",
+        "default": 20
+      },
+      {
+        "type": "select",
+        "id": "aspect_ratio",
+        "label": "Video aspect ratio",
+        "options": [
+          {
+            "value": "1/1",
+            "label": "Square (1:1)"
+          },
+          {
+            "value": "4/5",
+            "label": "Portrait (4:5)"
+          },
+          {
+            "value": "9/16",
+            "label": "Story (9:16)"
+          },
+          {
+            "value": "16/9",
+            "label": "Landscape (16:9)"
+          }
+        ],
+        "default": "9/16"
+      },
+      {
+        "type": "color",
+        "id": "button_bg_color",
+        "label": "Button background color",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "button_text_color",
+        "label": "Button text color",
+        "default": "#000000"
+      },
+      {
+        "type": "header",
+        "content": "Product Card Font Sizes"
+      },
+      {
+        "type": "range",
+        "id": "product_title_font_size_desktop",
+        "min": 12,
+        "max": 20,
+        "step": 1,
+        "unit": "px",
+        "label": "Product title font size (Desktop)",
+        "default": 14
+      },
+      {
+        "type": "range",
+        "id": "product_price_font_size_desktop",
+        "min": 10,
+        "max": 18,
+        "step": 1,
+        "unit": "px",
+        "label": "Product price font size (Desktop)",
+        "default": 13
+      },
+      {
+        "type": "range",
+        "id": "product_title_font_size_mobile",
+        "min": 10,
+        "max": 18,
+        "step": 1,
+        "unit": "px",
+        "label": "Product title font size (Mobile)",
+        "default": 13
+      },
+      {
+        "type": "range",
+        "id": "product_price_font_size_mobile",
+        "min": 8,
+        "max": 16,
+        "step": 1,
+        "unit": "px",
+        "label": "Product price font size (Mobile)",
+        "default": 12
+      }
+    ],
+    "blocks": [
+      {
+        "type": "video",
+        "name": "Video",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "thumbnail",
+            "label": "Thumbnail image"
+          },
+          {
+            "type": "url",
+            "id": "video",
+            "label": "Video URL",
+            "info": "Upload videos to Settings -> Files and paste the URL here"
+          },
+          {
+            "type": "product",
+            "id": "product",
+            "label": "Product"
+          },
+          {
+            "type": "text",
+            "id": "ref_tag",
+            "label": "Referral tag",
+            "info": "This will be added as ?ref=YOUR_TAG to the product URL"
+          },
+          {
+            "type": "select",
+            "id": "button_target",
+            "label": "Button target",
+            "options": [
+              {
+                "value": "_self",
+                "label": "Same window"
+              },
+              {
+                "value": "_blank",
+                "label": "New window"
+              }
+            ],
+            "default": "_self"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Video Hover Grid",
+        "category": "Media",
+        "blocks": [
+          {
+            "type": "video"
+          },
+          {
+            "type": "video"
+          },
+          {
+            "type": "video"
+          }
+        ]
+      }
+    ]
+  }
+  {% endschema %}
+  
+  
+  
+  
+  

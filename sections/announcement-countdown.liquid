@@ -1,0 +1,810 @@
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    --countdown-bg-color: {{ section.settings.background_color }};
+    --countdown-text-color: {{ section.settings.text_color }};
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    margin-top: {{ section.settings.margin_top }}px;
+    margin-bottom: {{ section.settings.margin_bottom }}px;
+  }
+
+  .announcement-countdown {
+    background: var(--countdown-bg-color);
+    color: var(--countdown-text-color);
+    width: 100%;
+  }
+
+  .countdown-container {
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: {{ section.settings.gap }}px;
+    padding: 0 {{ section.settings.padding_sides }}px;
+  }
+
+  .countdown-text {
+    font-size: {{ section.settings.text_size }}px;
+    font-weight: {{ section.settings.text_weight }};
+    flex: 1;
+    min-width: 200px;
+    text-align: {{ section.settings.text_align }};
+  }
+
+  .countdown-text b {
+    font-weight: {{ section.settings.bold_text_weight }};
+  }
+
+  .countdown-timer {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .countdown-segment {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .countdown-numbers {
+    display: flex;
+    gap: 2px;
+  }
+
+  .countdown-number {
+    background: var(--countdown-bg-color);
+    color: var(--countdown-text-color);
+    padding: 2px 5px;
+    border-radius: 2px;
+    font-size: {{ section.settings.number_size }}px;
+    font-weight: 700;
+  }
+
+  .countdown-label {
+    font-size: {{ section.settings.label_size }}px;
+    margin-top: 2px;
+  }
+
+  .countdown-separator {
+    font-size: {{ section.settings.number_size }}px;
+    font-weight: 700;
+    margin: 0 5px;
+    align-self: flex-end;
+    padding-bottom: 8px;
+  }
+
+  /* Modern Coupon Button Styles */
+  .countdown-coupon {
+    border: 1px dashed var(--countdown-text-color);
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-weight: 700;
+    background: var(--countdown-bg-color);
+    font-size: {{ section.settings.coupon_size }}px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    overflow: hidden;
+  }
+
+  .countdown-coupon::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 100%;
+    background: var(--countdown-text-color);
+    transition: width 0.5s ease;
+    z-index: 0;
+  }
+
+  .countdown-coupon:hover::before {
+    width: 100%;
+    right: auto;
+    left: 0;
+  }
+
+  .countdown-coupon span {
+    position: relative;
+    z-index: 1;
+    transition: color 0.3s ease;
+  }
+
+  .countdown-coupon:hover span {
+    color: var(--countdown-bg-color);
+  }
+
+  .countdown-coupon::after {
+    content: 'copiar';
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--countdown-text-color);
+    color: var(--countdown-bg-color);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .countdown-coupon:hover::after {
+    opacity: 1;
+  }
+
+  .countdown-coupon.copied::after {
+    content: 'COPIADO' !important;
+    opacity: 1;
+  }
+
+  .countdown-coupon.copied span {
+    visibility: hidden;
+  }
+
+  .countdown-coupon.copied::before {
+    content: 'COPIADO';
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--countdown-bg-color);
+    width: 100%;
+    background: var(--countdown-text-color);
+  }
+
+  .countdown-button {
+    background: {{ section.settings.button_bg_color }};
+    border: 1px solid {{ section.settings.button_border_color }};
+    color: {{ section.settings.button_text_color }};
+    padding: {{ section.settings.button_padding_vertical }}px {{ section.settings.button_padding_horizontal }}px;
+    border-radius: {{ section.settings.button_border_radius }}px;
+    font-weight: {{ section.settings.button_font_weight }};
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s ease;
+    font-size: {{ section.settings.button_font_size }}px;
+  }
+
+  .countdown-button:hover {
+    opacity: 0.9;
+  }
+
+  .countdown-button svg {
+    width: 7px;
+    height: 12px;
+    fill: {{ section.settings.button_text_color }};
+  }
+
+  .rules-link {
+    font-size: {{ section.settings.rules_font_size }}px;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .countdown-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* Mobile Styles */
+  @media (max-width: 768px) {
+    .announcement-countdown {
+    padding-bottom: 10px !important;
+  }
+    .countdown-container {
+      flex-direction: column;
+      text-align: center;
+      gap: 10px;
+    }
+    
+    .countdown-text {
+      order: 1;
+      width: 100%;
+      font-size: {{ section.settings.mobile_text_size }}px;
+    }
+    
+    .countdown-timer {
+      order: 2;
+    }
+    
+    .countdown-actions {
+      order: 3;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      width: 100%;
+      gap: 10px;
+    }
+    
+    .countdown-coupon {
+      font-size: {{ section.settings.mobile_coupon_size }}px;
+      margin: 0;
+    }
+    
+    .countdown-coupon::after {
+      top: auto;
+      bottom: -20px;
+    }
+    
+    .countdown-button {
+      font-size: {{ section.settings.mobile_button_font_size }}px;
+      margin: 0;
+    }
+    
+    .rules-link {
+      order: 4;
+      font-size: {{ section.settings.mobile_rules_font_size }}px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="announcement-countdown">
+  <div class="countdown-container">
+    <div class="countdown-text">
+      {{ section.settings.announcement_text | replace: '[highlight]', '<b>' | replace: '[/highlight]', '</b>' }}
+    </div>
+    
+    {% if section.settings.show_timer %}
+    <div class="countdown-timer">
+      <div class="countdown-segment" data-days>
+        <div class="countdown-numbers">
+          <div class="countdown-number" data-days-tens>0</div>
+          <div class="countdown-number" data-days-ones>0</div>
+        </div>
+        <div class="countdown-label">{{ section.settings.days_label | default: 'dias' }}</div>
+      </div>
+      
+      <div class="countdown-separator">:</div>
+      
+      <div class="countdown-segment" data-hours>
+        <div class="countdown-numbers">
+          <div class="countdown-number" data-hours-tens>0</div>
+          <div class="countdown-number" data-hours-ones>0</div>
+        </div>
+        <div class="countdown-label">{{ section.settings.hours_label }}</div>
+      </div>
+      
+      <div class="countdown-separator">:</div>
+      
+      <div class="countdown-segment" data-minutes>
+        <div class="countdown-numbers">
+          <div class="countdown-number" data-minutes-tens>0</div>
+          <div class="countdown-number" data-minutes-ones>0</div>
+        </div>
+        <div class="countdown-label">{{ section.settings.minutes_label }}</div>
+      </div>
+      
+      <div class="countdown-separator">:</div>
+      
+      <div class="countdown-segment" data-seconds>
+        <div class="countdown-numbers">
+          <div class="countdown-number" data-seconds-tens>0</div>
+          <div class="countdown-number" data-seconds-ones>0</div>
+        </div>
+        <div class="countdown-label">{{ section.settings.seconds_label }}</div>
+      </div>
+    </div>
+    {% endif %}
+    
+    <div class="countdown-actions">
+      {% if section.settings.show_coupon %}
+      <div class="countdown-coupon">
+        <span>{{ section.settings.coupon_code }}</span>
+      </div>
+      {% endif %}
+      
+      {% if section.settings.show_button %}
+      <a href="{{ section.settings.button_link }}" class="countdown-button">
+        {{ section.settings.button_text }}
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 7 12">
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M.672.11a.375.375 0 01.53 0l5.626 5.625a.375.375 0 010 .53L1.203 11.89a.375.375 0 01-.53-.53L6.032 6 .672.64a.375.375 0 010-.53z"/>
+        </svg>
+      </a>
+      {% endif %}
+    </div>
+    
+    {% if section.settings.show_rules %}
+    <div class="rules-link">{{ section.settings.rules_text }}</div>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+ // Countdown Timer Functionality
+// Countdown Timer Functionality
+function updateCountdown() {
+  const now = new Date();
+  let endTime, distance;
+
+  {% if section.settings.enable_24h_reset %}
+    // Calculate time until next midnight (24-hour reset mode)
+    const midnight = new Date();
+    midnight.setHours(24, 0, 0, 0);
+    endTime = midnight.getTime();
+    distance = endTime - now.getTime();
+  {% else %}
+    // Use the specified end date (normal mode)
+    endTime = new Date("{{ section.settings.end_date }}").getTime();
+    distance = endTime - now.getTime();
+  {% endif %}
+
+  if (distance < 0) {
+    // Countdown has ended
+    {% if section.settings.enable_24h_reset %}
+      // In 24h mode, we immediately reset for the next day
+      updateCountdown();
+      return;
+    {% else %}
+      document.querySelector('#shopify-section-{{ section.id }}').style.display = 'none';
+      return;
+    {% endif %}
+  }
+
+  // Calculate time units
+  const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+  // Update days display - show full number if more than 30 days
+  if (days > 30) {
+    document.querySelector('#shopify-section-{{ section.id }} [data-days-tens]').textContent = Math.floor(days / 10);
+    document.querySelector('#shopify-section-{{ section.id }} [data-days-ones]').textContent = days % 10;
+  } else {
+    const daysStr = days.toString().padStart(2, '0');
+    document.querySelector('#shopify-section-{{ section.id }} [data-days-tens]').textContent = daysStr[0];
+    document.querySelector('#shopify-section-{{ section.id }} [data-days-ones]').textContent = daysStr[1];
+  }
+
+  // Always update hours, minutes and seconds
+  const hoursStr = hours.toString().padStart(2, '0');
+  document.querySelector('#shopify-section-{{ section.id }} [data-hours-tens]').textContent = hoursStr[0];
+  document.querySelector('#shopify-section-{{ section.id }} [data-hours-ones]').textContent = hoursStr[1];
+
+  const minutesStr = minutes.toString().padStart(2, '0');
+  document.querySelector('#shopify-section-{{ section.id }} [data-minutes-tens]').textContent = minutesStr[0];
+  document.querySelector('#shopify-section-{{ section.id }} [data-minutes-ones]').textContent = minutesStr[1];
+
+  const secondsStr = seconds.toString().padStart(2, '0');
+  document.querySelector('#shopify-section-{{ section.id }} [data-seconds-tens]').textContent = secondsStr[0];
+  document.querySelector('#shopify-section-{{ section.id }} [data-seconds-ones]').textContent = secondsStr[1];
+}
+
+// Update countdown every second if timer is enabled
+{% if section.settings.show_timer %}
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+{% endif %}
+
+// Enhanced coupon copy functionality remains the same
+document.querySelector('#shopify-section-{{ section.id }} .countdown-coupon')?.addEventListener('click', function() {
+  const couponCode = "{{ section.settings.coupon_code }}";
+  
+  // Create temporary input element
+  const tempInput = document.createElement('input');
+  tempInput.value = couponCode;
+  document.body.appendChild(tempInput);
+  
+  // Select and copy the text
+  tempInput.select();
+  document.execCommand('copy');
+  
+  // Remove temporary input
+  document.body.removeChild(tempInput);
+  
+  // Add copied class
+  this.classList.add('copied');
+  
+  // Remove after 2 seconds but keep hover functionality
+  setTimeout(() => {
+    this.classList.remove('copied');
+  }, 2000);
+});
+</script>
+{% schema %}
+{
+  "name": "Countdown Announcement",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "richtext",
+      "id": "announcement_text",
+      "label": "Announcement Text",
+      "default": "<p>APROVEITE 60%OFF + [highlight]10% EXTRA NO CUPOM[/highlight]</p>",
+      "info": "Use [highlight] and [/highlight] to wrap text you want to bold"
+    },
+    {
+  "type": "header",
+  "content": "24 Hour Reset"
+},
+{
+  "type": "checkbox",
+  "id": "enable_24h_reset",
+  "label": "Enable 24 Hour Reset",
+  "default": false,
+  "info": "When enabled, the countdown will reset every 24 hours from the current hour"
+},
+    {
+      "type": "checkbox",
+      "id": "show_timer",
+      "label": "Show Countdown Timer",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "end_date",
+      "label": "Countdown End Date/Time",
+      "default": "December 31, 2025 23:59:59 GMT-0300",
+      "info": "Format: 'Month Day, Year Hour:Minute:Second Timezone'"
+    },
+    {
+      "type": "text",
+      "id": "hours_label",
+      "label": "Hours Label",
+      "default": "horas"
+    },
+    {
+      "type": "text",
+      "id": "minutes_label",
+      "label": "Minutes Label",
+      "default": "min"
+    },
+    {
+      "type": "text",
+      "id": "seconds_label",
+      "label": "Seconds Label",
+      "default": "seg"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_coupon",
+      "label": "Show Coupon Code",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "coupon_code",
+      "label": "Coupon Code",
+      "default": "EXTRA10"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_button",
+      "label": "Show Button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Compre agora"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rules",
+      "label": "Show Rules Link",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "rules_text",
+      "label": "Rules Text",
+      "default": "Confira as regras"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Button Background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "button_border_color",
+      "label": "Button Border",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button Text",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Text Size",
+      "min": 10,
+      "max": 30,
+      "step": 1,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mobile_text_size",
+      "label": "Mobile Text Size",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "text_weight",
+      "label": "Text Weight",
+      "options": [
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "select",
+      "id": "bold_text_weight",
+      "label": "Bold Text Weight",
+      "options": [
+        { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" },
+        { "value": "800", "label": "Extra-bold" }
+      ],
+      "default": "700"
+    },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Text Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "number_size",
+      "label": "Timer Number Size",
+      "min": 12,
+      "max": 40,
+      "step": 1,
+      "default": 24,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "label_size",
+      "label": "Timer Label Size",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "default": 12,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "coupon_size",
+      "label": "Coupon Code Size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mobile_coupon_size",
+      "label": "Mobile Coupon Size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "button_font_size",
+      "label": "Button Font Size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mobile_button_font_size",
+      "label": "Mobile Button Size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "default": 13,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "button_font_weight",
+      "label": "Button Font Weight",
+      "options": [
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "range",
+      "id": "rules_font_size",
+      "label": "Rules Link Size",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "default": 12,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mobile_rules_font_size",
+      "label": "Mobile Rules Size",
+      "min": 10,
+      "max": 14,
+      "step": 1,
+      "default": 11,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Max Width",
+      "min": 800,
+      "max": 1400,
+      "step": 20,
+      "default": 1200,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Elements Gap",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "default": 20,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_sides",
+      "label": "Side Padding",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "default": 20,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top Padding",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "default": 10,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom Padding",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "default": 10,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "label": "Top Margin",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "label": "Bottom Margin",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Button Styling"
+    },
+    {
+      "type": "range",
+      "id": "button_padding_vertical",
+      "label": "Button Vertical Padding",
+      "min": 5,
+      "max": 20,
+      "step": 1,
+      "default": 8,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "button_padding_horizontal",
+      "label": "Button Horizontal Padding",
+      "min": 10,
+      "max": 40,
+      "step": 1,
+      "default": 20,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "label": "Button Border Radius",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "default": 4,
+      "unit": "px"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Countdown Announcement",
+      "category": "Promotional"
+    }
+  ]
+}
+{% endschema %}
+
+

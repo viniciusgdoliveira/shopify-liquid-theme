@@ -1,0 +1,197 @@
+{% comment %}
+  Social sharing snippet
+  Displays social media sharing buttons
+{% endcomment %}
+
+{% liquid
+  assign share_title = share_title | default: ''
+  assign share_permalink = share_permalink | default: ''
+  assign share_image = share_image | default: ''
+%}
+
+<div class="social-sharing">
+  <div class="social-sharing__buttons">
+    <a 
+      href="https://www.facebook.com/sharer/sharer.php?u={{ share_permalink | url_encode }}"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="social-sharing__button social-sharing__button--facebook"
+      aria-label="{{ 'general.social.share_on_facebook' | t }}"
+    >
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+        <path d="M18.05.811q.439 0 .744.305t.305.744v16.637q0 .439-.305.744t-.744.305h-4.732v-7.221h2.415l.362-2.813h-2.777V6.758q0-.659.293-1t1.073-.341h1.411V2.758q-.976-.098-2.171-.098-1.634 0-2.635.964t-1 2.634V7.25H8.122v2.813h2.415v7.221H5.805q-.439 0-.744-.305t-.305-.744V1.86q0-.439.305-.744T5.805.811H18.05z"/>
+      </svg>
+      <span class="visually-hidden">{{ 'general.social.share_on_facebook' | t }}</span>
+    </a>
+
+    <a 
+      href="https://twitter.com/intent/tweet?text={{ share_title | url_encode }}&url={{ share_permalink | url_encode }}"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="social-sharing__button social-sharing__button--twitter"
+      aria-label="{{ 'general.social.share_on_twitter' | t }}"
+    >
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+        <path d="M19.551 4.208q-.815 1.202-1.956 2.038 0 .082.02.477t.02.477q0 2.04-.577 4.08t-1.756 3.9-2.832 3.3-3.96 2.3-4.92.9q-4.08 0-7.461-2.24.49.06.815.06 2.408 0 4.327-.816-2.245-.04-3.98-1.388t-2.408-3.49q.347.06.653.06.49 0 .98-.082-2.347-.49-3.98-2.347t-1.633-4.245v-.06q.714.408 1.531.449-2.204-1.47-2.204-4.02 0-.898.449-1.673 2.449 2.98 5.918 3.184-.082-.204-.082-.408 0-2.449 1.755-4.184t4.49-1.735q1.306 0 2.449.49 1.102-.49 2.02-1.306-.367 1.143-1.143 1.755 1.02-.102 2.02-.51-.68 1.02-1.755 1.551z"/>
+      </svg>
+      <span class="visually-hidden">{{ 'general.social.share_on_twitter' | t }}</span>
+    </a>
+
+    <a 
+      href="https://pinterest.com/pin/create/button/?url={{ share_permalink | url_encode }}&media={{ share_image | image_url: width: 1200 | url_encode }}&description={{ share_title | url_encode }}"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="social-sharing__button social-sharing__button--pinterest"
+      aria-label="{{ 'general.social.share_on_pinterest' | t }}"
+    >
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+        <path d="M10.017 0C4.485 0 0 4.485 0 10.017c0 4.232 2.633 7.85 6.35 9.306-.088-.79-.166-2.006.035-2.868.181-.78 1.172-4.966 1.172-4.966s-.299-.599-.299-1.484c0-1.388.805-2.425 1.808-2.425.852 0 1.264.64 1.264 1.408 0 .858-.546 2.14-.828 3.33-.236.995.499 1.807 1.479 1.807 1.776 0 3.144-1.872 3.144-4.575 0-2.392-1.72-4.064-4.177-4.064-2.845 0-4.516 2.135-4.516 4.34 0 .859.331 1.781.744 2.281a.3.3 0 01.069.288l-.278 1.133c-.044.183-.145.223-.334.134-1.249-.581-2.03-2.407-2.03-3.874 0-3.154 2.292-6.052 6.608-6.052 3.469 0 6.165 2.473 6.165 5.776 0 3.447-2.173 6.22-5.19 6.22-1.013 0-1.969-.527-2.292-1.155l-.623 2.378c-.226.869-.835 1.958-1.244 2.621.937.29 1.931.446 2.962.446 5.532 0 10.017-4.485 10.017-10.017S15.549 0 10.017 0z"/>
+      </svg>
+      <span class="visually-hidden">{{ 'general.social.share_on_pinterest' | t }}</span>
+    </a>
+
+    <button 
+      type="button"
+      class="social-sharing__button social-sharing__button--copy"
+      data-share-url="{{ share_permalink }}"
+      aria-label="{{ 'general.social.copy_link' | t }}"
+    >
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+        <path d="M8 2a1 1 0 000 2h2a1 1 0 100-2H8z"/>
+        <path d="M3 5a2 2 0 012-2 3 3 0 003 3h2a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2V5zM14 7a1 1 0 011 1v6a1 1 0 01-1 1h-1v1a2 2 0 01-2 2H6a2 2 0 01-2-2v-1H3a1 1 0 01-1-1V8a1 1 0 011-1h1V6a2 2 0 012-2h2a2 2 0 012 2v1h4z"/>
+      </svg>
+      <span class="visually-hidden">{{ 'general.social.copy_link' | t }}</span>
+    </button>
+  </div>
+</div>
+
+{% stylesheet %}
+.social-sharing {
+  margin-top: 1rem;
+}
+
+.social-sharing__buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.social-sharing__button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--color-border, #e0e0e0);
+  border-radius: 0.5rem;
+  background: var(--color-background, #fff);
+  color: var(--color-text-secondary, #666);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.social-sharing__button:hover {
+  background: var(--color-background-secondary, #f8f9fa);
+  color: var(--color-text-primary, #333);
+  transform: translateY(-1px);
+}
+
+.social-sharing__button--facebook:hover {
+  background: #1877f2;
+  color: white;
+  border-color: #1877f2;
+}
+
+.social-sharing__button--twitter:hover {
+  background: #1da1f2;
+  color: white;
+  border-color: #1da1f2;
+}
+
+.social-sharing__button--pinterest:hover {
+  background: #bd081c;
+  color: white;
+  border-color: #bd081c;
+}
+
+.social-sharing__button--copy:hover {
+  background: var(--color-primary, #007bff);
+  color: white;
+  border-color: var(--color-primary, #007bff);
+}
+
+.social-sharing__button svg {
+  width: 20px;
+  height: 20px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+{% endstylesheet %}
+
+{% javascript %}
+class SocialSharing extends HTMLElement {
+  constructor() {
+    super();
+    this.copyButton = this.querySelector('.social-sharing__button--copy');
+    if (this.copyButton) {
+      this.copyButton.addEventListener('click', this.copyToClipboard.bind(this));
+    }
+  }
+
+  async copyToClipboard() {
+    const url = this.copyButton.dataset.shareUrl;
+    
+    try {
+      await navigator.clipboard.writeText(url);
+      this.showCopyFeedback();
+    } catch (err) {
+      // Fallback for older browsers
+      this.fallbackCopyToClipboard(url);
+    }
+  }
+
+  fallbackCopyToClipboard(text) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
+    try {
+      document.execCommand('copy');
+      this.showCopyFeedback();
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+    }
+    
+    document.body.removeChild(textArea);
+  }
+
+  showCopyFeedback() {
+    const originalText = this.copyButton.innerHTML;
+    this.copyButton.innerHTML = `
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+      </svg>
+      <span class="visually-hidden">Copied!</span>
+    `;
+    
+    setTimeout(() => {
+      this.copyButton.innerHTML = originalText;
+    }, 2000);
+  }
+}
+
+customElements.define('social-sharing', SocialSharing);
+{% endjavascript %}

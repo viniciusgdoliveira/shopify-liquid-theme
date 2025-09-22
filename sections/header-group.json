@@ -13,7 +13,10 @@
   "sections": {
     "header": {
       "type": "header",
-      "settings": {}
+      "settings": {
+        "menu": "home",
+        "enable_search": true
+      }
     }
   },
   "order": [

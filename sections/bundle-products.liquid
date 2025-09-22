@@ -1,0 +1,676 @@
+<!-- sections/product-bundle.liquid -->
+<style>
+    .bundle-section {
+      background: {{ section.settings.background_color }};
+      border: 1px solid #e9ecef;
+      border-radius: {{ section.settings.border_radius }}px;
+      padding: {{ section.settings.padding }}px;
+      margin: {{ section.settings.margin }}px 0;
+    }
+   
+   
+    .bundle-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+   
+   
+    .bundle-title {
+      font-size: {{ section.settings.title_size }}px;
+      font-weight: 600;
+      color: {{ section.settings.title_color }};
+      margin-bottom: 8px;
+    }
+   
+   
+    .bundle-subtitle {
+      color: {{ section.settings.subtitle_color }};
+      font-size: {{ section.settings.subtitle_size }}px;
+    }
+   
+   
+    .bundle-products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin: 30px 0;
+    }
+   
+   
+    .product-card {
+      background: white;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+   
+   
+    .product-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+   
+   
+    .product-card img {
+      width: 100%;
+      max-width: {{ section.settings.product_image_size }}px;
+      height: {{ section.settings.product_image_size }}px;
+      object-fit: cover;
+      border-radius: 6px;
+      margin-bottom: 15px;
+    }
+   
+   
+    .product-title {
+      font-size: 1.1em;
+      font-weight: 600;
+      margin-bottom: 8px;
+      line-height: 1.3;
+      color: #333;
+    }
+   
+   
+    .product-description {
+      font-size: 0.9em;
+      color: #666;
+      margin-bottom: 15px;
+      line-height: 1.4;
+    }
+   
+   
+    .product-price {
+      font-size: 1.2em;
+      color: {{ section.settings.price_color }};
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+   
+   
+    .product-price .compare-price {
+      text-decoration: line-through;
+      color: #999;
+      margin-right: 8px;
+      font-size: 0.9em;
+    }
+   
+   
+    .product-variants {
+      margin-bottom: 15px;
+    }
+   
+   
+    .product-variants select {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 0.9em;
+    }
+   
+   
+    .add-to-cart-btn {
+      background: {{ section.settings.button_bg_color }};
+      color: {{ section.settings.button_text_color }};
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-size: 1em;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.3s;
+    }
+   
+   
+    .add-to-cart-btn:hover {
+      background: {{ section.settings.button_hover_color }};
+    }
+   
+   
+    .add-to-cart-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+   
+   
+    .product-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: {{ section.settings.badge_bg_color }};
+      color: {{ section.settings.badge_text_color }};
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.75em;
+      font-weight: 600;
+    }
+   
+   
+    .product-card {
+      position: relative;
+    }
+   
+   
+    .main-product .product-badge {
+      background: #007bff;
+    }
+   
+   
+    .bundle-product .product-badge {
+      background: #28a745;
+    }
+   
+   
+    .debug-info {
+      background: #f0f0f0;
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 12px;
+      border-radius: 4px;
+    }
+   
+   
+    @media (max-width: 768px) {
+      .bundle-products {
+        grid-template-columns: 1fr;
+      }
+     
+      .product-card {
+        padding: 15px;
+      }
+    }
+   </style>
+   
+   
+   {% comment %} Debug: Show what metafields are available {% endcomment %}
+   {% if section.settings.show_debug %}
+    <div class="debug-info">
+      <strong>Debug Info:</strong><br>
+      Product ID: {{ product.id }}<br>
+      Product Handle: {{ product.handle }}<br>
+      Bundle 1 Metafield: {{ product.metafields.custom.bundle_with_1 | json }}<br>
+      Bundle 2 Metafield: {{ product.metafields.custom.bundle_with_2 | json }}<br>
+      Bundle 1 Value: {{ product.metafields.custom.bundle_with_1.value }}<br>
+      Bundle 2 Value: {{ product.metafields.custom.bundle_with_2.value }}
+    </div>
+   {% endif %}
+   
+   
+   {% comment %} Get the two bundle products from metafields {% endcomment %}
+   {% if section.settings.use_metafield %}
+    {% assign bundle_1_ref = product.metafields.custom.bundle_with_1.value %}
+    {% assign bundle_2_ref = product.metafields.custom.bundle_with_2.value %}
+     {% if bundle_1_ref.id %}
+      {% assign bundle_product_1 = bundle_1_ref %}
+    {% else %}
+      {% assign bundle_product_1 = all_products[bundle_1_ref] %}
+    {% endif %}
+     {% if bundle_2_ref.id %}
+      {% assign bundle_product_2 = bundle_2_ref %}
+    {% else %}
+      {% assign bundle_product_2 = all_products[bundle_2_ref] %}
+    {% endif %}
+    {% else %}
+    {% assign bundle_product_1 = section.settings.bundle_product_1 %}
+    {% assign bundle_product_2 = section.settings.bundle_product_2 %}
+   {% endif %}
+   
+   
+   {% comment %} Alternative metafield access method {% endcomment %}
+   {% unless bundle_product_1 %}
+    {% assign bundle_product_1 = product.metafields['custom']['bundle_with_1'].value %}
+   {% endunless %}
+   
+   
+   {% unless bundle_product_2 %}
+    {% assign bundle_product_2 = product.metafields['custom']['bundle_with_2'].value %}
+   {% endunless %}
+   
+   
+   {% if bundle_product_1 and bundle_product_2 %}
+    <div class="bundle-section">
+      <div class="bundle-header">
+        <h3 class="bundle-title">{{ section.settings.bundle_title }}</h3>
+        <p class="bundle-subtitle">{{ section.settings.bundle_subtitle }}</p>
+      </div>
+   
+   
+      <div class="bundle-products">
+        <!-- Main Product Card -->
+        <div class="product-card main-product">
+          <div class="product-badge">Main Product</div>
+          <img src="{{ product.featured_image | image_url: width: section.settings.product_image_size }}" alt="{{ product.title }}">
+         
+          <h4 class="product-title">{{ product.title }}</h4>
+         
+          {% if product.description != blank %}
+            <p class="product-description">{{ product.description | strip_html | truncate: 120 }}</p>
+          {% endif %}
+         
+          <div class="product-price">
+            {% if product.compare_at_price > product.price %}
+              <span class="compare-price">{{ product.compare_at_price | money }}</span>
+            {% endif %}
+            {{ product.price | money }}
+          </div>
+   
+   
+          {% if product.variants.size > 1 %}
+            <div class="product-variants">
+              <select id="main-product-variant-{{ section.id }}">
+                {% for variant in product.variants %}
+                  {% if variant.available %}
+                    <option value="{{ variant.id }}" {% if variant == product.selected_or_first_available_variant %}selected{% endif %}>
+                      {{ variant.title }}
+                      {% if variant.price != product.price %} - {{ variant.price | money }}{% endif %}
+                    </option>
+                  {% endif %}
+                {% endfor %}
+              </select>
+            </div>
+          {% endif %}
+   
+   
+          <button class="add-to-cart-btn"
+                  data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+                  data-product-title="{{ product.title }}"
+                  onclick="addSingleToCart(this)">
+            Add to Cart - {{ product.price | money }}
+          </button>
+        </div>
+   
+   
+        <!-- Bundle Product 1 Card -->
+        {% if bundle_product_1.available %}
+          <div class="product-card bundle-product">
+            <div class="product-badge">Bundle Item</div>
+            <img src="{{ bundle_product_1.featured_image | image_url: width: section.settings.product_image_size }}" alt="{{ bundle_product_1.title }}">
+           
+            <h4 class="product-title">{{ bundle_product_1.title }}</h4>
+           
+            {% if bundle_product_1.description != blank %}
+              <p class="product-description">{{ bundle_product_1.description | strip_html | truncate: 120 }}</p>
+            {% endif %}
+           
+            <div class="product-price">
+              {% if bundle_product_1.compare_at_price > bundle_product_1.price %}
+                <span class="compare-price">{{ bundle_product_1.compare_at_price | money }}</span>
+              {% endif %}
+              {{ bundle_product_1.price | money }}
+            </div>
+   
+   
+            {% if bundle_product_1.variants.size > 1 %}
+              <div class="product-variants">
+                <select id="bundle-1-variant-{{ section.id }}">
+                  {% for variant in bundle_product_1.variants %}
+                    {% if variant.available %}
+                      <option value="{{ variant.id }}" {% if variant == bundle_product_1.selected_or_first_available_variant %}selected{% endif %}>
+                        {{ variant.title }}
+                        {% if variant.price != bundle_product_1.price %} - {{ variant.price | money }}{% endif %}
+                      </option>
+                    {% endif %}
+                  {% endfor %}
+                </select>
+              </div>
+            {% endif %}
+   
+   
+            <button class="add-to-cart-btn"
+                    data-variant-id="{{ bundle_product_1.selected_or_first_available_variant.id }}"
+                    data-product-title="{{ bundle_product_1.title }}"
+                    onclick="addSingleToCart(this)">
+              Add to Cart - {{ bundle_product_1.price | money }}
+            </button>
+          </div>
+        {% endif %}
+   
+   
+        <!-- Bundle Product 2 Card -->
+        {% if bundle_product_2.available %}
+          <div class="product-card bundle-product">
+            <div class="product-badge">Bundle Item</div>
+            <img src="{{ bundle_product_2.featured_image | image_url: width: section.settings.product_image_size }}" alt="{{ bundle_product_2.title }}">
+           
+            <h4 class="product-title">{{ bundle_product_2.title }}</h4>
+           
+            {% if bundle_product_2.description != blank %}
+              <p class="product-description">{{ bundle_product_2.description | strip_html | truncate: 120 }}</p>
+            {% endif %}
+           
+            <div class="product-price">
+              {% if bundle_product_2.compare_at_price > bundle_product_2.price %}
+                <span class="compare-price">{{ bundle_product_2.compare_at_price | money }}</span>
+              {% endif %}
+              {{ bundle_product_2.price | money }}
+            </div>
+   
+   
+            {% if bundle_product_2.variants.size > 1 %}
+              <div class="product-variants">
+                <select id="bundle-2-variant-{{ section.id }}">
+                  {% for variant in bundle_product_2.variants %}
+                    {% if variant.available %}
+                      <option value="{{ variant.id }}" {% if variant == bundle_product_2.selected_or_first_available_variant %}selected{% endif %}>
+                        {{ variant.title }}
+                        {% if variant.price != bundle_product_2.price %} - {{ variant.price | money }}{% endif %}
+                      </option>
+                    {% endif %}
+                  {% endfor %}
+                </select>
+              </div>
+            {% endif %}
+   
+   
+            <button class="add-to-cart-btn"
+                    data-variant-id="{{ bundle_product_2.selected_or_first_available_variant.id }}"
+                    data-product-title="{{ bundle_product_2.title }}"
+                    onclick="addSingleToCart(this)">
+              Add to Cart - {{ bundle_product_2.price | money }}
+            </button>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+   
+   
+    <script>
+      // Update variant selection and price
+      document.querySelectorAll('select[id*="variant"]').forEach(select => {
+        select.addEventListener('change', function() {
+          const card = this.closest('.product-card');
+          const button = card.querySelector('.add-to-cart-btn');
+          const selectedOption = this.options[this.selectedIndex];
+         
+          button.dataset.variantId = this.value;
+         
+          // Update button text with new price if available
+          const priceMatch = selectedOption.text.match(/- \$[\d,.]+/);
+          if (priceMatch) {
+            const newPrice = priceMatch[0].substring(2);
+            button.innerHTML = `Add to Cart - $${newPrice}`;
+          }
+        });
+      });
+   
+   
+      // Add single product to cart
+      function addSingleToCart(button) {
+        const variantId = button.dataset.variantId;
+        const productTitle = button.dataset.productTitle;
+        const originalText = button.innerHTML;
+       
+        button.disabled = true;
+        button.textContent = 'Adding...';
+       
+        fetch('/cart/add.js', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            id: variantId,
+            quantity: 1
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          button.textContent = 'Added!';
+         
+          {% if section.settings.redirect_to_cart %}
+            setTimeout(() => {
+              window.location.href = '/cart';
+            }, 500);
+          {% else %}
+            // Show success and reset button
+            setTimeout(() => {
+              button.disabled = false;
+              button.innerHTML = originalText;
+            }, 1500);
+           
+            // Update cart count if function exists
+            if (typeof updateCartCount === 'function') {
+              updateCartCount();
+            }
+          {% endif %}
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          button.disabled = false;
+          button.innerHTML = originalText;
+          alert('There was an error adding the item to cart. Please try again.');
+        });
+      }
+    </script>
+   
+   
+   {% elsif section.settings.show_debug %}
+    <div class="debug-info">
+      <strong>Bundle not showing because:</strong><br>
+      Bundle Product 1:
+      {% if bundle_product_1 %}
+        Found ({{ bundle_product_1.title }})
+      {% else %}
+        Not found
+      {% endif %}<br>
+      Bundle Product 2:
+      {% if bundle_product_2 %}
+        Found ({{ bundle_product_2.title }})
+      {% else %}
+        Not found
+      {% endif %}<br>
+    </div>
+   {% endif %}
+   
+   
+   {% schema %}
+   {
+    "name": "Product Bundle Cards",
+    "tag": "section",
+    "class": "section",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Bundle Configuration"
+      },
+      {
+        "type": "paragraph",
+        "content": "Shows 3 individual product cards with separate add to cart buttons"
+      },
+      {
+        "type": "checkbox",
+        "id": "use_metafield",
+        "label": "Use metafields for bundle products",
+        "default": true,
+        "info": "Uses custom.bundle_with_1 and custom.bundle_with_2 metafields"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_debug",
+        "label": "Show Debug Info",
+        "default": false,
+        "info": "Shows metafield values and troubleshooting info"
+      },
+      {
+        "type": "product",
+        "id": "bundle_product_1",
+        "label": "Bundle Product 1 (Fallback)",
+        "info": "Used when metafield is not set"
+      },
+      {
+        "type": "product",
+        "id": "bundle_product_2",
+        "label": "Bundle Product 2 (Fallback)",
+        "info": "Used when metafield is not set"
+      },
+      {
+        "type": "checkbox",
+        "id": "redirect_to_cart",
+        "label": "Redirect to cart after adding",
+        "default": false,
+        "info": "If unchecked, shows success message and stays on page"
+      },
+      {
+        "type": "header",
+        "content": "Content"
+      },
+      {
+        "type": "text",
+        "id": "bundle_title",
+        "label": "Bundle Title",
+        "default": "Related Products"
+      },
+      {
+        "type": "text",
+        "id": "bundle_subtitle",
+        "label": "Bundle Subtitle",
+        "default": "Complete your purchase with these recommended items"
+      },
+      {
+        "type": "header",
+        "content": "Styling"
+      },
+      {
+        "type": "color",
+        "id": "background_color",
+        "label": "Background Color",
+        "default": "#f8f9fa"
+      },
+      {
+        "type": "range",
+        "id": "border_radius",
+        "min": 0,
+        "max": 20,
+        "step": 2,
+        "unit": "px",
+        "label": "Border Radius",
+        "default": 8
+      },
+      {
+        "type": "range",
+        "id": "padding",
+        "min": 10,
+        "max": 40,
+        "step": 5,
+        "unit": "px",
+        "label": "Padding",
+        "default": 20
+      },
+      {
+        "type": "range",
+        "id": "margin",
+        "min": 10,
+        "max": 60,
+        "step": 5,
+        "unit": "px",
+        "label": "Margin",
+        "default": 30
+      },
+      {
+        "type": "header",
+        "content": "Typography"
+      },
+      {
+        "type": "range",
+        "id": "title_size",
+        "min": 16,
+        "max": 36,
+        "step": 2,
+        "unit": "px",
+        "label": "Title Font Size",
+        "default": 28
+      },
+      {
+        "type": "color",
+        "id": "title_color",
+        "label": "Title Color",
+        "default": "#333333"
+      },
+      {
+        "type": "range",
+        "id": "subtitle_size",
+        "min": 12,
+        "max": 20,
+        "step": 1,
+        "unit": "px",
+        "label": "Subtitle Font Size",
+        "default": 16
+      },
+      {
+        "type": "color",
+        "id": "subtitle_color",
+        "label": "Subtitle Color",
+        "default": "#666666"
+      },
+      {
+        "type": "header",
+        "content": "Product Display"
+      },
+      {
+        "type": "range",
+        "id": "product_image_size",
+        "min": 150,
+        "max": 300,
+        "step": 10,
+        "unit": "px",
+        "label": "Product Image Size",
+        "default": 200
+      },
+      {
+        "type": "color",
+        "id": "price_color",
+        "label": "Price Color",
+        "default": "#007bff"
+      },
+      {
+        "type": "header",
+        "content": "Badges"
+      },
+      {
+        "type": "color",
+        "id": "badge_bg_color",
+        "label": "Badge Background Color",
+        "default": "#28a745"
+      },
+      {
+        "type": "color",
+        "id": "badge_text_color",
+        "label": "Badge Text Color",
+        "default": "#ffffff"
+      },
+      {
+        "type": "header",
+        "content": "Buttons"
+      },
+      {
+        "type": "color",
+        "id": "button_bg_color",
+        "label": "Button Background Color",
+        "default": "#007bff"
+      },
+      {
+        "type": "color",
+        "id": "button_text_color",
+        "label": "Button Text Color",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "button_hover_color",
+        "label": "Button Hover Color",
+        "default": "#0056b3"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Product Bundle Cards"
+      }
+    ]
+   }
+   {% endschema %}
+   
+   
+   
+   

@@ -1,40 +1,406 @@
-<footer>
-  <div class="footer__copyright">
-    &copy;
-    {{ 'now' | date: '%Y' }}
-    {{ shop.name | link_to: routes.root_url }}, {{ powered_by_link }}
-  </div>
+<footer class="footer" id="shopify-section-footer">
+  <div class="footer__wrapper page-width">
+    <div class="footer__content">
+      <!-- Company Info -->
+      <div class="footer__company">
+        {% if section.settings.logo %}
+          <div class="footer__logo">
+            {% render 'image', 
+              image: section.settings.logo, 
+              class: 'footer__logo-image',
+              sizes: '150px'
+            %}
+          </div>
+        {% else %}
+          <h3 class="footer__company-name">{{ shop.name }}</h3>
+        {% endif %}
+        
+        {% if section.settings.description %}
+          <p class="footer__description">{{ section.settings.description }}</p>
+        {% endif %}
+        
+        {% if section.settings.show_social_media %}
+          <div class="footer__social">
+            {% if settings.social_twitter_link != blank %}
+              <a href="{{ settings.social_twitter_link }}" class="footer__social-link" aria-label="Twitter">
+                {% render 'icon-twitter' %}
+              </a>
+            {% endif %}
+            {% if settings.social_facebook_link != blank %}
+              <a href="{{ settings.social_facebook_link }}" class="footer__social-link" aria-label="Facebook">
+                {% render 'icon-facebook' %}
+              </a>
+            {% endif %}
+            {% if settings.social_instagram_link != blank %}
+              <a href="{{ settings.social_instagram_link }}" class="footer__social-link" aria-label="Instagram">
+                {% render 'icon-instagram' %}
+              </a>
+            {% endif %}
+            {% if settings.social_youtube_link != blank %}
+              <a href="{{ settings.social_youtube_link }}" class="footer__social-link" aria-label="YouTube">
+                {% render 'icon-youtube' %}
+              </a>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
 
-  <div class="footer__links">
-    {% for link in section.settings.menu.links %}
-      {{ link.title | link_to: link.url }}
-    {% endfor %}
-  </div>
+      <!-- Quick Links -->
+      {% if section.settings.menu %}
+        <div class="footer__links">
+          <h4 class="footer__links-title">{{ section.settings.menu.title }}</h4>
+          <ul class="footer__links-list">
+            {% for link in section.settings.menu.links %}
+              <li class="footer__links-item">
+                <a href="{{ link.url }}" class="footer__links-link">{{ link.title }}</a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
 
-  <div class="footer__payment">
-    {% if section.settings.show_payment_icons %}
-      {% for type in shop.enabled_payment_types %}
-        {{ type | payment_type_svg_tag }}
-      {% endfor %}
-    {% endif %}
+      <!-- Newsletter -->
+      {% if section.settings.enable_newsletter %}
+        <div class="footer__newsletter">
+          <h4 class="footer__newsletter-title">{{ 'general.newsletter.title' | t }}</h4>
+          <p class="footer__newsletter-description">{{ 'general.newsletter.description' | t }}</p>
+          
+          {% form 'customer', class: 'footer__newsletter-form' %}
+            <div class="footer__newsletter-input-group">
+              <input 
+                type="email" 
+                name="contact[email]" 
+                placeholder="{{ 'general.newsletter.placeholder' | t }}"
+                class="footer__newsletter-input"
+                required
+              >
+              <button type="submit" class="footer__newsletter-button">
+                {{ 'general.newsletter.submit' | t }}
+              </button>
+            </div>
+            
+            {% if form.posted_successfully? %}
+              <p class="footer__newsletter-success">{{ 'general.newsletter.success' | t }}</p>
+            {% endif %}
+            
+            {% if form.errors %}
+              <p class="footer__newsletter-error">{{ form.errors | default_errors }}</p>
+            {% endif %}
+          {% endform %}
+        </div>
+      {% endif %}
+
+      <!-- Contact Info -->
+      {% if section.settings.show_contact_info %}
+        <div class="footer__contact">
+          <h4 class="footer__contact-title">{{ 'general.contact.title' | t }}</h4>
+          <div class="footer__contact-info">
+            {% if shop.address %}
+              <div class="footer__contact-item">
+                <strong>{{ 'general.contact.address' | t }}:</strong>
+                <address>{{ shop.address | format_address }}</address>
+              </div>
+            {% endif %}
+            
+            {% if shop.phone %}
+              <div class="footer__contact-item">
+                <strong>{{ 'general.contact.phone' | t }}:</strong>
+                <a href="tel:{{ shop.phone }}">{{ shop.phone }}</a>
+              </div>
+            {% endif %}
+            
+            {% if shop.email %}
+              <div class="footer__contact-item">
+                <strong>{{ 'general.contact.email' | t }}:</strong>
+                <a href="mailto:{{ shop.email }}">{{ shop.email }}</a>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Footer Bottom -->
+    <div class="footer__bottom">
+      <div class="footer__copyright">
+        <p>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. {{ powered_by_link }}</p>
+      </div>
+      
+      {% if section.settings.show_payment_icons %}
+        <div class="footer__payment">
+          <span class="footer__payment-label">{{ 'general.payment.accepted_payments' | t }}</span>
+          <div class="footer__payment-icons">
+            {% for type in shop.enabled_payment_types %}
+              {{ type | payment_type_svg_tag: class: 'footer__payment-icon' }}
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+    </div>
   </div>
 </footer>
 
 {% stylesheet %}
-  footer {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 2rem;
+.footer {
+  background: var(--color-background-secondary, #f8f9fa);
+  border-top: 1px solid var(--color-border, #e0e0e0);
+  margin-top: 4rem;
+  padding: 3rem 0 1rem;
+}
+
+.footer__wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.footer__content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+/* Company Info */
+.footer__company {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.footer__logo-image {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+}
+
+.footer__company-name {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text-primary, #333);
+}
+
+.footer__description {
+  margin: 0;
+  color: var(--color-text-secondary, #666);
+  line-height: 1.6;
+}
+
+.footer__social {
+  display: flex;
+  gap: 1rem;
+}
+
+.footer__social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: var(--color-background, #ffffff);
+  border: 1px solid var(--color-border, #e0e0e0);
+  border-radius: 0.5rem;
+  color: var(--color-text-primary, #333);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.footer__social-link:hover {
+  background: var(--color-primary, #007bff);
+  color: var(--color-text-inverse, #ffffff);
+  border-color: var(--color-primary, #007bff);
+}
+
+.footer__social-link svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Links */
+.footer__links-title,
+.footer__newsletter-title,
+.footer__contact-title {
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-primary, #333);
+}
+
+.footer__links-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.footer__links-item {
+  margin-bottom: 0.5rem;
+}
+
+.footer__links-link {
+  color: var(--color-text-secondary, #666);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.footer__links-link:hover {
+  color: var(--color-primary, #007bff);
+}
+
+/* Newsletter */
+.footer__newsletter-description {
+  margin: 0 0 1rem 0;
+  color: var(--color-text-secondary, #666);
+  font-size: 0.875rem;
+}
+
+.footer__newsletter-input-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.footer__newsletter-input {
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid var(--color-border, #e0e0e0);
+  border-radius: 0.25rem;
+  background: var(--color-background, #ffffff);
+  font-size: 0.875rem;
+}
+
+.footer__newsletter-input:focus {
+  outline: none;
+  border-color: var(--color-primary, #007bff);
+}
+
+.footer__newsletter-button {
+  padding: 0.75rem 1.5rem;
+  background: var(--color-primary, #007bff);
+  color: var(--color-text-inverse, #ffffff);
+  border: none;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.footer__newsletter-button:hover {
+  background: var(--color-primary-hover, #0056b3);
+}
+
+.footer__newsletter-success {
+  margin: 0.5rem 0 0 0;
+  color: var(--color-success, #28a745);
+  font-size: 0.875rem;
+}
+
+.footer__newsletter-error {
+  margin: 0.5rem 0 0 0;
+  color: var(--color-error, #dc3545);
+  font-size: 0.875rem;
+}
+
+/* Contact Info */
+.footer__contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.footer__contact-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.footer__contact-item strong {
+  color: var(--color-text-primary, #333);
+  font-size: 0.875rem;
+}
+
+.footer__contact-item address,
+.footer__contact-item a {
+  color: var(--color-text-secondary, #666);
+  text-decoration: none;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.footer__contact-item a:hover {
+  color: var(--color-primary, #007bff);
+}
+
+/* Footer Bottom */
+.footer__bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 2rem;
+  border-top: 1px solid var(--color-border, #e0e0e0);
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.footer__copyright p {
+  margin: 0;
+  color: var(--color-text-secondary, #666);
+  font-size: 0.875rem;
+}
+
+.footer__copyright a {
+  color: var(--color-text-secondary, #666);
+  text-decoration: none;
+}
+
+.footer__payment {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.footer__payment-label {
+  color: var(--color-text-secondary, #666);
+  font-size: 0.75rem;
+}
+
+.footer__payment-icons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.footer__payment-icon {
+  height: 24px;
+  width: auto;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 749px) {
+  .footer__content {
+    grid-template-columns: 1fr;
+    gap: 2rem;
   }
-  footer a {
-    text-decoration: none;
-    color: var(--color-foreground);
+  
+  .footer__bottom {
+    flex-direction: column;
+    text-align: center;
   }
-  footer .footer__links,
-  footer .footer__payment {
-    display: flex;
-    gap: 1rem;
+  
+  .footer__payment {
+    align-items: center;
   }
+  
+  .footer__newsletter-input-group {
+    flex-direction: column;
+  }
+}
+
+/* Social Media Icons */
+.footer svg {
+  fill: currentColor;
+}
 {% endstylesheet %}
 
 {% schema %}
@@ -42,9 +408,38 @@
   "name": "t:general.footer",
   "settings": [
     {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Company description",
+      "info": "Brief description of your company"
+    },
+    {
       "type": "link_list",
       "id": "menu",
       "label": "t:labels.menu"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_newsletter",
+      "label": "Enable newsletter signup",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_social_media",
+      "label": "Show social media links",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_contact_info",
+      "label": "Show contact information",
+      "default": true
     },
     {
       "type": "checkbox",
