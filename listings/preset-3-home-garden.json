@@ -1,0 +1,23 @@
+{
+  "name": "Home & Garden",
+  "description": "Perfect for home decor, furniture, garden supplies, and lifestyle brands. Features warm, inviting design with lifestyle imagery.",
+  "industry": "home-garden",
+  "catalog_size": "medium",
+  "demo_store_url": "https://home-garden-demo.myshopify.com",
+  "preview_images": [
+    "home-garden-homepage.jpg",
+    "home-garden-product.jpg",
+    "home-garden-collection.jpg"
+  ],
+  "features": [
+    "Lifestyle imagery",
+    "Room inspiration",
+    "Product categories",
+    "Warm color palette",
+    "Inspirational content"
+  ],
+  "target_audience": "Home decor brands, furniture retailers, garden centers, lifestyle companies",
+  "color_scheme": "Warm earth tones and natural colors",
+  "typography": "Friendly, approachable fonts",
+  "layout": "Inspirational with lifestyle focus"
+}

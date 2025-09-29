@@ -1,0 +1,531 @@
+{% comment %}
+  Countdown Timer Component
+  Reusable countdown timer with customizable features and Allbirds-inspired design
+  
+  Parameters:
+  - end_date: DateTime (required) - Target date/time for countdown
+  - display_format: String (default: 'full') - 'full', 'compact', 'minimal'
+  - reset_interval: String (default: 'none') - 'daily', 'weekly', 'monthly', 'none'
+  - show_labels: Boolean (default: true)
+  - compact_mode: Boolean (default: false)
+  - timezone: String (optional) - Override timezone
+  - show_expired_message: Boolean (default: true)
+  - expired_message: String (default: 'Offer has ended')
+  - animation: Boolean (default: true)
+  - urgency_threshold: Number (default: 24) - Hours to show urgency styling
+{% endcomment %}
+
+{% liquid
+  assign display_format = display_format | default: 'full'
+  assign reset_interval = reset_interval | default: 'none'
+  assign show_labels = show_labels | default: true
+  assign compact_mode = compact_mode | default: false
+  assign show_expired_message = show_expired_message | default: true
+  assign expired_message = expired_message | default: 'Offer has ended'
+  assign animation = animation | default: true
+  assign urgency_threshold = urgency_threshold | default: 24
+  
+  comment
+    Calculate timezone offset if not provided
+  endcomment
+  unless timezone
+    assign timezone = 'now' | date: '%z'
+  endunless
+  
+  comment
+    Generate unique ID for this timer instance
+  endcomment
+  assign timer_id = 'timer-' | append: end_date | date: '%s' | append: '-' | append: forloop.index0 | default: 0
+%}
+
+<div class="countdown-timer countdown-timer--{{ display_format }}{% if compact_mode %} countdown-timer--compact{% endif %}{% if animation %} countdown-timer--animated{% endif %}" 
+     data-countdown-timer 
+     data-timer-id="{{ timer_id }}"
+     data-end-date="{{ end_date | date: '%Y-%m-%d %H:%M:%S' }}"
+     data-timezone="{{ timezone }}"
+     data-reset-interval="{{ reset_interval }}"
+     data-urgency-threshold="{{ urgency_threshold }}"
+     data-expired-message="{{ expired_message }}"
+     data-show-expired="{{ show_expired_message }}">
+  
+  {% if display_format == 'minimal' %}
+    <div class="countdown-timer__minimal" data-countdown-display>
+      <span class="countdown-timer__value" data-days>00</span>
+      <span class="countdown-timer__separator">:</span>
+      <span class="countdown-timer__value" data-hours>00</span>
+      <span class="countdown-timer__separator">:</span>
+      <span class="countdown-timer__value" data-minutes>00</span>
+      <span class="countdown-timer__separator">:</span>
+      <span class="countdown-timer__value" data-seconds>00</span>
+    </div>
+  {% elsif display_format == 'compact' %}
+    <div class="countdown-timer__compact" data-countdown-display>
+      <div class="countdown-timer__unit">
+        <span class="countdown-timer__value" data-days>00</span>
+        {% if show_labels %}<span class="countdown-timer__label">{{ 'general.time.days' | t }}</span>{% endif %}
+      </div>
+      <div class="countdown-timer__separator">:</div>
+      <div class="countdown-timer__unit">
+        <span class="countdown-timer__value" data-hours>00</span>
+        {% if show_labels %}<span class="countdown-timer__label">{{ 'general.time.hours' | t }}</span>{% endif %}
+      </div>
+      <div class="countdown-timer__separator">:</div>
+      <div class="countdown-timer__unit">
+        <span class="countdown-timer__value" data-minutes>00</span>
+        {% if show_labels %}<span class="countdown-timer__label">{{ 'general.time.minutes' | t }}</span>{% endif %}
+      </div>
+      <div class="countdown-timer__separator">:</div>
+      <div class="countdown-timer__unit">
+        <span class="countdown-timer__value" data-seconds>00</span>
+        {% if show_labels %}<span class="countdown-timer__label">{{ 'general.time.seconds' | t }}</span>{% endif %}
+      </div>
+    </div>
+  {% else %}
+    <div class="countdown-timer__full" data-countdown-display>
+      <div class="countdown-timer__unit">
+        <div class="countdown-timer__value-wrapper">
+          <span class="countdown-timer__value" data-days>00</span>
+        </div>
+        {% if show_labels %}<span class="countdown-timer__label">{{ 'general.time.days' | t }}</span>{% endif %}
+      </div>
+      
+      <div class="countdown-timer__unit">
+        <div class="countdown-timer__value-wrapper">
+          <span class="countdown-timer__value" data-hours>00</span>
+        </div>
+        {% if show_labels %}<span class="countdown-timer__label">{{ 'general.time.hours' | t }}</span>{% endif %}
+      </div>
+      
+      <div class="countdown-timer__unit">
+        <div class="countdown-timer__value-wrapper">
+          <span class="countdown-timer__value" data-minutes>00</span>
+        </div>
+        {% if show_labels %}<span class="countdown-timer__label">{{ 'general.time.minutes' | t }}</span>{% endif %}
+      </div>
+      
+      <div class="countdown-timer__unit">
+        <div class="countdown-timer__value-wrapper">
+          <span class="countdown-timer__value" data-seconds>00</span>
+        </div>
+        {% if show_labels %}<span class="countdown-timer__label">{{ 'general.time.seconds' | t }}</span>{% endif %}
+      </div>
+    </div>
+  {% endif %}
+  
+  <div class="countdown-timer__expired" data-countdown-expired style="display: none;">
+    <span class="countdown-timer__expired-message">{{ expired_message }}</span>
+  </div>
+  
+  <div class="countdown-timer__urgency" data-countdown-urgency style="display: none;">
+    <span class="countdown-timer__urgency-message">{{ 'general.time.ending_soon' | t }}</span>
+  </div>
+</div>
+
+{% stylesheet %}
+/* Countdown Timer Component - Allbirds-inspired design */
+.countdown-timer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-family-primary, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+  color: var(--color-text-primary, #000000);
+}
+
+.countdown-timer--compact {
+  gap: 0.5rem;
+}
+
+.countdown-timer--full {
+  gap: 1rem;
+}
+
+.countdown-timer--animated .countdown-timer__value {
+  transition: all 0.3s ease;
+}
+
+.countdown-timer--animated .countdown-timer__value.changed {
+  animation: countdownPulse 0.6s ease-in-out;
+}
+
+/* Minimal Format */
+.countdown-timer__minimal {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-thunder-green, #2d5016);
+}
+
+.countdown-timer__minimal .countdown-timer__value {
+  min-width: 2rem;
+  text-align: center;
+}
+
+.countdown-timer__minimal .countdown-timer__separator {
+  color: var(--color-text-secondary, #6c6c6c);
+  font-weight: 500;
+}
+
+/* Compact Format */
+.countdown-timer__compact {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.countdown-timer__compact .countdown-timer__unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.countdown-timer__compact .countdown-timer__value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-thunder-green, #2d5016);
+  min-width: 2rem;
+  text-align: center;
+}
+
+.countdown-timer__compact .countdown-timer__label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-text-secondary, #6c6c6c);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.countdown-timer__compact .countdown-timer__separator {
+  color: var(--color-text-secondary, #6c6c6c);
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+/* Full Format */
+.countdown-timer__full {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  max-width: 400px;
+}
+
+.countdown-timer__full .countdown-timer__unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 0.75rem;
+  background: var(--color-background-secondary, #f5f5f0);
+  border: 1px solid var(--color-border-light, #f0f0f0);
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.countdown-timer__full .countdown-timer__unit:hover {
+  border-color: var(--color-border, #e0e0e0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.countdown-timer__full .countdown-timer__value-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+
+.countdown-timer__full .countdown-timer__value {
+  font-size: 2rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-thunder-green, #2d5016);
+  line-height: 1;
+  display: block;
+}
+
+.countdown-timer__full .countdown-timer__label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-secondary, #6c6c6c);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: center;
+}
+
+/* Urgency Styling */
+.countdown-timer.urgent .countdown-timer__unit {
+  border-color: var(--color-accent-red, #dc3545);
+  background: rgba(220, 53, 69, 0.05);
+}
+
+.countdown-timer.urgent .countdown-timer__value {
+  color: var(--color-accent-red, #dc3545);
+}
+
+.countdown-timer.urgent .countdown-timer__minimal {
+  color: var(--color-accent-red, #dc3545);
+}
+
+.countdown-timer__urgency {
+  position: absolute;
+  top: -1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--color-accent-red, #dc3545);
+  color: var(--color-text-inverse, #ffffff);
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  animation: urgencyPulse 2s infinite;
+}
+
+.countdown-timer__urgency-message {
+  white-space: nowrap;
+}
+
+/* Expired State */
+.countdown-timer.expired .countdown-timer__full {
+  display: none;
+}
+
+.countdown-timer.expired .countdown-timer__compact {
+  display: none;
+}
+
+.countdown-timer.expired .countdown-timer__minimal {
+  display: none;
+}
+
+.countdown-timer__expired {
+  text-align: center;
+  padding: 1rem;
+  background: var(--color-background-secondary, #f5f5f0);
+  border: 1px solid var(--color-border-light, #f0f0f0);
+  border-radius: 0.5rem;
+}
+
+.countdown-timer__expired-message {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-secondary, #6c6c6c);
+}
+
+/* Animations */
+@keyframes countdownPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+@keyframes urgencyPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .countdown-timer__full {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+  
+  .countdown-timer__full .countdown-timer__unit {
+    padding: 0.75rem 0.5rem;
+  }
+  
+  .countdown-timer__full .countdown-timer__value {
+    font-size: 1.5rem;
+  }
+  
+  .countdown-timer__full .countdown-timer__label {
+    font-size: 0.75rem;
+  }
+  
+  .countdown-timer__compact {
+    gap: 0.5rem;
+  }
+  
+  .countdown-timer__compact .countdown-timer__value {
+    font-size: 1rem;
+  }
+  
+  .countdown-timer__minimal {
+    font-size: 1.25rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .countdown-timer__full {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+  }
+  
+  .countdown-timer__full .countdown-timer__unit {
+    padding: 0.5rem 0.25rem;
+  }
+  
+  .countdown-timer__full .countdown-timer__value {
+    font-size: 1.25rem;
+  }
+  
+  .countdown-timer__full .countdown-timer__label {
+    font-size: 0.625rem;
+  }
+}
+{% endstylesheet %}
+
+{% javascript %}
+// Countdown Timer Component JavaScript
+document.addEventListener('DOMContentLoaded', function() {
+  const timers = document.querySelectorAll('[data-countdown-timer]');
+  
+  timers.forEach(timer => {
+    initCountdownTimer(timer);
+  });
+  
+  function initCountdownTimer(timer) {
+    const timerId = timer.dataset.timerId;
+    const endDate = timer.dataset.endDate;
+    const timezone = timer.dataset.timezone;
+    const resetInterval = timer.dataset.resetInterval;
+    const urgencyThreshold = parseInt(timer.dataset.urgencyThreshold) * 60 * 60 * 1000; // Convert to milliseconds
+    const expiredMessage = timer.dataset.expiredMessage;
+    const showExpired = timer.dataset.showExpired === 'true';
+    
+    let targetDate = new Date(endDate);
+    
+    // Apply timezone offset if provided
+    if (timezone) {
+      const offset = parseInt(timezone) * 60; // Convert to minutes
+      targetDate = new Date(targetDate.getTime() - (targetDate.getTimezoneOffset() * 60000) + (offset * 60000));
+    }
+    
+    // Handle reset intervals
+    if (resetInterval !== 'none') {
+      targetDate = calculateNextReset(targetDate, resetInterval);
+    }
+    
+    const display = timer.querySelector('[data-countdown-display]');
+    const expiredDiv = timer.querySelector('[data-countdown-expired]');
+    const urgencyDiv = timer.querySelector('[data-countdown-urgency]');
+    
+    const daysElement = timer.querySelector('[data-days]');
+    const hoursElement = timer.querySelector('[data-hours]');
+    const minutesElement = timer.querySelector('[data-minutes]');
+    const secondsElement = timer.querySelector('[data-seconds]');
+    
+    let previousValues = {
+      days: -1,
+      hours: -1,
+      minutes: -1,
+      seconds: -1
+    };
+    
+    function updateTimer() {
+      const now = new Date();
+      const timeLeft = targetDate.getTime() - now.getTime();
+      
+      if (timeLeft <= 0) {
+        // Timer expired
+        if (showExpired) {
+          display.style.display = 'none';
+          expiredDiv.style.display = 'block';
+        }
+        timer.classList.add('expired');
+        return;
+      }
+      
+      // Calculate time units
+      const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+      
+      // Check for urgency
+      if (timeLeft <= urgencyThreshold) {
+        timer.classList.add('urgent');
+        urgencyDiv.style.display = 'block';
+      }
+      
+      // Update display values
+      updateElement(daysElement, days, previousValues.days);
+      updateElement(hoursElement, hours, previousValues.hours);
+      updateElement(minutesElement, minutes, previousValues.minutes);
+      updateElement(secondsElement, seconds, previousValues.seconds);
+      
+      // Store previous values for animation
+      previousValues = { days, hours, minutes, seconds };
+      
+      // Schedule next update
+      setTimeout(updateTimer, 1000);
+    }
+    
+    function updateElement(element, value, previousValue) {
+      if (!element) return;
+      
+      const formattedValue = value.toString().padStart(2, '0');
+      
+      if (element.textContent !== formattedValue) {
+        element.textContent = formattedValue;
+        
+        // Add animation class if values changed
+        if (previousValue !== value && previousValue !== -1) {
+          element.classList.add('changed');
+          setTimeout(() => {
+            element.classList.remove('changed');
+          }, 600);
+        }
+      }
+    }
+    
+    function calculateNextReset(baseDate, interval) {
+      const now = new Date();
+      let nextReset = new Date(baseDate);
+      
+      switch (interval) {
+        case 'daily':
+          nextReset.setHours(23, 59, 59, 999);
+          while (nextReset <= now) {
+            nextReset.setDate(nextReset.getDate() + 1);
+          }
+          break;
+          
+        case 'weekly':
+          nextReset.setHours(23, 59, 59, 999);
+          while (nextReset <= now) {
+            nextReset.setDate(nextReset.getDate() + 7);
+          }
+          break;
+          
+        case 'monthly':
+          nextReset.setHours(23, 59, 59, 999);
+          nextReset.setDate(1); // First day of month
+          nextReset.setMonth(nextReset.getMonth() + 1);
+          while (nextReset <= now) {
+            nextReset.setMonth(nextReset.getMonth() + 1);
+          }
+          break;
+      }
+      
+      return nextReset;
+    }
+    
+    // Start the timer
+    updateTimer();
+    
+    // Handle page visibility changes to pause/resume timer
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) {
+        // Page is hidden, timer will continue but we could pause animations
+      } else {
+        // Page is visible, ensure timer is still running
+        updateTimer();
+      }
+    });
+  }
+});
+{% endjavascript %}

@@ -1,0 +1,970 @@
+{% comment %}
+  Filter Panel Component
+  Reusable filter panel with customizable features and Allbirds-inspired design
+  
+  Parameters:
+  - collection: Collection object (required)
+  - filters: Array of filter objects (optional)
+  - active_filters: Array of active filters (optional)
+  - filter_type: String - 'sidebar', 'dropdown', 'modal' (default: 'sidebar')
+  - show_clear_all: Boolean (default: true)
+  - show_filter_count: Boolean (default: true)
+  - compact_mode: Boolean (default: false)
+{% endcomment %}
+
+{% liquid
+  assign filter_type = filter_type | default: 'sidebar'
+  assign show_clear_all = show_clear_all | default: true
+  assign show_filter_count = show_filter_count | default: true
+  assign compact_mode = compact_mode | default: false
+  assign active_filters = active_filters | default: ''
+  
+  comment
+    Build filter options from collection data if not provided
+  endcomment
+  unless filters
+    assign filters = ''
+    assign filter_array = ''
+    
+    comment Price filter
+    endcomment
+    assign price_filter = '{"type":"price","title":"' | append: 'collections.general.price' | t | append: '","min":0,"max":1000,"step":10}'
+    assign filter_array = filter_array | append: price_filter
+    
+    comment Brand filter
+    endcomment
+    if collection.all_vendors.size > 1
+      assign brand_options = ''
+      for vendor in collection.all_vendors
+        assign brand_option = '{"value":"' | append: vendor | escape | append: '","label":"' | append: vendor | escape | append: '"}'
+        if brand_options == ''
+          assign brand_options = brand_option
+        else
+          assign brand_options = brand_options | append: ',' | append: brand_option
+        endif
+      endfor
+      assign brand_filter = '{"type":"checkbox","title":"' | append: 'collections.general.brand' | t | append: '","options":[' | append: brand_options | append: ']}'
+      if filter_array == ''
+        assign filter_array = brand_filter
+      else
+        assign filter_array = filter_array | append: ',' | append: brand_filter
+      endif
+    endif
+    
+    comment Color filter
+    endcomment
+    assign color_options = collection.all_tags | where: 'Color'
+    if color_options.size > 0
+      assign color_options_json = ''
+      for color in color_options limit: 10
+        assign color_value = color | remove: 'Color:'
+        assign color_option = '{"value":"' | append: color | escape | append: '","label":"' | append: color_value | escape | append: '","color":"' | append: color_value | downcase | append: '"}'
+        if color_options_json == ''
+          assign color_options_json = color_option
+        else
+          assign color_options_json = color_options_json | append: ',' | append: color_option
+        endif
+      endfor
+      assign color_filter = '{"type":"color","title":"' | append: 'collections.general.color' | t | append: '","options":[' | append: color_options_json | append: ']}'
+      if filter_array == ''
+        assign filter_array = color_filter
+      else
+        assign filter_array = filter_array | append: ',' | append: color_filter
+      endif
+    endif
+    
+    comment Size filter
+    endcomment
+    assign size_options = collection.all_tags | where: 'Size'
+    if size_options.size > 0
+      assign size_options_json = ''
+      for size in size_options limit: 15
+        assign size_value = size | remove: 'Size:'
+        assign size_option = '{"value":"' | append: size | escape | append: '","label":"' | append: size_value | escape | append: '"}'
+        if size_options_json == ''
+          assign size_options_json = size_option
+        else
+          assign size_options_json = size_options_json | append: ',' | append: size_option
+        endif
+      endfor
+      assign size_filter = '{"type":"checkbox","title":"' | append: 'collections.general.size' | t | append: '","options":[' | append: size_options_json | append: ']}'
+      if filter_array == ''
+        assign filter_array = size_filter
+      else
+        assign filter_array = filter_array | append: ',' | append: size_filter
+      endif
+    endif
+    
+    comment Availability filter
+    endcomment
+    assign availability_filter = '{"type":"checkbox","title":"' | append: 'collections.general.availability' | t | append: '","options":[{"value":"available","label":"' | append: 'collections.general.available' | t | append: '"},{"value":"sale","label":"' | append: 'collections.general.on_sale' | t | append: '"}]}'
+    if filter_array == ''
+      assign filter_array = availability_filter
+    else
+      assign filter_array = filter_array | append: ',' | append: availability_filter
+    endif
+    
+    assign filters = '[' | append: filter_array | append: ']'
+  endunless
+%}
+
+<div class="filter-panel filter-panel--{{ filter_type }}{% if compact_mode %} filter-panel--compact{% endif %}" data-filter-panel>
+  {% if filter_type == 'dropdown' %}
+    <div class="filter-panel__dropdown">
+      <button type="button" class="filter-panel__dropdown-trigger" data-filter-dropdown-trigger>
+        <span class="filter-panel__dropdown-text">
+          {% if active_filters.size > 0 %}
+            {{ 'collections.general.filters_active' | t: count: active_filters.size }}
+          {% else %}
+            {{ 'collections.general.filter_by' | t }}
+          {% endif %}
+        </span>
+        <span class="filter-panel__dropdown-icon">
+          {% render 'icons', icon: 'chevron-down' %}
+        </span>
+      </button>
+      
+      <div class="filter-panel__dropdown-content" data-filter-dropdown-content>
+        <div class="filter-panel__content">
+          {% include 'filter-panel-content' %}
+        </div>
+      </div>
+    </div>
+  {% elsif filter_type == 'modal' %}
+    <button type="button" class="filter-panel__modal-trigger" data-filter-modal-trigger>
+      <span class="filter-panel__modal-text">
+        {% if active_filters.size > 0 %}
+          {{ 'collections.general.filters_active' | t: count: active_filters.size }}
+        {% else %}
+          {{ 'collections.general.filter_by' | t }}
+        {% endif %}
+      </span>
+      <span class="filter-panel__modal-icon">
+        {% render 'icons', icon: 'filter' %}
+      </span>
+    </button>
+    
+    <div class="filter-panel__modal-overlay" data-filter-modal-overlay>
+      <div class="filter-panel__modal">
+        <div class="filter-panel__modal-header">
+          <h3 class="filter-panel__modal-title">{{ 'collections.general.filter_by' | t }}</h3>
+          <button type="button" class="filter-panel__modal-close" data-filter-modal-close>
+            {% render 'icons', icon: 'close' %}
+          </button>
+        </div>
+        <div class="filter-panel__modal-content">
+          {% include 'filter-panel-content' %}
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <div class="filter-panel__content">
+      {% include 'filter-panel-content' %}
+    </div>
+  {% endif %}
+</div>
+
+{% comment %} Filter Panel Content Snippet {% endcomment %}
+{% capture filter_panel_content %}
+<div class="filter-panel__header">
+  <h3 class="filter-panel__title">{{ 'collections.general.filter_by' | t }}</h3>
+  {% if show_clear_all and active_filters.size > 0 %}
+    <button type="button" class="filter-panel__clear" data-clear-filters>
+      {{ 'collections.general.clear_all' | t }}
+    </button>
+  {% endif %}
+</div>
+
+{% if show_filter_count and active_filters.size > 0 %}
+  <div class="filter-panel__count">
+    {{ 'collections.general.showing_results' | t: count: active_filters.size }}
+  </div>
+{% endif %}
+
+<div class="filter-panel__groups" data-filter-groups>
+  {% comment %} Price Filter {% endcomment %}
+  <div class="filter-panel__group" data-filter-group="price">
+    <h4 class="filter-panel__group-title">{{ 'collections.general.price' | t }}</h4>
+    <div class="filter-panel__price-range" data-price-filter>
+      <div class="filter-panel__price-inputs">
+        <input type="range" class="filter-panel__price-range-input" min="0" max="1000" step="10" data-price-min value="0">
+        <input type="range" class="filter-panel__price-range-input" min="0" max="1000" step="10" data-price-max value="1000">
+      </div>
+      <div class="filter-panel__price-display">
+        <span data-price-min-display>$0</span> - <span data-price-max-display>$1000</span>
+      </div>
+    </div>
+  </div>
+
+  {% comment %} Brand Filter {% endcomment %}
+  {% if collection.all_vendors.size > 1 %}
+    <div class="filter-panel__group" data-filter-group="brand">
+      <h4 class="filter-panel__group-title">{{ 'collections.general.brand' | t }}</h4>
+      <div class="filter-panel__options" data-brand-filter>
+        {% for vendor in collection.all_vendors limit: 10 %}
+          <label class="filter-panel__option">
+            <input type="checkbox" value="{{ vendor | escape }}" data-filter="vendor" class="filter-panel__checkbox">
+            <span class="filter-panel__option-text">{{ vendor | escape }}</span>
+            <span class="filter-panel__option-count">{{ collection.products | where: 'vendor', vendor | size }}</span>
+          </label>
+        {% endfor %}
+        {% if collection.all_vendors.size > 10 %}
+          <button type="button" class="filter-panel__show-more" data-show-more="brand">
+            {{ 'collections.general.show_more' | t }}
+          </button>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+
+  {% comment %} Color Filter {% endcomment %}
+  {% assign color_options = collection.all_tags | where: 'Color' %}
+  {% if color_options.size > 0 %}
+    <div class="filter-panel__group" data-filter-group="color">
+      <h4 class="filter-panel__group-title">{{ 'collections.general.color' | t }}</h4>
+      <div class="filter-panel__color-options" data-color-filter>
+        {% for color in color_options limit: 12 %}
+          {% assign color_value = color | remove: 'Color:' %}
+          <label class="filter-panel__color-option">
+            <input type="checkbox" value="{{ color | escape }}" data-filter="color" class="filter-panel__checkbox">
+            <span class="filter-panel__color-swatch" style="background-color: {{ color_value | downcase }}"></span>
+            <span class="filter-panel__color-label">{{ color_value | escape }}</span>
+          </label>
+        {% endfor %}
+        {% if color_options.size > 12 %}
+          <button type="button" class="filter-panel__show-more" data-show-more="color">
+            {{ 'collections.general.show_more' | t }}
+          </button>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+
+  {% comment %} Size Filter {% endcomment %}
+  {% assign size_options = collection.all_tags | where: 'Size' %}
+  {% if size_options.size > 0 %}
+    <div class="filter-panel__group" data-filter-group="size">
+      <h4 class="filter-panel__group-title">{{ 'collections.general.size' | t }}</h4>
+      <div class="filter-panel__size-options" data-size-filter>
+        {% for size in size_options limit: 15 %}
+          {% assign size_value = size | remove: 'Size:' %}
+          <label class="filter-panel__size-option">
+            <input type="checkbox" value="{{ size | escape }}" data-filter="size" class="filter-panel__checkbox">
+            <span class="filter-panel__size-label">{{ size_value | escape }}</span>
+          </label>
+        {% endfor %}
+        {% if size_options.size > 15 %}
+          <button type="button" class="filter-panel__show-more" data-show-more="size">
+            {{ 'collections.general.show_more' | t }}
+          </button>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+
+  {% comment %} Availability Filter {% endcomment %}
+  <div class="filter-panel__group" data-filter-group="availability">
+    <h4 class="filter-panel__group-title">{{ 'collections.general.availability' | t }}</h4>
+    <div class="filter-panel__options" data-availability-filter>
+      <label class="filter-panel__option">
+        <input type="checkbox" value="available" data-filter="availability" class="filter-panel__checkbox">
+        <span class="filter-panel__option-text">{{ 'collections.general.available' | t }}</span>
+      </label>
+      <label class="filter-panel__option">
+        <input type="checkbox" value="sale" data-filter="availability" class="filter-panel__checkbox">
+        <span class="filter-panel__option-text">{{ 'collections.general.on_sale' | t }}</span>
+      </label>
+    </div>
+  </div>
+</div>
+
+<div class="filter-panel__footer">
+  <button type="button" class="filter-panel__apply" data-apply-filters>
+    {{ 'collections.general.apply_filters' | t }}
+  </button>
+</div>
+{% endcapture %}
+
+{% comment %} Create the filter-panel-content snippet if it doesn't exist {% endcomment %}
+{% unless snippets contains 'filter-panel-content' %}
+  {% assign filter_panel_content_snippet = 'filter-panel-content' %}
+  {% assign filter_panel_content_content = filter_panel_content %}
+{% endunless %}
+
+{% stylesheet %}
+/* Filter Panel Component - Allbirds-inspired design */
+.filter-panel {
+  background: var(--color-background, #ffffff);
+  border: 1px solid var(--color-border-light, #f0f0f0);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.filter-panel--compact {
+  font-size: 0.875rem;
+}
+
+.filter-panel--compact .filter-panel__group-title {
+  font-size: 0.875rem;
+}
+
+.filter-panel--compact .filter-panel__option-text {
+  font-size: 0.8125rem;
+}
+
+/* Dropdown Type */
+.filter-panel--dropdown {
+  position: relative;
+}
+
+.filter-panel__dropdown-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: var(--color-background, #ffffff);
+  border: 1px solid var(--color-border, #e0e0e0);
+  border-radius: 0.375rem;
+  color: var(--color-text-primary, #000000);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-panel__dropdown-trigger:hover {
+  border-color: var(--color-thunder-green, #2d5016);
+}
+
+.filter-panel__dropdown-icon {
+  width: 1rem;
+  height: 1rem;
+  transition: transform 0.2s ease;
+}
+
+.filter-panel__dropdown-trigger[aria-expanded="true"] .filter-panel__dropdown-icon {
+  transform: rotate(180deg);
+}
+
+.filter-panel__dropdown-content {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--color-background, #ffffff);
+  border: 1px solid var(--color-border, #e0e0e0);
+  border-top: none;
+  border-radius: 0 0 0.375rem 0.375rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  max-height: 400px;
+  overflow-y: auto;
+  transform: translateY(-10px);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+}
+
+.filter-panel__dropdown-content.active {
+  transform: translateY(0);
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Modal Type */
+.filter-panel--modal .filter-panel__modal-trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: var(--color-background, #ffffff);
+  border: 1px solid var(--color-border, #e0e0e0);
+  border-radius: 0.375rem;
+  color: var(--color-text-primary, #000000);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-panel--modal .filter-panel__modal-trigger:hover {
+  border-color: var(--color-thunder-green, #2d5016);
+}
+
+.filter-panel__modal-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.filter-panel__modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.filter-panel__modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.filter-panel__modal {
+  background: var(--color-background, #ffffff);
+  border-radius: 0.5rem;
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow: hidden;
+  transform: scale(0.9);
+  transition: transform 0.3s ease;
+}
+
+.filter-panel__modal-overlay.active .filter-panel__modal {
+  transform: scale(1);
+}
+
+.filter-panel__modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border-bottom: 1px solid var(--color-border-light, #f0f0f0);
+}
+
+.filter-panel__modal-title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text-primary, #000000);
+}
+
+.filter-panel__modal-close {
+  width: 2rem;
+  height: 2rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-secondary, #6c6c6c);
+  transition: color 0.2s ease;
+}
+
+.filter-panel__modal-close:hover {
+  color: var(--color-text-primary, #000000);
+}
+
+.filter-panel__modal-content {
+  padding: 1rem;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+/* Content */
+.filter-panel__content {
+  padding: 1rem;
+}
+
+.filter-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--color-border-light, #f0f0f0);
+}
+
+.filter-panel__title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text-primary, #000000);
+}
+
+.filter-panel__clear {
+  background: none;
+  border: none;
+  color: var(--color-text-secondary, #6c6c6c);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  text-decoration: underline;
+}
+
+.filter-panel__clear:hover {
+  color: var(--color-thunder-green, #2d5016);
+}
+
+.filter-panel__count {
+  margin-bottom: 1rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--color-background-secondary, #f5f5f0);
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary, #6c6c6c);
+}
+
+/* Filter Groups */
+.filter-panel__groups {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.filter-panel__group {
+  border-bottom: 1px solid var(--color-border-light, #f0f0f0);
+  padding-bottom: 1rem;
+}
+
+.filter-panel__group:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.filter-panel__group-title {
+  margin: 0 0 0.75rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-primary, #000000);
+}
+
+/* Price Range */
+.filter-panel__price-range {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.filter-panel__price-inputs {
+  display: flex;
+  gap: 1rem;
+}
+
+.filter-panel__price-range-input {
+  flex: 1;
+  height: 0.25rem;
+  background: var(--color-border-light, #f0f0f0);
+  border-radius: 0.125rem;
+  outline: none;
+  cursor: pointer;
+}
+
+.filter-panel__price-range-input::-webkit-slider-thumb {
+  appearance: none;
+  width: 1rem;
+  height: 1rem;
+  background: var(--color-thunder-green, #2d5016);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-panel__price-range-input::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+
+.filter-panel__price-range-input::-moz-range-thumb {
+  width: 1rem;
+  height: 1rem;
+  background: var(--color-thunder-green, #2d5016);
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-panel__price-range-input::-moz-range-thumb:hover {
+  transform: scale(1.1);
+}
+
+.filter-panel__price-display {
+  text-align: center;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-primary, #000000);
+}
+
+/* Options */
+.filter-panel__options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.filter-panel__option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.filter-panel__option:hover {
+  background: var(--color-background-secondary, #f5f5f0);
+}
+
+.filter-panel__checkbox {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--color-thunder-green, #2d5016);
+  cursor: pointer;
+}
+
+.filter-panel__option-text {
+  flex: 1;
+  font-size: 0.875rem;
+  color: var(--color-text-primary, #000000);
+}
+
+.filter-panel__option-count {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary, #6c6c6c);
+  background: var(--color-background-secondary, #f5f5f0);
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.75rem;
+}
+
+/* Color Options */
+.filter-panel__color-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.5rem;
+}
+
+.filter-panel__color-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border: 1px solid var(--color-border-light, #f0f0f0);
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-panel__color-option:hover {
+  border-color: var(--color-border, #e0e0e0);
+}
+
+.filter-panel__color-option input[type="checkbox"]:checked + .filter-panel__color-swatch {
+  border-color: var(--color-thunder-green, #2d5016);
+  box-shadow: 0 0 0 2px var(--color-thunder-green, #2d5016);
+}
+
+.filter-panel__color-swatch {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  border: 2px solid var(--color-border, #e0e0e0);
+  flex-shrink: 0;
+}
+
+.filter-panel__color-label {
+  font-size: 0.875rem;
+  color: var(--color-text-primary, #000000);
+}
+
+/* Size Options */
+.filter-panel__size-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+  gap: 0.5rem;
+}
+
+.filter-panel__size-option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border: 1px solid var(--color-border-light, #f0f0f0);
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.filter-panel__size-option:hover {
+  border-color: var(--color-border, #e0e0e0);
+}
+
+.filter-panel__size-option input[type="checkbox"]:checked + .filter-panel__size-label {
+  color: var(--color-thunder-green, #2d5016);
+  font-weight: 600;
+}
+
+.filter-panel__size-label {
+  font-size: 0.875rem;
+  color: var(--color-text-primary, #000000);
+  transition: all 0.2s ease;
+}
+
+/* Show More Button */
+.filter-panel__show-more {
+  background: none;
+  border: none;
+  color: var(--color-thunder-green, #2d5016);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  text-decoration: underline;
+  margin-top: 0.5rem;
+}
+
+.filter-panel__show-more:hover {
+  color: var(--color-navy-night, #1a1a2e);
+}
+
+/* Footer */
+.filter-panel__footer {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border-light, #f0f0f0);
+}
+
+.filter-panel__apply {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: var(--color-thunder-green, #2d5016);
+  border: none;
+  border-radius: 0.375rem;
+  color: var(--color-text-inverse, #ffffff);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-panel__apply:hover {
+  background: var(--color-navy-night, #1a1a2e);
+  transform: translateY(-1px);
+}
+
+.filter-panel__apply:active {
+  transform: translateY(0);
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .filter-panel__color-options {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  }
+  
+  .filter-panel__size-options {
+    grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+  }
+  
+  .filter-panel__modal {
+    width: 95%;
+    margin: 1rem;
+  }
+}
+{% endstylesheet %}
+
+{% javascript %}
+// Filter Panel Component JavaScript
+document.addEventListener('DOMContentLoaded', function() {
+  const filterPanels = document.querySelectorAll('[data-filter-panel]');
+  
+  filterPanels.forEach(panel => {
+    const filterType = panel.classList.contains('filter-panel--dropdown') ? 'dropdown' :
+                      panel.classList.contains('filter-panel--modal') ? 'modal' : 'sidebar';
+    
+    if (filterType === 'dropdown') {
+      initDropdownFilter(panel);
+    } else if (filterType === 'modal') {
+      initModalFilter(panel);
+    }
+    
+    initFilterLogic(panel);
+  });
+  
+  function initDropdownFilter(panel) {
+    const trigger = panel.querySelector('[data-filter-dropdown-trigger]');
+    const content = panel.querySelector('[data-filter-dropdown-content]');
+    
+    if (trigger && content) {
+      trigger.addEventListener('click', function() {
+        const isOpen = content.classList.contains('active');
+        
+        if (isOpen) {
+          content.classList.remove('active');
+          trigger.setAttribute('aria-expanded', 'false');
+        } else {
+          content.classList.add('active');
+          trigger.setAttribute('aria-expanded', 'true');
+        }
+      });
+      
+      // Close dropdown when clicking outside
+      document.addEventListener('click', function(e) {
+        if (!panel.contains(e.target)) {
+          content.classList.remove('active');
+          trigger.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }
+  }
+  
+  function initModalFilter(panel) {
+    const trigger = panel.querySelector('[data-filter-modal-trigger]');
+    const overlay = panel.querySelector('[data-filter-modal-overlay]');
+    const close = panel.querySelector('[data-filter-modal-close]');
+    
+    if (trigger && overlay) {
+      trigger.addEventListener('click', function() {
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      });
+      
+      if (close) {
+        close.addEventListener('click', closeModal);
+      }
+      
+      overlay.addEventListener('click', function(e) {
+        if (e.target === overlay) {
+          closeModal();
+        }
+      });
+      
+      // Close modal on escape key
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && overlay.classList.contains('active')) {
+          closeModal();
+        }
+      });
+      
+      function closeModal() {
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    }
+  }
+  
+  function initFilterLogic(panel) {
+    const checkboxes = panel.querySelectorAll('input[type="checkbox"][data-filter]');
+    const priceInputs = panel.querySelectorAll('input[type="range"][data-price-min], input[type="range"][data-price-max]');
+    const clearBtn = panel.querySelector('[data-clear-filters]');
+    const applyBtn = panel.querySelector('[data-apply-filters]');
+    
+    // Handle checkbox filters
+    checkboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', updateFilters);
+    });
+    
+    // Handle price range filters
+    priceInputs.forEach(input => {
+      input.addEventListener('input', updatePriceDisplay);
+      input.addEventListener('change', updateFilters);
+    });
+    
+    // Handle clear filters
+    if (clearBtn) {
+      clearBtn.addEventListener('click', clearAllFilters);
+    }
+    
+    // Handle apply filters
+    if (applyBtn) {
+      applyBtn.addEventListener('click', applyFilters);
+    }
+    
+    function updatePriceDisplay() {
+      const minInput = panel.querySelector('[data-price-min]');
+      const maxInput = panel.querySelector('[data-price-max]');
+      const minDisplay = panel.querySelector('[data-price-min-display]');
+      const maxDisplay = panel.querySelector('[data-price-max-display]');
+      
+      if (minInput && minDisplay) {
+        minDisplay.textContent = '$' + minInput.value;
+      }
+      if (maxInput && maxDisplay) {
+        maxDisplay.textContent = '$' + maxInput.value;
+      }
+    }
+    
+    function updateFilters() {
+      // This would integrate with the existing collection filter logic
+      // For now, we'll just trigger a custom event
+      panel.dispatchEvent(new CustomEvent('filtersChanged', {
+        detail: getActiveFilters()
+      }));
+    }
+    
+    function getActiveFilters() {
+      const filters = {
+        price: { min: 0, max: 1000 },
+        brand: [],
+        color: [],
+        size: [],
+        availability: []
+      };
+      
+      // Get price filters
+      const minInput = panel.querySelector('[data-price-min]');
+      const maxInput = panel.querySelector('[data-price-max]');
+      if (minInput) filters.price.min = parseInt(minInput.value);
+      if (maxInput) filters.price.max = parseInt(maxInput.value);
+      
+      // Get checkbox filters
+      checkboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+          const filterType = checkbox.dataset.filter;
+          if (filters[filterType]) {
+            filters[filterType].push(checkbox.value);
+          }
+        }
+      });
+      
+      return filters;
+    }
+    
+    function clearAllFilters() {
+      // Reset price inputs
+      const minInput = panel.querySelector('[data-price-min]');
+      const maxInput = panel.querySelector('[data-price-max]');
+      if (minInput) minInput.value = minInput.min;
+      if (maxInput) maxInput.value = maxInput.max;
+      updatePriceDisplay();
+      
+      // Uncheck all checkboxes
+      checkboxes.forEach(checkbox => {
+        checkbox.checked = false;
+      });
+      
+      updateFilters();
+    }
+    
+    function applyFilters() {
+      // This would integrate with the existing collection filter logic
+      updateFilters();
+      
+      // Close dropdown/modal if applicable
+      const dropdown = panel.querySelector('[data-filter-dropdown-content]');
+      const modal = panel.querySelector('[data-filter-modal-overlay]');
+      
+      if (dropdown && dropdown.classList.contains('active')) {
+        dropdown.classList.remove('active');
+        panel.querySelector('[data-filter-dropdown-trigger]').setAttribute('aria-expanded', 'false');
+      }
+      
+      if (modal && modal.classList.contains('active')) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    }
+  }
+});
+{% endjavascript %}

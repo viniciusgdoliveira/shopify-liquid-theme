@@ -1,0 +1,299 @@
+{% doc %}
+  Renders an image block with customizable styling and behavior.
+
+  @example
+  {% content_for 'block', type: 'image', id: 'image' %}
+{% enddoc %}
+
+{%- liquid
+  assign image = block.settings.image
+  assign alt_text = block.settings.alt_text | default: image.alt
+  assign image_fit = block.settings.image_fit | default: 'cover'
+  assign border_radius = block.settings.border_radius | default: 0
+  assign link_url = block.settings.link_url
+  assign open_new_tab = block.settings.open_new_tab
+  assign lazy_loading = block.settings.lazy_loading | default: true
+  
+  assign image_classes = 'image-block__image image-block__image--' | append: image_fit
+  
+  if border_radius > 0
+    assign image_style = 'style="border-radius: ' | append: border_radius | append: 'px;"'
+  else
+    assign image_style = ''
+  endif
+  
+  if link_url != blank
+    assign link_target = ''
+    if open_new_tab
+      assign link_target = 'target="_blank" rel="noopener"'
+    endif
+  endif
+-%}
+
+<div class="image-block" {{ block.shopify_attributes }}>
+  {%- if image != blank -%}
+    {%- if link_url != blank -%}
+      <a href="{{ link_url }}" class="image-block__link" {{ link_target }} aria-label="{{ alt_text | t | escape }}">
+    {%- endif -%}
+    
+    <div class="image-block__container" {{ image_style }}>
+      {%- if lazy_loading -%}
+        <img
+          src="{{ image | image_url: width: 800 }}"
+          srcset="{%- if image.width >= 375 -%}{{ image | image_url: width: 375 }} 375w,{%- endif -%}
+                  {%- if image.width >= 550 -%}{{ image | image_url: width: 550 }} 550w,{%- endif -%}
+                  {%- if image.width >= 750 -%}{{ image | image_url: width: 750 }} 750w,{%- endif -%}
+                  {%- if image.width >= 1100 -%}{{ image | image_url: width: 1100 }} 1100w,{%- endif -%}
+                  {%- if image.width >= 1500 -%}{{ image | image_url: width: 1500 }} 1500w,{%- endif -%}
+                  {%- if image.width >= 1780 -%}{{ image | image_url: width: 1780 }} 1780w,{%- endif -%}
+                  {%- if image.width >= 2000 -%}{{ image | image_url: width: 2000 }} 2000w,{%- endif -%}
+                  {%- if image.width >= 3000 -%}{{ image | image_url: width: 3000 }} 3000w,{%- endif -%}
+                  {%- if image.width >= 3840 -%}{{ image | image_url: width: 3840 }} 3840w,{%- endif -%}
+                  {{ image | image_url }} {{ image.width }}w"
+          sizes="(min-width: {{ settings.page_width }}px) {{ settings.page_width | minus: 100 }}px, (min-width: 750px) calc(100vw - 10rem), 100vw"
+          alt="{{ alt_text | t | escape }}"
+          class="{{ image_classes }}"
+          loading="lazy"
+          width="{{ image.width }}"
+          height="{{ image.height }}"
+          fetchpriority="low"
+        >
+      {%- else -%}
+        <img
+          src="{{ image | image_url: width: 800 }}"
+          srcset="{%- if image.width >= 375 -%}{{ image | image_url: width: 375 }} 375w,{%- endif -%}
+                  {%- if image.width >= 550 -%}{{ image | image_url: width: 550 }} 550w,{%- endif -%}
+                  {%- if image.width >= 750 -%}{{ image | image_url: width: 750 }} 750w,{%- endif -%}
+                  {%- if image.width >= 1100 -%}{{ image | image_url: width: 1100 }} 1100w,{%- endif -%}
+                  {%- if image.width >= 1500 -%}{{ image | image_url: width: 1500 }} 1500w,{%- endif -%}
+                  {%- if image.width >= 1780 -%}{{ image | image_url: width: 1780 }} 1780w,{%- endif -%}
+                  {%- if image.width >= 2000 -%}{{ image | image_url: width: 2000 }} 2000w,{%- endif -%}
+                  {%- if image.width >= 3000 -%}{{ image | image_url: width: 3000 }} 3000w,{%- endif -%}
+                  {%- if image.width >= 3840 -%}{{ image | image_url: width: 3840 }} 3840w,{%- endif -%}
+                  {{ image | image_url }} {{ image.width }}w"
+          sizes="(min-width: {{ settings.page_width }}px) {{ settings.page_width | minus: 100 }}px, (min-width: 750px) calc(100vw - 10rem), 100vw"
+          alt="{{ alt_text | t | escape }}"
+          class="{{ image_classes }}"
+          width="{{ image.width }}"
+          height="{{ image.height }}"
+        >
+      {%- endif -%}
+    </div>
+    
+    {%- if link_url != blank -%}
+      </a>
+    {%- endif -%}
+  {%- else -%}
+    <div class="image-block__placeholder" {{ image_style }}>
+      <div class="image-block__placeholder-content">
+        <svg class="image-block__placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+          <circle cx="8.5" cy="8.5" r="1.5"/>
+          <polyline points="21,15 16,10 5,21"/>
+        </svg>
+        <p class="image-block__placeholder-text">Select an image</p>
+      </div>
+    </div>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  .image-block {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .image-block__link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    transition: var(--transition-fast);
+  }
+
+  .image-block__link:hover {
+    transform: scale(1.02);
+  }
+
+  .image-block__container {
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio by default */
+    overflow: hidden;
+    background-color: var(--color-background-secondary);
+  }
+
+  .image-block__image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: var(--transition-fast);
+  }
+
+  /* Image Fit Options */
+  .image-block__image--cover {
+    object-fit: cover;
+  }
+
+  .image-block__image--contain {
+    object-fit: contain;
+    background-color: var(--color-background-secondary);
+  }
+
+  .image-block__image--fill {
+    object-fit: fill;
+  }
+
+  .image-block__image--scale-down {
+    object-fit: scale-down;
+  }
+
+  /* Placeholder Styles */
+  .image-block__placeholder {
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-bottom: 56.25%;
+    background-color: var(--color-background-secondary);
+    border: var(--border-width-1) dashed var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .image-block__placeholder-content {
+    text-align: center;
+    color: var(--color-text-secondary);
+  }
+
+  .image-block__placeholder-icon {
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: var(--space-2);
+    opacity: 0.5;
+  }
+
+  .image-block__placeholder-text {
+    font-size: var(--font-size-sm);
+    margin: 0;
+    color: var(--color-text-secondary);
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .image-block__container {
+      padding-bottom: 75%; /* 4:3 aspect ratio on mobile */
+    }
+    
+    .image-block__placeholder {
+      padding-bottom: 75%;
+    }
+  }
+
+  /* Accessibility improvements */
+  @media (prefers-reduced-motion: reduce) {
+    .image-block__link:hover {
+      transform: none;
+    }
+    
+    .image-block__image {
+      transition: none;
+    }
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .image-block__placeholder {
+      border-width: var(--border-width-2);
+    }
+  }
+
+  /* Print styles */
+  @media print {
+    .image-block__link {
+      text-decoration: none;
+    }
+  }
+
+  /* Focus styles for links */
+  .image-block__link:focus {
+    outline: var(--border-width-2) solid var(--color-primary);
+    outline-offset: var(--space-1);
+    border-radius: var(--radius-sm);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Image",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:blocks.image.image"
+    },
+    {
+      "type": "text",
+      "id": "alt_text",
+      "label": "t:blocks.image.alt_text",
+      "info": "t:blocks.image.alt_text_info"
+    },
+    {
+      "type": "select",
+      "id": "image_fit",
+      "label": "t:blocks.image.image_fit",
+      "options": [
+        { "value": "cover", "label": "t:blocks.image.image_fit_options.cover" },
+        { "value": "contain", "label": "t:blocks.image.image_fit_options.contain" },
+        { "value": "fill", "label": "t:blocks.image.image_fit_options.fill" },
+        { "value": "scale-down", "label": "t:blocks.image.image_fit_options.scale_down" }
+      ],
+      "default": "cover"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "t:blocks.image.border_radius",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "default": 0,
+      "info": "t:blocks.image.border_radius_info"
+    },
+    {
+      "type": "url",
+      "id": "link_url",
+      "label": "t:blocks.image.link_url",
+      "info": "t:blocks.image.link_url_info"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_new_tab",
+      "label": "t:blocks.image.open_new_tab",
+      "default": false,
+      "info": "t:blocks.image.open_new_tab_info"
+    },
+    {
+      "type": "checkbox",
+      "id": "lazy_loading",
+      "label": "t:blocks.image.lazy_loading",
+      "default": true,
+      "info": "t:blocks.image.lazy_loading_info"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image",
+      "settings": {
+        "image_fit": "cover",
+        "lazy_loading": true
+      }
+    }
+  ]
+}
+{% endschema %}

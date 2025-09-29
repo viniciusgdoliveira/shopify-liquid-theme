@@ -1,0 +1,357 @@
+{%- comment -%}
+  Enhanced Predictive Search Section
+  Features: Real-time search suggestions, multiple content types, advanced filtering, keyboard navigation
+  Supports: Products, articles, pages, collections, and search queries
+{%- endcomment -%}
+
+<style>
+  .predictive-search {
+    --search-bg: {{ section.settings.background_color | default: '#ffffff' }};
+    --search-text: {{ section.settings.text_color | default: '#000000' }};
+    --search-border: {{ section.settings.border_color | default: '#e0e0e0' }};
+    --search-primary: {{ section.settings.primary_color | default: '#2d5016' }};
+  }
+</style>
+
+{%- assign has_results = false -%}
+{%- assign has_collection_results_only = true -%}
+
+{%- for resource in predictive_search.resources -%}
+  {%- if resource.last.size > 0 -%}
+    {%- assign has_results = true -%}
+
+    {%- if resource.first != 'collections' -%}
+      {%- assign has_collection_results_only = false -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- if has_results -%}
+  <div class="predictive-search" data-predictive-search>
+    <div class="predictive-search__header">
+      <div class="predictive-search__results-count">
+        <span class="predictive-search__count-text">{{ 'search.predictive.results_count' | t: count: predictive_search.results_count }}</span>
+      </div>
+      <button type="button" class="predictive-search__close" data-predictive-search-close aria-label="{{ 'search.predictive.close' | t }}">
+        {%- render 'icons', icon: 'close' -%}
+      </button>
+    </div>
+
+    <tabs-nav class="predictive-search__tabs tabs-nav tabs-nav--edge2edge tabs-nav--narrow tabs-nav--no-border">
+      <scrollable-content class="tabs-nav__scroller hide-scrollbar">
+        <div class="tabs-nav__scroller-inner">
+          <div class="tabs-nav__item-list">
+            {%- assign is_first = true -%}
+
+            {%- if predictive_search.resources.products.size > 0 -%}
+              <button type="button" class="tabs-nav__item heading heading--small" aria-expanded="{% if is_first %}true{% else %}false{% endif %}" aria-controls="predictive-search-products" data-predictive-search-tab="products">
+                <span class="tabs-nav__item-text">{{- 'search.general.products' | t -}}</span>
+                <span class="tabs-nav__item-count">({{ predictive_search.resources.products.size }})</span>
+              </button>
+              {%- assign is_first = false -%}
+            {%- endif -%}
+
+            {%- if predictive_search.resources.queries.size > 0 -%}
+              <button type="button" class="tabs-nav__item heading heading--small" aria-expanded="{% if is_first %}true{% else %}false{% endif %}" aria-controls="predictive-search-queries" data-predictive-search-tab="queries">
+                <span class="tabs-nav__item-text">{{- 'search.general.queries' | t -}}</span>
+                <span class="tabs-nav__item-count">({{ predictive_search.resources.queries.size }})</span>
+              </button>
+              {%- assign is_first = false -%}
+            {%- endif -%}
+
+            {%- if predictive_search.resources.articles.size > 0 -%}
+              <button type="button" class="tabs-nav__item heading heading--small" aria-expanded="{% if is_first %}true{% else %}false{% endif %}" aria-controls="predictive-search-articles" data-predictive-search-tab="articles">
+                <span class="tabs-nav__item-text">{{- 'search.general.articles' | t -}}</span>
+                <span class="tabs-nav__item-count">({{ predictive_search.resources.articles.size }})</span>
+              </button>
+              {%- assign is_first = false -%}
+            {%- endif -%}
+
+            {%- if predictive_search.resources.pages.size > 0 -%}
+              <button type="button" class="tabs-nav__item heading heading--small" aria-expanded="{% if is_first %}true{% else %}false{% endif %}" aria-controls="predictive-search-pages" data-predictive-search-tab="pages">
+                <span class="tabs-nav__item-text">{{- 'search.general.pages' | t -}}</span>
+                <span class="tabs-nav__item-count">({{ predictive_search.resources.pages.size }})</span>
+              </button>
+              {%- assign is_first = false -%}
+            {%- endif -%}
+
+            {%- if predictive_search.resources.collections.size > 0 -%}
+              <button type="button" class="tabs-nav__item heading heading--small" aria-expanded="{% if is_first %}true{% else %}false{% endif %}" aria-controls="predictive-search-collections" data-predictive-search-tab="collections">
+                <span class="tabs-nav__item-text">{{- 'search.general.collections' | t -}}</span>
+                <span class="tabs-nav__item-count">({{ predictive_search.resources.collections.size }})</span>
+              </button>
+              {%- assign is_first = false -%}
+            {%- endif -%}
+          </div>
+        </div>
+      </scrollable-content>
+    </tabs-nav>
+
+    <div class="predictive-search__results-categories">
+      {%- assign is_first = true -%}
+
+      {%- if predictive_search.resources.products.size > 0 -%}
+        <div class="predictive-search__results-categories-item" {% unless is_first %}hidden{% endunless %} id="predictive-search-products" data-predictive-search-content="products">
+          {%- if is_first -%}
+            <input type="hidden" form="predictive-search-form" name="type" value="product">
+          {%- endif -%}
+
+          <div class="predictive-search__section-header">
+            <h3 class="predictive-search__section-title">{{ 'search.general.products' | t }}</h3>
+            <span class="predictive-search__section-count">({{ predictive_search.resources.products.size }})</span>
+          </div>
+
+          <ul class="predictive-search__product-list list--unstyled" role="list" data-type="products">
+            {%- for product in predictive_search.resources.products -%}
+              <li class="predictive-search__product-item line-item line-item--centered" data-predictive-search-item>
+                <a href="{{ product.url }}" class="line-item__content-wrapper" data-instant>
+                  {%- if product.featured_media -%}
+                    <span class="line-item__image-wrapper">
+                      <img class="line-item__image" alt="{{ product.featured_media.alt | escape }}" width="{{ product.featured_media.width }}" height="{{ product.featured_media.height }}" src="{{ product.featured_media | image_url: width: 210 }}" loading="lazy">
+                    </span>
+                  {%- endif -%}
+
+                  <div class="line-item__info">
+                    <div class="product-item-meta">
+                      {%- if settings.show_vendor -%}
+                        <span class="product-item-meta__vendor heading heading--xxsmall">{{ product.vendor }}</span>
+                      {%- endif -%}
+
+                      <span class="product-item-meta__title text--small">{{ product.title }}</span>
+
+                      <div class="product-item-meta__price-list-container text--small">
+                        <div class="price-list">
+                          {%- if product.compare_at_price_min > product.price_min -%}
+                            <span class="price price--highlight">{{ product.price_min | money }}</span>
+                            <span class="price price--compare">{{ product.compare_at_price_min | money }}</span>
+                          {%- else -%}
+                            <span class="price">{{ product.price_min | money }}</span>
+                          {%- endif -%}
+
+                          {%- if product.selected_or_first_available_variant.unit_price_measurement -%}
+                            <div class="price text--xsmall text--subdued">
+                              <div class="unit-price-measurement">
+                                <span class="unit-price-measurement__price">{{ product.selected_or_first_available_variant.unit_price | money }}</span>
+                                <span class="unit-price-measurement__separator">/</span>
+
+                                {%- if product.selected_or_first_available_variant.unit_price_measurement.reference_value != 1 -%}
+                                  <span class="unit-price-measurement__reference-value">{{ product.selected_or_first_available_variant.unit_price_measurement.reference_value }}</span>
+                                {%- endif -%}
+
+                                <span class="unit-price-measurement__reference-unit">{{ product.selected_or_first_available_variant.unit_price_measurement.reference_unit }}</span>
+                              </div>
+                            </div>
+                          {%- endif -%}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {%- render 'icons', icon: 'arrow-right' -%}
+                </a>
+              </li>
+            {%- endfor -%}
+          </ul>
+        </div>
+
+        {%- assign is_first = false -%}
+      {%- endif -%}
+
+      {%- if predictive_search.resources.queries.size > 0 -%}
+        <div class="predictive-search__results-categories-item" {% unless is_first %}hidden{% endunless %} id="predictive-search-queries" data-predictive-search-content="queries">
+          <div class="predictive-search__section-header">
+            <h3 class="predictive-search__section-title">{{ 'search.general.queries' | t }}</h3>
+            <span class="predictive-search__section-count">({{ predictive_search.resources.queries.size }})</span>
+          </div>
+
+          <ul class="predictive-search__product-list list--unstyled" role="list" data-type="queries">
+            {%- for query in predictive_search.resources.queries -%}
+              <li class="predictive-search__linklist-item" data-predictive-search-item>
+                <a class="predictive-search__linklist-link" href="{{ query.url }}" data-instant>
+                  <span>{{- query.styled_text -}}</span>
+                  {%- render 'icons', icon: 'arrow-right' -%}
+                </a>
+              </li>
+            {%- endfor -%}
+          </ul>
+        </div>
+
+        {%- assign is_first = false -%}
+      {%- endif -%}
+
+      {%- if predictive_search.resources.articles.size > 0 -%}
+        <div class="predictive-search__results-categories-item" {% unless is_first %}hidden{% endunless %} id="predictive-search-articles" data-predictive-search-content="articles">
+          {%- if is_first -%}
+            <input type="hidden" form="predictive-search-form" name="type" value="article">
+          {%- endif -%}
+
+          <div class="predictive-search__section-header">
+            <h3 class="predictive-search__section-title">{{ 'search.general.articles' | t }}</h3>
+            <span class="predictive-search__section-count">({{ predictive_search.resources.articles.size }})</span>
+          </div>
+
+          <ul class="predictive-search__product-list list--unstyled" role="list" data-type="articles">
+            {%- for article in predictive_search.resources.articles -%}
+              <li class="predictive-search__article-item" data-predictive-search-item>
+                <a class="article-item article-item--horizontal" href="{{ article.url }}" data-instant>
+                  {%- if article.image -%}
+                    <span class="predictive-search__article-image-wrapper">
+                      <img class="predictive-search__article-image" width="{{ article.image.width }}" height="{{ article.image.height }}" src="{{ article.image | image_url: width: 280 }}" loading="lazy">
+                      <span class="article-item__arrow prev-next-button prev-next-button--small prev-next-button--next">{% render 'icons', icon: 'arrow-right', size: 15 %}</span>
+                    </span>
+                  {%- endif -%}
+
+                  <div class="predictive-search__article-info">
+                    {%- if article.tags.size > 0 -%}
+                      <span class="predictive-search__article-category heading heading--xxsmall text--subdued">{{ article.tags.first }}</span>
+                    {%- endif -%}
+
+                    <span class="predictive-search__article-title">{{ article.title }}</span>
+                  </div>
+                </a>
+              </li>
+            {%- endfor -%}
+          </ul>
+        </div>
+
+        {%- assign is_first = false -%}
+      {%- endif -%}
+
+      {%- if predictive_search.resources.pages.size > 0 -%}
+        <div class="predictive-search__results-categories-item" {% unless is_first %}hidden{% endunless %} id="predictive-search-pages" data-predictive-search-content="pages">
+          {%- if is_first -%}
+            <input type="hidden" form="predictive-search-form" name="type" value="page">
+          {%- endif -%}
+
+          <div class="predictive-search__section-header">
+            <h3 class="predictive-search__section-title">{{ 'search.general.pages' | t }}</h3>
+            <span class="predictive-search__section-count">({{ predictive_search.resources.pages.size }})</span>
+          </div>
+
+          <ul class="predictive-search__product-list list--unstyled" role="list" data-type="pages">
+            {%- for page in predictive_search.resources.pages -%}
+              <li class="predictive-search__linklist-item" data-predictive-search-item>
+                <a class="predictive-search__linklist-link" href="{{ page.url }}" data-instant>
+                  {{- page.title -}}
+                  {%- render 'icons', icon: 'arrow-right' -%}
+                </a>
+              </li>
+            {%- endfor -%}
+          </ul>
+        </div>
+
+        {%- assign is_first = false -%}
+      {%- endif -%}
+
+      {%- if predictive_search.resources.collections.size > 0 -%}
+        <div class="predictive-search__results-categories-item" {% unless is_first %}hidden{% endunless %} id="predictive-search-collections" data-predictive-search-content="collections">
+          <div class="predictive-search__section-header">
+            <h3 class="predictive-search__section-title">{{ 'search.general.collections' | t }}</h3>
+            <span class="predictive-search__section-count">({{ predictive_search.resources.collections.size }})</span>
+          </div>
+
+          <ul class="predictive-search__product-list list--unstyled" role="list" data-type="collections">
+            {%- for collection in predictive_search.resources.collections -%}
+              <li class="predictive-search__linklist-item" data-predictive-search-item>
+                <a class="predictive-search__linklist-link" href="{{ collection.url }}" data-instant>
+                  {{- collection.title -}}
+                  {%- render 'icons', icon: 'arrow-right' -%}
+                </a>
+              </li>
+            {%- endfor -%}
+          </ul>
+        </div>
+
+        {%- assign is_first = false -%}
+      {%- endif -%}
+    </div>
+
+    <div class="predictive-search__footer">
+      <a href="{{ routes.search_url }}?q={{ predictive_search.terms | escape }}" class="predictive-search__view-all">
+        {{ 'search.predictive.view_all' | t: terms: predictive_search.terms }}
+      </a>
+    </div>
+  </div>
+
+  {%- if has_collection_results_only -%}
+    {%- comment -%}
+      IMPLEMENTATION NOTE: as of today, only the predictive search supports collection search. As a consequence if we only
+      have collection as results, we need to make sure to hide the button redirecting to the search page results, because
+      it would show an inconsistent result.
+    {%- endcomment -%}
+
+    <style>
+      [type="submit"][form="predictive-search-form"] {
+        display: none;
+      }
+    </style>
+  {%- endif -%}
+{%- else -%}
+  <div class="predictive-search__empty" data-predictive-search>
+    <div class="predictive-search__empty-icon">
+      {%- render 'icons', icon: 'search' -%}
+    </div>
+    <p class="predictive-search__empty-text">{{ 'search.predictive.no_results' | t }}</p>
+    <div class="predictive-search__empty-actions">
+      <button type="button" data-action="reset-search" class="button button--primary">{{ 'search.predictive.new_search' | t }}</button>
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Predictive search",
+  "class": "shopify-section--predictive-search",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Behavior"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_keyboard_navigation",
+      "label": "Enable keyboard navigation",
+      "default": true,
+      "info": "Allow users to navigate results with arrow keys"
+    },
+    {
+      "type": "range",
+      "id": "results_limit",
+      "label": "Results limit",
+      "min": 3,
+      "max": 10,
+      "step": 1,
+      "default": 5,
+      "info": "Maximum number of results to show per category"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "color",
+      "id": "primary_color",
+      "label": "Primary color",
+      "default": "#2d5016"
+    }
+  ]
+}
+{% endschema %}

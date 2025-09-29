@@ -4,32 +4,79 @@
     {% # Inlined CSS Variables %}
     {% render 'css-variables' %}
 
-    {% # Load and preload the critical CSS %}
+    {% # Load critical CSS with preload for maximum performance %}
     {{ 'critical.css' | asset_url | stylesheet_tag: preload: true }}
     
-    {% # Load V design system first %}
+    {% # Load essential CSS files immediately (critical for above-the-fold) %}
     {{ 'v-design-system.css' | asset_url | stylesheet_tag }}
-    
-    {% # Load base CSS with design tokens %}
     {{ 'base.css' | asset_url | stylesheet_tag }}
+    {{ 'header.css' | asset_url | stylesheet_tag }}
+    {{ 'notifications.css' | asset_url | stylesheet_tag }}
+
+    {% # CSS Loading Optimization - handles async loading of non-critical CSS %}
+    {% render 'css-loading-optimization' %}
     
-    {% # Load component styles %}
-    {{ 'components.css' | asset_url | stylesheet_tag }}
+    {% # CSS Optimization - minification, compression, and performance monitoring %}
+    {% render 'css-optimization' %}
     
-    {% # Load utility classes %}
-    {{ 'utilities.css' | asset_url | stylesheet_tag }}
+    {% # CSS Performance Monitoring - real-time performance tracking %}
+    {% render 'css-performance-monitor' %}
 
     {% # Social, title, etc. %}
     {% render 'meta-tags' %}
 
+    {% # Performance monitoring and optimization %}
+    {% render 'performance-monitor' %}
+
+    {% # Schema validation and settings validation %}
+    {% render 'schema-validation' %}
+    {% render 'settings-validation' %}
+
     {{ content_for_header }}
   </head>
 
-  <body>
-    {% sections 'header-group' %}
+  <body class="template-{{ template.name | handle }}">
+    <!-- Skip Links for Accessibility -->
+    <a href="#main-content" class="skip-link">{{ 'general.accessibility.skip_to_content' | t }}</a>
+    <a href="#main-navigation" class="skip-link">{{ 'general.accessibility.skip_to_navigation' | t }}</a>
+    
+    <!-- Screen Reader Only Announcements -->
+    <div id="announcements" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+    
+    <!-- Main Header -->
+    <header role="banner" aria-label="{{ 'general.accessibility.site_header' | t }}">
+      {% sections 'header-group' %}
+    </header>
 
-    {{ content_for_layout }}
+    <!-- Main Content -->
+    <main id="main-content" role="main" aria-label="{{ 'general.accessibility.main_content' | t }}">
+      {{ content_for_layout }}
+    </main>
 
-    {% sections 'footer-group' %}
+    <!-- Footer -->
+    <footer role="contentinfo" aria-label="{{ 'general.accessibility.site_footer' | t }}">
+      {% sections 'footer-group' %}
+    </footer>
+
+    <!-- Cart Drawer -->
+    {% section 'cart-drawer' %}
+    
+    <!-- Accessibility Enhancement Script -->
+    <script src="{{ 'accessibility.js' | asset_url }}" defer></script>
+    
+         <!-- Cart utilities - must load first -->
+         <script src="{{ 'cart-utils.js' | asset_url }}" defer></script>
+         <script src="{{ 'cart-drawer.js' | asset_url }}" defer></script>
+         <script src="{{ 'search-utils.js' | asset_url }}" defer></script>
+         <script src="{{ 'product-utils.js' | asset_url }}" defer></script>
+         <script src="{{ 'collection-utils.js' | asset_url }}" defer></script>
+         <script src="{{ 'blog-utils.js' | asset_url }}" defer></script>
+         <script src="{{ 'contact-utils.js' | asset_url }}" defer></script>
+
+         <!-- Section-specific JavaScript files -->
+         <script src="{{ 'header.js' | asset_url }}" defer></script>
+         <script src="{{ 'product.js' | asset_url }}" defer></script>
+         <script src="{{ 'cart.js' | asset_url }}" defer></script>
+         <script src="{{ 'search.js' | asset_url }}" defer></script>
   </body>
 </html>

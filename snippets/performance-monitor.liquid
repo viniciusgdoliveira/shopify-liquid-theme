@@ -1,0 +1,297 @@
+{% comment %}
+  Performance Monitoring Snippet
+  Tracks Core Web Vitals and provides performance insights
+{% endcomment %}
+
+<script>
+(function() {
+  'use strict';
+  
+  // Core Web Vitals tracking
+  function trackWebVitals() {
+    // Track Largest Contentful Paint (LCP)
+    if ('PerformanceObserver' in window) {
+      const lcpObserver = new PerformanceObserver((entryList) => {
+        const entries = entryList.getEntries();
+        const lastEntry = entries[entries.length - 1];
+        
+        // Send LCP data to analytics
+        if (window.gtag) {
+          window.gtag('event', 'web_vitals', {
+            name: 'LCP',
+            value: Math.round(lastEntry.startTime),
+            event_category: 'Web Vitals',
+            event_label: 'Largest Contentful Paint'
+          });
+        }
+        
+        // Log for debugging
+        console.log('LCP:', lastEntry.startTime);
+      });
+      
+      try {
+        lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
+      } catch (e) {
+        console.warn('LCP tracking not supported:', e);
+      }
+    }
+
+    // Track First Input Delay (FID)
+    if ('PerformanceObserver' in window) {
+      const fidObserver = new PerformanceObserver((entryList) => {
+        const entries = entryList.getEntries();
+        entries.forEach((entry) => {
+          // Send FID data to analytics
+          if (window.gtag) {
+            window.gtag('event', 'web_vitals', {
+              name: 'FID',
+              value: Math.round(entry.processingStart - entry.startTime),
+              event_category: 'Web Vitals',
+              event_label: 'First Input Delay'
+            });
+          }
+          
+          // Log for debugging
+          console.log('FID:', entry.processingStart - entry.startTime);
+        });
+      });
+      
+      try {
+        fidObserver.observe({ entryTypes: ['first-input'] });
+      } catch (e) {
+        console.warn('FID tracking not supported:', e);
+      }
+    }
+
+    // Track Cumulative Layout Shift (CLS)
+    if ('PerformanceObserver' in window) {
+      let clsValue = 0;
+      const clsObserver = new PerformanceObserver((entryList) => {
+        const entries = entryList.getEntries();
+        entries.forEach((entry) => {
+          if (!entry.hadRecentInput) {
+            clsValue += entry.value;
+          }
+        });
+        
+        // Send CLS data to analytics
+        if (window.gtag) {
+          window.gtag('event', 'web_vitals', {
+            name: 'CLS',
+            value: Math.round(clsValue * 1000) / 1000,
+            event_category: 'Web Vitals',
+            event_label: 'Cumulative Layout Shift'
+          });
+        }
+        
+        // Log for debugging
+        console.log('CLS:', clsValue);
+      });
+      
+      try {
+        clsObserver.observe({ entryTypes: ['layout-shift'] });
+      } catch (e) {
+        console.warn('CLS tracking not supported:', e);
+      }
+    }
+  }
+
+  // Resource loading optimization
+  function optimizeResourceLoading() {
+    // Preload critical resources
+    const criticalResources = [
+      '{{ "critical.css" | asset_url }}',
+      '{{ "v-design-system.css" | asset_url }}',
+      '{{ "base.css" | asset_url }}'
+    ];
+
+    criticalResources.forEach(resource => {
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.as = 'style';
+      link.href = resource;
+      link.onload = function() {
+        this.rel = 'stylesheet';
+      };
+      document.head.appendChild(link);
+    });
+
+    // Lazy load non-critical CSS
+    const nonCriticalCSS = [
+      '{{ "components.css" | asset_url }}',
+      '{{ "utilities.css" | asset_url }}'
+    ];
+
+    nonCriticalCSS.forEach(resource => {
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.as = 'style';
+      link.href = resource;
+      link.onload = function() {
+        this.rel = 'stylesheet';
+      };
+      
+      // Load after page load
+      if (document.readyState === 'complete') {
+        document.head.appendChild(link);
+      } else {
+        window.addEventListener('load', () => {
+          document.head.appendChild(link);
+        });
+      }
+    });
+  }
+
+  // Image optimization
+  function optimizeImages() {
+    // Add intersection observer for lazy loading
+    if ('IntersectionObserver' in window) {
+      const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const img = entry.target;
+            if (img.dataset.src) {
+              img.src = img.dataset.src;
+              img.classList.add('loaded');
+              observer.unobserve(img);
+            }
+          }
+        });
+      }, {
+        rootMargin: '50px 0px',
+        threshold: 0.01
+      });
+
+      // Observe all lazy images
+      document.querySelectorAll('img[data-src]').forEach(img => {
+        imageObserver.observe(img);
+      });
+    }
+
+    // Add responsive image support
+    document.querySelectorAll('img[data-srcset]').forEach(img => {
+      if (img.dataset.srcset) {
+        img.srcset = img.dataset.srcset;
+      }
+    });
+  }
+
+  // Font optimization
+  function optimizeFonts() {
+    // Preload critical fonts
+    const criticalFonts = [
+      '{{ settings.type_primary_font | font_url }}',
+      '{{ settings.type_secondary_font | font_url }}'
+    ];
+
+    criticalFonts.forEach(fontUrl => {
+      if (fontUrl) {
+        const link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'font';
+        link.type = 'font/woff2';
+        link.href = fontUrl;
+        link.crossOrigin = 'anonymous';
+        document.head.appendChild(link);
+      }
+    });
+
+    // Add font display swap
+    const style = document.createElement('style');
+    style.textContent = `
+      @font-face {
+        font-family: 'Primary Font';
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'Secondary Font';
+        font-display: swap;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  // JavaScript optimization
+  function optimizeJavaScript() {
+    // Defer non-critical JavaScript
+    const nonCriticalJS = [
+      '{{ "accessibility.js" | asset_url }}',
+      '{{ "utilities.js" | asset_url }}'
+    ];
+
+    nonCriticalJS.forEach(jsUrl => {
+      const script = document.createElement('script');
+      script.src = jsUrl;
+      script.defer = true;
+      script.async = true;
+      
+      // Load after page load
+      if (document.readyState === 'complete') {
+        document.head.appendChild(script);
+      } else {
+        window.addEventListener('load', () => {
+          document.head.appendChild(script);
+        });
+      }
+    });
+  }
+
+  // Performance monitoring
+  function monitorPerformance() {
+    // Track page load time
+    window.addEventListener('load', () => {
+      const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+      
+      if (window.gtag) {
+        window.gtag('event', 'page_load_time', {
+          value: loadTime,
+          event_category: 'Performance',
+          event_label: 'Page Load Time'
+        });
+      }
+      
+      console.log('Page load time:', loadTime + 'ms');
+    });
+
+    // Track resource loading
+    if ('PerformanceObserver' in window) {
+      const resourceObserver = new PerformanceObserver((entryList) => {
+        const entries = entryList.getEntries();
+        entries.forEach(entry => {
+          if (entry.duration > 1000) { // Log slow resources
+            console.warn('Slow resource:', entry.name, entry.duration + 'ms');
+          }
+        });
+      });
+      
+      try {
+        resourceObserver.observe({ entryTypes: ['resource'] });
+      } catch (e) {
+        console.warn('Resource tracking not supported:', e);
+      }
+    }
+  }
+
+  // Initialize performance optimizations
+  function init() {
+    // Only run on production or when explicitly enabled
+    if (window.location.hostname === 'localhost' || window.location.hostname.includes('myshopify.com')) {
+      return;
+    }
+
+    trackWebVitals();
+    optimizeResourceLoading();
+    optimizeImages();
+    optimizeFonts();
+    optimizeJavaScript();
+    monitorPerformance();
+  }
+
+  // Run when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>

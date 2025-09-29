@@ -94,6 +94,18 @@
   --line-height-normal: {{ settings.line_height_normal | default: 15 | divided_by: 10.0 }};
   --line-height-relaxed: {{ settings.line_height_relaxed | default: 18 | divided_by: 10.0 }};
   
+  /* Z-Index System - Layered Architecture */
+  --z-base: 1;
+  --z-dropdown: 50;
+  --z-sticky: 100;
+  --z-fixed: 200;
+  --z-modal-backdrop: 1000;
+  --z-modal: 1001;
+  --z-popover: 1002;
+  --z-tooltip: 1003;
+  --z-toast: 1004;
+  --z-overlay: 10000;
+
   /* Spacing Scale - Modern Modular Scale */
   --spacing-xs: {{ settings.spacing_xs | default: '0.25rem' }};
   --spacing-sm: {{ settings.spacing_sm | default: '0.5rem' }};
@@ -157,6 +169,7 @@
   --z-modal: {{ settings.z_modal | default: '1050' }};
   --z-popover: {{ settings.z_popover | default: '1060' }};
   --z-tooltip: {{ settings.z_tooltip | default: '1070' }};
+  --z-cart-drawer: {{ settings.z_cart_drawer | default: '9999' }};
   
   /* Breakpoints */
   --breakpoint-sm: {{ settings.breakpoint_sm | default: '640px' }};

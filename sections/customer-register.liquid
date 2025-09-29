@@ -1,0 +1,488 @@
+{% liquid
+  assign section_id = section.settings.custom_id | default: section.id
+  assign section_class = 'customer-register'
+%}
+
+<div id="{{ section_id }}" class="{{ section_class }} page-width">
+  <div class="customer-register__wrapper">
+    <div class="customer-register__container">
+      <!-- Register Form -->
+      <div class="customer-register__form-container">
+        <div class="customer-register__header">
+          <h1 class="customer-register__title">{{ 'customer.register.title' | t }}</h1>
+          <p class="customer-register__subtitle">{{ 'customer.register.subtitle' | t }}</p>
+        </div>
+
+        {% form 'customer', class: 'customer-register__form', novalidate: 'novalidate' %}
+          {% if form.errors %}
+            <div class="customer-register__errors" role="alert">
+              <h2 class="customer-register__errors-title">{{ 'templates.contact.form.error_heading' | t }}</h2>
+              <ul class="customer-register__errors-list">
+                {% for field in form.errors %}
+                  <li class="customer-register__errors-item">
+                    {% if field == 'form' %}
+                      {{ form.errors.messages[field] }}
+                    {% else %}
+                      <a href="#{{ field }}">{{ form.errors.translated_fields[field] | capitalize }} {{ form.errors.messages[field] }}</a>
+                    {% endif %}
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+
+          {% if form.posted_successfully? %}
+            <div class="customer-register__success" role="status">
+              <h2 class="customer-register__success-title">{{ 'customer.register.success_title' | t }}</h2>
+              <p class="customer-register__success-message">{{ 'customer.register.success_message' | t }}</p>
+            </div>
+          {% endif %}
+
+          <div class="customer-register__fields">
+            <div class="customer-register__field">
+              <label for="RegisterFirstName" class="customer-register__label">
+                {{ 'customer.register.first_name' | t }}
+              </label>
+              <input
+                type="text"
+                name="customer[first_name]"
+                id="RegisterFirstName"
+                autocomplete="given-name"
+                class="customer-register__input"
+                required
+                aria-describedby="{% if form.errors contains 'first_name' %}RegisterFirstName-error{% endif %}"
+              >
+              {% if form.errors contains 'first_name' %}
+                <span id="RegisterFirstName-error" class="customer-register__field-error">
+                  {{ form.errors.messages.first_name }}
+                </span>
+              {% endif %}
+            </div>
+
+            <div class="customer-register__field">
+              <label for="RegisterLastName" class="customer-register__label">
+                {{ 'customer.register.last_name' | t }}
+              </label>
+              <input
+                type="text"
+                name="customer[last_name]"
+                id="RegisterLastName"
+                autocomplete="family-name"
+                class="customer-register__input"
+                required
+                aria-describedby="{% if form.errors contains 'last_name' %}RegisterLastName-error{% endif %}"
+              >
+              {% if form.errors contains 'last_name' %}
+                <span id="RegisterLastName-error" class="customer-register__field-error">
+                  {{ form.errors.messages.last_name }}
+                </span>
+              {% endif %}
+            </div>
+
+            <div class="customer-register__field">
+              <label for="RegisterEmail" class="customer-register__label">
+                {{ 'customer.register.email' | t }}
+              </label>
+              <input
+                type="email"
+                name="customer[email]"
+                id="RegisterEmail"
+                autocomplete="email"
+                autocorrect="off"
+                autocapitalize="off"
+                class="customer-register__input"
+                required
+                aria-describedby="{% if form.errors contains 'email' %}RegisterEmail-error{% endif %}"
+              >
+              {% if form.errors contains 'email' %}
+                <span id="RegisterEmail-error" class="customer-register__field-error">
+                  {{ form.errors.messages.email }}
+                </span>
+              {% endif %}
+            </div>
+
+            {% if section.settings.require_phone %}
+              <div class="customer-register__field">
+                <label for="RegisterPhone" class="customer-register__label">
+                  {{ 'customer.register.phone' | t }}
+                </label>
+                <input
+                  type="tel"
+                  name="customer[phone]"
+                  id="RegisterPhone"
+                  autocomplete="tel"
+                  class="customer-register__input"
+                  required
+                  aria-describedby="{% if form.errors contains 'phone' %}RegisterPhone-error{% endif %}"
+                >
+                {% if form.errors contains 'phone' %}
+                  <span id="RegisterPhone-error" class="customer-register__field-error">
+                    {{ form.errors.messages.phone }}
+                  </span>
+                {% endif %}
+              </div>
+            {% endif %}
+
+            <div class="customer-register__field">
+              <label for="RegisterPassword" class="customer-register__label">
+                {{ 'customer.register.password' | t }}
+              </label>
+              <input
+                type="password"
+                name="customer[password]"
+                id="RegisterPassword"
+                class="customer-register__input"
+                required
+                aria-describedby="{% if form.errors contains 'password' %}RegisterPassword-error{% endif %}"
+              >
+              {% if form.errors contains 'password' %}
+                <span id="RegisterPassword-error" class="customer-register__field-error">
+                  {{ form.errors.messages.password }}
+                </span>
+              {% endif %}
+            </div>
+
+            {% if section.settings.enable_newsletter_signup %}
+              <div class="customer-register__field customer-register__field--checkbox">
+                <label class="customer-register__checkbox-label">
+                  <input
+                    type="checkbox"
+                    name="customer[accepts_marketing]"
+                    class="customer-register__checkbox"
+                  >
+                  <span class="customer-register__checkbox-text">
+                    {{ 'customer.register.newsletter_signup' | t }}
+                  </span>
+                </label>
+              </div>
+            {% endif %}
+
+            {% if section.settings.show_terms_conditions %}
+              <div class="customer-register__field customer-register__field--checkbox">
+                <label class="customer-register__checkbox-label">
+                  <input
+                    type="checkbox"
+                    name="customer[accepts_terms]"
+                    class="customer-register__checkbox"
+                    required
+                  >
+                  <span class="customer-register__checkbox-text">
+                    {{ 'customer.register.terms_conditions' | t }}
+                  </span>
+                </label>
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="customer-register__actions">
+            <button type="submit" class="btn btn--primary customer-register__submit">
+              {{ 'customer.register.create_account' | t }}
+            </button>
+          </div>
+        {% endform %}
+
+        <div class="customer-register__login">
+          <p class="customer-register__login-text">
+            {{ 'customer.register.existing_customer' | t }}
+          </p>
+          <a href="{{ routes.account_login_url }}" class="btn btn--secondary">
+            {{ 'customer.register.sign_in' | t }}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+.customer-register {
+  padding: 4rem 0;
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+}
+
+.customer-register__wrapper {
+  width: 100%;
+}
+
+.customer-register__container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.customer-register__header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.customer-register__title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--color-text-primary);
+}
+
+.customer-register__subtitle {
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.customer-register__form-container {
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.customer-register__form {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.customer-register__fields {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.customer-register__field {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.customer-register__field--checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.customer-register__label {
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.customer-register__input {
+  padding: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.customer-register__input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.1);
+}
+
+.customer-register__input:invalid {
+  border-color: var(--color-error);
+}
+
+.customer-register__field-error {
+  color: var(--color-error);
+  font-size: 0.875rem;
+}
+
+.customer-register__checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.customer-register__checkbox {
+  margin-top: 0.125rem;
+  flex-shrink: 0;
+}
+
+.customer-register__checkbox-text {
+  color: var(--color-text-secondary);
+}
+
+.customer-register__actions {
+  display: grid;
+  gap: 1rem;
+}
+
+.customer-register__submit {
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.customer-register__login {
+  text-align: center;
+  padding: 1.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  background-color: var(--color-background-secondary);
+}
+
+.customer-register__login-text {
+  margin-bottom: 1rem;
+  color: var(--color-text-secondary);
+}
+
+.customer-register__success {
+  padding: 1.5rem;
+  background-color: var(--color-success);
+  color: white;
+  border-radius: var(--border-radius-md);
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.customer-register__success-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.customer-register__success-message {
+  margin: 0;
+}
+
+.customer-register__errors {
+  padding: 1rem;
+  background-color: var(--color-error);
+  color: white;
+  border-radius: var(--border-radius-md);
+  margin-bottom: 1.5rem;
+}
+
+.customer-register__errors-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.customer-register__errors-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.customer-register__errors-item {
+  margin-bottom: 0.25rem;
+}
+
+.customer-register__errors-item a {
+  color: white;
+  text-decoration: underline;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 749px) {
+  .customer-register {
+    padding: 2rem 0;
+  }
+  
+  .customer-register__form-container {
+    padding: 1.5rem;
+  }
+  
+  .customer-register__login {
+    padding: 1rem;
+  }
+}
+{% endstylesheet %}
+
+{% javascript %}
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.querySelector('.customer-register__form');
+  
+  if (form) {
+    form.addEventListener('submit', function(e) {
+      const inputs = form.querySelectorAll('input[required]');
+      let isValid = true;
+
+      inputs.forEach(input => {
+        if (!input.value.trim()) {
+          isValid = false;
+          input.classList.add('error');
+        } else {
+          input.classList.remove('error');
+        }
+      });
+
+      // Check password strength
+      const passwordInput = document.getElementById('RegisterPassword');
+      if (passwordInput && passwordInput.value.length < 8) {
+        isValid = false;
+        passwordInput.classList.add('error');
+      }
+
+      if (!isValid) {
+        e.preventDefault();
+      }
+    });
+
+    // Real-time validation
+    const inputs = form.querySelectorAll('input[required]');
+    inputs.forEach(input => {
+      input.addEventListener('blur', function() {
+        if (!this.value.trim()) {
+          this.classList.add('error');
+        } else {
+          this.classList.remove('error');
+        }
+      });
+    });
+  }
+});
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Customer Register",
+  "tag": "section",
+  "class": "customer-register",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Registration Options"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_newsletter_signup",
+      "label": "Enable Newsletter Signup",
+      "default": true,
+      "info": "Allow customers to subscribe to newsletter during registration"
+    },
+    {
+      "type": "checkbox",
+      "id": "require_phone",
+      "label": "Require Phone Number",
+      "default": false,
+      "info": "Make phone number a required field"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_terms_conditions",
+      "label": "Show Terms & Conditions",
+      "default": true,
+      "info": "Display terms and conditions checkbox"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_social_login",
+      "label": "Enable Social Login",
+      "default": false,
+      "info": "Allow customers to register with social media accounts"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Customer Register"
+    }
+  ]
+}
+{% endschema %}

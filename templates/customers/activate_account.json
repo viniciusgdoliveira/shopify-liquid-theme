@@ -1,0 +1,15 @@
+{
+  "sections": {
+    "main": {
+      "type": "customer-activate-account",
+      "settings": {
+        "show_welcome_message": true,
+        "enable_auto_login": true,
+        "show_account_benefits": true
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

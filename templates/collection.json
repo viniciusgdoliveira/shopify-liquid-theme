@@ -1,16 +1,103 @@
 {
   "sections": {
+    "collection_breadcrumbs": {
+      "type": "multirow",
+      "settings": {
+        "heading": "Collection Breadcrumbs",
+        "layout": "breadcrumbs",
+        "show_breadcrumbs": true
+      }
+    },
+    "collection_header": {
+      "type": "multirow",
+      "settings": {
+        "heading": "Collection Header",
+        "layout": "collection_header",
+        "show_collection_title": true,
+        "show_collection_description": true,
+        "show_collection_image": true,
+        "enable_parallax": false
+      }
+    },
+    "collection_filters": {
+      "type": "multirow",
+      "settings": {
+        "heading": "Collection Filters",
+        "layout": "filters",
+        "show_filtering": true,
+        "show_sorting": true,
+        "show_product_count": true,
+        "enable_ajax_filtering": true,
+        "show_price_filter": true,
+        "show_color_filter": true,
+        "show_size_filter": true,
+        "show_brand_filter": true,
+        "show_availability_filter": true,
+        "enable_filter_sidebar": true,
+        "enable_mobile_filters": true
+      }
+    },
     "v_collection_main": {
       "type": "v-collection",
       "settings": {
-        "products_per_page": 20,
+        "products_per_page": 24,
         "show_filtering": true,
         "show_sorting": true,
-        "show_product_count": true
+        "show_product_count": true,
+        "enable_grid_view": true,
+        "enable_list_view": true,
+        "default_view": "grid",
+        "show_product_badges": true,
+        "show_quick_add": true,
+        "show_wishlist": true,
+        "enable_infinite_scroll": true,
+        "enable_pagination": true,
+        "show_load_more": true,
+        "enable_lazy_loading": true,
+        "show_product_ratings": true,
+        "show_vendor": false,
+        "enable_compare": true
+      }
+    },
+    "collection_pagination": {
+      "type": "multirow",
+      "settings": {
+        "heading": "Collection Pagination",
+        "layout": "pagination",
+        "enable_pagination": true,
+        "show_page_numbers": true,
+        "show_prev_next": true,
+        "enable_load_more": true,
+        "enable_infinite_scroll": true
+      }
+    },
+    "collection_recommendations": {
+      "type": "collection-product-icons",
+      "settings": {
+        "heading": "You might also like",
+        "products_to_show": 8,
+        "columns_desktop": 4,
+        "image_ratio": "adapt",
+        "image_shape": "default",
+        "show_secondary_image": true,
+        "show_vendor": false,
+        "show_rating": true,
+        "enable_quick_add": true,
+        "columns_mobile": "2",
+        "swipe_on_mobile": false,
+        "padding_top": 36,
+        "padding_bottom": 36,
+        "color_scheme": "background-1",
+        "enable_carousel": true
       }
     }
   },
   "order": [
-    "v_collection_main"
+    "collection_breadcrumbs",
+    "collection_header",
+    "collection_filters",
+    "v_collection_main",
+    "collection_pagination",
+    "collection_recommendations"
   ]
 }

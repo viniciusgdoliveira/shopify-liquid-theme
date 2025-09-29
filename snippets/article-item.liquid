@@ -1,0 +1,87 @@
+{% comment %}
+  Article Item Component
+  Renders article preview for search results and blog listings
+  
+  Parameters:
+  - article: Article object
+  - show_excerpt: Boolean (default: true)
+  - show_author: Boolean (default: true)
+  - show_date: Boolean (default: true)
+  - show_tags: Boolean (default: false)
+  - image_ratio: String (default: 'square')
+{% endcomment %}
+
+{% liquid
+  assign show_excerpt = show_excerpt | default: true
+  assign show_author = show_author | default: true
+  assign show_date = show_date | default: true
+  assign show_tags = show_tags | default: false
+  assign image_ratio = image_ratio | default: 'square'
+%}
+
+<article class="article-item article-item--{{ image_ratio }}">
+  {% if article.image %}
+    <div class="article-item__image-wrapper">
+      <a href="{{ article.url }}" class="article-item__image-link">
+        {% render 'image',
+          image: article.image,
+          class: 'article-item__image',
+          width: 400,
+          height: 300,
+          crop: 'center',
+          loading: 'lazy'
+        %}
+      </a>
+    </div>
+  {% endif %}
+
+  <div class="article-item__content">
+    <div class="article-item__meta">
+      {% if show_date and article.published_at %}
+        <time class="article-item__date" datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
+          {{ article.published_at | date: '%B %d, %Y' }}
+        </time>
+      {% endif %}
+
+      {% if show_author and article.author %}
+        <span class="article-item__author">
+          {{ 'blog.article.by' | t }} {{ article.author }}
+        </span>
+      {% endif %}
+    </div>
+
+    <h3 class="article-item__title heading h4">
+      <a href="{{ article.url }}" class="article-item__title-link">
+        {{ article.title }}
+      </a>
+    </h3>
+
+    {% if show_excerpt and article.excerpt != blank %}
+      <div class="article-item__excerpt">
+        {{ article.excerpt | strip_html | truncate: 150 }}
+      </div>
+    {% elsif show_excerpt and article.content != blank %}
+      <div class="article-item__excerpt">
+        {{ article.content | strip_html | truncate: 150 }}
+      </div>
+    {% endif %}
+
+    {% if show_tags and article.tags.size > 0 %}
+      <div class="article-item__tags">
+        {% for tag in article.tags limit: 3 %}
+          <span class="article-item__tag">{{ tag }}</span>
+        {% endfor %}
+        {% if article.tags.size > 3 %}
+          <span class="article-item__tag-more">+{{ article.tags.size | minus: 3 }} more</span>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <div class="article-item__footer">
+      <a href="{{ article.url }}" class="article-item__read-more link">
+        {{ 'blog.article.read_more' | t }}
+        {% render 'icons', icon: 'arrow-right', size: 14 %}
+      </a>
+    </div>
+  </div>
+</article>

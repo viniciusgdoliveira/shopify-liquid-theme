@@ -1,0 +1,16 @@
+{
+  "sections": {
+    "main": {
+      "type": "customer-login",
+      "settings": {
+        "enable_guest_checkout": true,
+        "show_forgot_password": true,
+        "enable_social_login": false,
+        "show_register_link": true
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

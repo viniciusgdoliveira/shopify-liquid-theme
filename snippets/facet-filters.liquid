@@ -1,0 +1,98 @@
+{% comment %}
+  Facet Filters Component
+  Renders filter options for search and collection pages
+  
+  Parameters:
+  - filters: Array of filter objects
+  - position: 'sidebar' or 'drawer'
+{% endcomment %}
+
+{% liquid
+  assign position = position | default: 'sidebar'
+  assign filter_count = 0
+  
+  for filter in filters
+    if filter.type == 'list' and filter.active_values.size > 0
+      assign filter_count = filter_count | plus: 1
+    elsif filter.type == 'price_range' and filter.min_value.value or filter.max_value.value
+      assign filter_count = filter_count | plus: 1
+    endif
+  endfor
+%}
+
+{% if filters.size > 0 %}
+  <div class="facet-filters facet-filters--{{ position }}">
+    <div class="facet-filters__header">
+      <h3 class="facet-filters__title heading h6">{{ 'collection.general.filters' | t }}</h3>
+      {% if filter_count > 0 %}
+        <a href="{{ collection.url }}" class="facet-filters__clear link text--subdued">
+          {{ 'collection.general.clear_filters' | t }}
+        </a>
+      {% endif %}
+    </div>
+
+    <div class="facet-filters__content">
+      {% for filter in filters %}
+        {% case filter.type %}
+          {% when 'list' %}
+            <div class="facet-filter">
+              <h4 class="facet-filter__title heading h6">{{ filter.label }}</h4>
+              <div class="facet-filter__options">
+                {% for value in filter.values %}
+                  <label class="facet-filter__option">
+                    <input 
+                      type="checkbox" 
+                      name="{{ value.param_name }}" 
+                      value="{{ value.value }}"
+                      {% if value.active %}checked{% endif %}
+                      class="facet-filter__checkbox"
+                    >
+                    <span class="facet-filter__label">
+                      {{ value.label }}
+                      <span class="facet-filter__count">({{ value.count }})</span>
+                    </span>
+                  </label>
+                {% endfor %}
+              </div>
+            </div>
+
+          {% when 'price_range' %}
+            <div class="facet-filter">
+              <h4 class="facet-filter__title heading h6">{{ filter.label }}</h4>
+              <div class="facet-filter__price-range">
+                <div class="price-range">
+                  <div class="price-range__inputs">
+                    <label class="price-range__label">
+                      <span class="price-range__label-text">{{ 'collection.general.from' | t }}</span>
+                      <input 
+                        type="number" 
+                        name="{{ filter.min_value.param_name }}" 
+                        value="{{ filter.min_value.value | money_without_currency | remove: ',' }}"
+                        placeholder="{{ filter.range_min | money_without_currency | remove: ',' }}"
+                        class="price-range__input"
+                        min="0"
+                        max="{{ filter.range_max | money_without_currency | remove: ',' }}"
+                      >
+                    </label>
+                    <span class="price-range__separator">-</span>
+                    <label class="price-range__label">
+                      <span class="price-range__label-text">{{ 'collection.general.to' | t }}</span>
+                      <input 
+                        type="number" 
+                        name="{{ filter.max_value.param_name }}" 
+                        value="{{ filter.max_value.value | money_without_currency | remove: ',' }}"
+                        placeholder="{{ filter.range_max | money_without_currency | remove: ',' }}"
+                        class="price-range__input"
+                        min="0"
+                        max="{{ filter.range_max | money_without_currency | remove: ',' }}"
+                      >
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+        {% endcase %}
+      {% endfor %}
+    </div>
+  </div>
+{% endif %}

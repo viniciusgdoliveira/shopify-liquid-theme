@@ -1,0 +1,179 @@
+/* Notification System Styles */
+/* Uses z-index variables from v-design-system.css */
+
+.notification {
+  position: fixed;
+  top: var(--space-4);
+  right: var(--space-4);
+  padding: var(--space-4) var(--space-6);
+  border-radius: var(--radius-base);
+  color: var(--notification-text);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  z-index: var(--notification-z-index);
+  box-shadow: var(--shadow-lg);
+  transform: translateX(100%);
+  transition: transform var(--duration-300) var(--ease-out);
+  max-width: 400px;
+  word-wrap: break-word;
+}
+
+.notification--visible {
+  transform: translateX(0);
+}
+
+.notification--success {
+  background: var(--notification-success-bg);
+}
+
+.notification--warning {
+  background: var(--notification-warning-bg);
+}
+
+.notification--error {
+  background: var(--notification-error-bg);
+}
+
+.notification--info {
+  background: var(--notification-info-bg);
+}
+
+/* Toast notifications (lower z-index) */
+.notification--toast {
+  z-index: var(--notification-toast-z-index);
+  top: auto;
+  bottom: var(--space-4);
+  right: var(--space-4);
+}
+
+/* Mobile responsive */
+@media (max-width: 767px) {
+  .notification {
+    top: var(--space-2);
+    right: var(--space-2);
+    left: var(--space-2);
+    max-width: none;
+  }
+  
+  .notification--toast {
+    bottom: var(--space-2);
+    right: var(--space-2);
+    left: var(--space-2);
+  }
+}
+
+/* Loading overlay */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.8);
+  z-index: var(--z-loading-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--duration-300) var(--ease-out), visibility var(--duration-300) var(--ease-out);
+}
+
+.loading-overlay--visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.loading-overlay__spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--color-border);
+  border-top: 3px solid var(--color-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Floating action button */
+.floating-action {
+  position: fixed;
+  bottom: var(--space-6);
+  right: var(--space-6);
+  width: 56px;
+  height: 56px;
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  border: none;
+  border-radius: 50%;
+  box-shadow: var(--shadow-lg);
+  z-index: var(--z-floating-action);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-fast);
+}
+
+.floating-action:hover {
+  background: var(--color-primary-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-xl);
+}
+
+/* Scroll to top button */
+.scroll-to-top {
+  position: fixed;
+  bottom: var(--space-6);
+  right: var(--space-6);
+  width: 48px;
+  height: 48px;
+  background: var(--color-background);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  box-shadow: var(--shadow-base);
+  z-index: var(--z-scroll-to-top);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-fast);
+  opacity: 0;
+  visibility: hidden;
+}
+
+.scroll-to-top--visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.scroll-to-top:hover {
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Mobile responsive for floating elements */
+@media (max-width: 767px) {
+  .floating-action,
+  .scroll-to-top {
+    bottom: var(--space-4);
+    right: var(--space-4);
+  }
+  
+  .floating-action {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .scroll-to-top {
+    width: 40px;
+    height: 40px;
+  }
+}

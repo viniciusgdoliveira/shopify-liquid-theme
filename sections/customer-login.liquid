@@ -1,0 +1,481 @@
+{% liquid
+  assign section_id = section.settings.custom_id | default: section.id
+  assign section_class = 'customer-login'
+%}
+
+<div id="{{ section_id }}" class="{{ section_class }} page-width">
+  <div class="customer-login__wrapper">
+    <div class="customer-login__container">
+      <!-- Login Form -->
+      <div class="customer-login__form-container">
+        <div class="customer-login__header">
+          <h1 class="customer-login__title">{{ 'customer.login.title' | t }}</h1>
+          <p class="customer-login__subtitle">{{ 'customer.login.subtitle' | t }}</p>
+        </div>
+
+        {% form 'customer_login', class: 'customer-login__form', novalidate: 'novalidate' %}
+          {% if form.errors %}
+            <div class="customer-login__errors" role="alert">
+              <h2 class="customer-login__errors-title">{{ 'templates.contact.form.error_heading' | t }}</h2>
+              <ul class="customer-login__errors-list">
+                {% for field in form.errors %}
+                  <li class="customer-login__errors-item">
+                    {% if field == 'form' %}
+                      {{ form.errors.messages[field] }}
+                    {% else %}
+                      <a href="#{{ field }}">{{ form.errors.translated_fields[field] | capitalize }} {{ form.errors.messages[field] }}</a>
+                    {% endif %}
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+
+          <div class="customer-login__field">
+            <label for="CustomerEmail" class="customer-login__label">
+              {{ 'customer.login.email' | t }}
+            </label>
+            <input
+              type="email"
+              name="customer[email]"
+              id="CustomerEmail"
+              autocomplete="email"
+              autocorrect="off"
+              autocapitalize="off"
+              class="customer-login__input"
+              required
+              aria-describedby="{% if form.errors contains 'email' %}CustomerEmail-error{% endif %}"
+            >
+            {% if form.errors contains 'email' %}
+              <span id="CustomerEmail-error" class="customer-login__field-error">
+                {{ form.errors.messages.email }}
+              </span>
+            {% endif %}
+          </div>
+
+          <div class="customer-login__field">
+            <label for="CustomerPassword" class="customer-login__label">
+              {{ 'customer.login.password' | t }}
+            </label>
+            <input
+              type="password"
+              name="customer[password]"
+              id="CustomerPassword"
+              class="customer-login__input"
+              required
+              aria-describedby="{% if form.errors contains 'password' %}CustomerPassword-error{% endif %}"
+            >
+            {% if form.errors contains 'password' %}
+              <span id="CustomerPassword-error" class="customer-login__field-error">
+                {{ form.errors.messages.password }}
+              </span>
+            {% endif %}
+          </div>
+
+          <div class="customer-login__actions">
+            <button type="submit" class="btn btn--primary customer-login__submit">
+              {{ 'customer.login.sign_in' | t }}
+            </button>
+
+            {% if section.settings.show_forgot_password %}
+              <a href="#recover" class="customer-login__forgot-password">
+                {{ 'customer.login.forgot_password' | t }}
+              </a>
+            {% endif %}
+          </div>
+        {% endform %}
+
+        {% if section.settings.show_register_link %}
+          <div class="customer-login__register">
+            <p class="customer-login__register-text">
+              {{ 'customer.login.new_customer' | t }}
+            </p>
+            <a href="{{ routes.account_register_url }}" class="btn btn--secondary">
+              {{ 'customer.login.create_account' | t }}
+            </a>
+          </div>
+        {% endif %}
+
+        {% if section.settings.enable_guest_checkout %}
+          <div class="customer-login__guest">
+            <p class="customer-login__guest-text">
+              {{ 'customer.login.guest_checkout' | t }}
+            </p>
+            <a href="{{ routes.root_url }}" class="btn btn--outline">
+              {{ 'customer.login.continue_shopping' | t }}
+            </a>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Forgot Password Form -->
+      {% if section.settings.show_forgot_password %}
+        <div id="recover" class="customer-login__recover" style="display: none;">
+          <div class="customer-login__recover-header">
+            <h2 class="customer-login__recover-title">{{ 'customer.recover_password.title' | t }}</h2>
+            <p class="customer-login__recover-subtitle">{{ 'customer.recover_password.subtitle' | t }}</p>
+          </div>
+
+          {% form 'recover_customer_password', class: 'customer-login__recover-form', novalidate: 'novalidate' %}
+            {% if form.errors %}
+              <div class="customer-login__errors" role="alert">
+                <h3 class="customer-login__errors-title">{{ 'templates.contact.form.error_heading' | t }}</h3>
+                <ul class="customer-login__errors-list">
+                  {% for field in form.errors %}
+                    <li class="customer-login__errors-item">
+                      {% if field == 'form' %}
+                        {{ form.errors.messages[field] }}
+                      {% else %}
+                        <a href="#{{ field }}">{{ form.errors.translated_fields[field] | capitalize }} {{ form.errors.messages[field] }}</a>
+                      {% endif %}
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+
+            {% if form.posted_successfully? %}
+              <div class="customer-login__success" role="status">
+                <p>{{ 'customer.recover_password.success' | t }}</p>
+              </div>
+            {% endif %}
+
+            <div class="customer-login__field">
+              <label for="RecoverEmail" class="customer-login__label">
+                {{ 'customer.recover_password.email' | t }}
+              </label>
+              <input
+                type="email"
+                name="email"
+                id="RecoverEmail"
+                autocomplete="email"
+                class="customer-login__input"
+                required
+                aria-describedby="{% if form.errors contains 'email' %}RecoverEmail-error{% endif %}"
+              >
+              {% if form.errors contains 'email' %}
+                <span id="RecoverEmail-error" class="customer-login__field-error">
+                  {{ form.errors.messages.email }}
+                </span>
+              {% endif %}
+            </div>
+
+            <div class="customer-login__actions">
+              <button type="submit" class="btn btn--primary">
+                {{ 'customer.recover_password.submit' | t }}
+              </button>
+              <button type="button" class="btn btn--secondary customer-login__cancel-recover">
+                {{ 'customer.recover_password.cancel' | t }}
+              </button>
+            </div>
+          {% endform %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+.customer-login {
+  padding: 4rem 0;
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+}
+
+.customer-login__wrapper {
+  width: 100%;
+}
+
+.customer-login__container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.customer-login__header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.customer-login__title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--color-text-primary);
+}
+
+.customer-login__subtitle {
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.customer-login__form-container {
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.customer-login__form {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.customer-login__field {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.customer-login__label {
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.customer-login__input {
+  padding: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.customer-login__input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.1);
+}
+
+.customer-login__input:invalid {
+  border-color: var(--color-error);
+}
+
+.customer-login__field-error {
+  color: var(--color-error);
+  font-size: 0.875rem;
+}
+
+.customer-login__actions {
+  display: grid;
+  gap: 1rem;
+}
+
+.customer-login__submit {
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.customer-login__forgot-password {
+  text-align: center;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  font-size: 0.875rem;
+}
+
+.customer-login__forgot-password:hover {
+  color: var(--color-primary);
+}
+
+.customer-login__register,
+.customer-login__guest {
+  text-align: center;
+  padding: 1.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  background-color: var(--color-background-secondary);
+}
+
+.customer-login__register-text,
+.customer-login__guest-text {
+  margin-bottom: 1rem;
+  color: var(--color-text-secondary);
+}
+
+.customer-login__recover {
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  padding: 2rem;
+}
+
+.customer-login__recover-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.customer-login__recover-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--color-text-primary);
+}
+
+.customer-login__recover-subtitle {
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.customer-login__recover-form {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.customer-login__success {
+  padding: 1rem;
+  background-color: var(--color-success);
+  color: white;
+  border-radius: var(--border-radius-md);
+  text-align: center;
+}
+
+.customer-login__errors {
+  padding: 1rem;
+  background-color: var(--color-error);
+  color: white;
+  border-radius: var(--border-radius-md);
+}
+
+.customer-login__errors-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.customer-login__errors-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.customer-login__errors-item {
+  margin-bottom: 0.25rem;
+}
+
+.customer-login__errors-item a {
+  color: white;
+  text-decoration: underline;
+}
+
+.customer-login__cancel-recover {
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+}
+
+/* Responsive Design */
+@media screen and (max-width: 749px) {
+  .customer-login {
+    padding: 2rem 0;
+  }
+  
+  .customer-login__form-container,
+  .customer-login__recover {
+    padding: 1.5rem;
+  }
+  
+  .customer-login__register,
+  .customer-login__guest {
+    padding: 1rem;
+  }
+}
+{% endstylesheet %}
+
+{% javascript %}
+document.addEventListener('DOMContentLoaded', function() {
+  // Handle forgot password toggle
+  const forgotPasswordLink = document.querySelector('.customer-login__forgot-password');
+  const cancelRecoverLink = document.querySelector('.customer-login__cancel-recover');
+  const recoverForm = document.querySelector('.customer-login__recover');
+  const loginForm = document.querySelector('.customer-login__form-container');
+
+  if (forgotPasswordLink && recoverForm) {
+    forgotPasswordLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      loginForm.style.display = 'none';
+      recoverForm.style.display = 'block';
+    });
+  }
+
+  if (cancelRecoverLink && recoverForm) {
+    cancelRecoverLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      recoverForm.style.display = 'none';
+      loginForm.style.display = 'block';
+    });
+  }
+
+  // Handle form validation
+  const forms = document.querySelectorAll('.customer-login__form, .customer-login__recover-form');
+  forms.forEach(form => {
+    form.addEventListener('submit', function(e) {
+      const inputs = form.querySelectorAll('input[required]');
+      let isValid = true;
+
+      inputs.forEach(input => {
+        if (!input.value.trim()) {
+          isValid = false;
+          input.classList.add('error');
+        } else {
+          input.classList.remove('error');
+        }
+      });
+
+      if (!isValid) {
+        e.preventDefault();
+      }
+    });
+  });
+});
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Customer Login",
+  "tag": "section",
+  "class": "customer-login",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Login Options"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_guest_checkout",
+      "label": "Enable Guest Checkout",
+      "default": true,
+      "info": "Allow customers to checkout without creating an account"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_forgot_password",
+      "label": "Show Forgot Password",
+      "default": true,
+      "info": "Display forgot password link and recovery form"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_register_link",
+      "label": "Show Register Link",
+      "default": true,
+      "info": "Display link to create new account"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_social_login",
+      "label": "Enable Social Login",
+      "default": false,
+      "info": "Allow customers to login with social media accounts"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Customer Login"
+    }
+  ]
+}
+{% endschema %}

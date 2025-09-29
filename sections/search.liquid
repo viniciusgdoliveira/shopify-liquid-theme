@@ -1,54 +1,374 @@
 {% comment %}
-  This section is used in the search template to render search results for
-  products, articles, and pages.
-
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/search
+  Enhanced Search Section - Advanced search functionality with AJAX, autocomplete, and filtering
+  Features: Real-time search, autocomplete, filtering, sorting, pagination, and performance optimization
 {% endcomment %}
 
-<h1>{{ 'search.title' | t }}</h1>
+{% liquid
+  assign search_query = search.terms | escape
+  assign search_performed = search.performed
+  assign results_count = search.results_count
+  assign enable_ajax_search = section.settings.enable_ajax_search | default: true
+  assign enable_autocomplete = section.settings.enable_autocomplete | default: true
+  assign enable_filtering = section.settings.enable_filtering | default: true
+  assign enable_sorting = section.settings.enable_sorting | default: true
+  assign results_per_page = section.settings.results_per_page | default: 20
+  assign show_product_images = section.settings.show_product_images | default: true
+  assign show_product_prices = section.settings.show_product_prices | default: true
+  assign enable_quick_add = section.settings.enable_quick_add | default: true
+  assign enable_wishlist = section.settings.enable_wishlist | default: true
+%}
 
-<form action="{{ routes.search_url }}" method="get" role="search">
-  <input
-    type="search"
-    size="50"
-    name="q"
-    value="{{ search.terms | escape }}"
-    placeholder="{{ 'search.placeholder' | t }}"
-  >
-  <button type="submit">{{ 'search.submit' | t }}</button>
-</form>
+<div class="search-section" 
+     data-ajax-search="{{ enable_ajax_search }}"
+     data-autocomplete="{{ enable_autocomplete }}"
+     data-filtering="{{ enable_filtering }}"
+     data-sorting="{{ enable_sorting }}"
+     data-results-per-page="{{ results_per_page }}"
+     style="
+       --search-bg: {{ section.settings.background_color | default: '#ffffff' }};
+       --search-text: {{ section.settings.text_color | default: '#000000' }};
+       --search-border: {{ section.settings.border_color | default: '#e0e0e0' }};
+       --search-primary: {{ section.settings.primary_color | default: '#2d5016' }};
+     ">
 
-{% if search.performed %}
-  {% if search.results_count == 0 %}
-    <p>{{ 'search.no_results_html' | t: terms: search.terms }}</p>
-  {% else %}
-    <p>{{ 'search.results_for_html' | t: terms: search.terms, count: search.results_count }}</p>
+  <!-- Search Header -->
+  <div class="search-header">
+    <div class="search-header__content">
+      <h1 class="search-header__title">
+        {% if search_performed %}
+          {{ 'search.results_title' | t }}
+        {% else %}
+          {{ 'search.title' | t }}
+        {% endif %}
+      </h1>
+      
+      {% if search_performed and search_query %}
+        <div class="search-header__query">
+          <span class="search-header__query-label">{{ 'search.searching_for' | t }}:</span>
+          <span class="search-header__query-term">"{{ search_query }}"</span>
+          <button class="search-header__clear" data-clear-search aria-label="{{ 'search.clear_search' | t }}">
+            {% render 'icons', icon: 'close' %}
+          </button>
+        </div>
+      {% endif %}
+    </div>
+  </div>
 
-    <div class="search-results">
-      {% paginate search.results by 20 %}
-        {% # Search result items may be an article, a page, or a product. %}
-        {% for result in search.results %}
-          <div class="search-result">
-            {% assign featured_image = result.featured_image | default: result.image %}
-            {% if featured_image %}
-              {% render 'image', class: 'search-result__image', image: featured_image, url: result.url, width: 400 %}
-            {% endif %}
-            <div class="search-result__content">
-              <p>
-                {{ result.title | link_to: result.url }}
-                {% if result.price %}
-                  {{ result.price | money_with_currency }}
-                {% endif %}
-              </p>
-            </div>
+  <!-- Search Form -->
+  <div class="search-form-container">
+    <form action="{{ routes.search_url }}" method="get" class="search-form" role="search" data-search-form>
+      <div class="search-form__wrapper">
+        <div class="search-form__input-group">
+          <input
+            type="search"
+            name="q"
+            value="{{ search_query }}"
+            placeholder="{{ 'search.placeholder' | t }}"
+            class="search-form__input"
+            aria-label="{{ 'search.search_label' | t }}"
+            autocomplete="off"
+            data-search-input
+          >
+          <button type="submit" class="search-form__submit" aria-label="{{ 'search.submit' | t }}">
+            {% render 'icons', icon: 'search' %}
+          </button>
+        </div>
+        
+        {% if enable_autocomplete %}
+          <div class="search-form__suggestions" data-search-suggestions style="display: none;">
+            <!-- Autocomplete suggestions will be populated here -->
           </div>
-        {% endfor %}
+        {% endif %}
+      </div>
+    </form>
+  </div>
 
-        {{ paginate | default_pagination }}
-      {% endpaginate %}
+  <!-- Search Filters and Sorting -->
+  {% if enable_filtering or enable_sorting %}
+    <div class="search-controls">
+      <div class="search-controls__wrapper">
+        <!-- Mobile Filter Toggle -->
+        <button class="search-controls__mobile-toggle" data-mobile-filters-toggle>
+          <span class="search-controls__mobile-toggle-icon">
+            {% render 'icons', icon: 'filter' %}
+          </span>
+          <span class="search-controls__mobile-toggle-text">{{ 'search.filters' | t }}</span>
+          <span class="search-controls__mobile-toggle-count" data-active-filters-count style="display: none;">0</span>
+        </button>
+
+        <!-- Sort Options -->
+        {% if enable_sorting %}
+          <div class="search-controls__sort">
+            <label for="search-sort" class="search-controls__sort-label">{{ 'search.sort_by' | t }}:</label>
+            <select id="search-sort" name="sort_by" class="search-controls__sort-select" data-search-sort>
+              <option value="relevance" {% if request.query.sort_by == 'relevance' %}selected{% endif %}>
+                {{ 'search.sort.relevance' | t }}
+              </option>
+              <option value="price-ascending" {% if request.query.sort_by == 'price-ascending' %}selected{% endif %}>
+                {{ 'search.sort.price_low_to_high' | t }}
+              </option>
+              <option value="price-descending" {% if request.query.sort_by == 'price-descending' %}selected{% endif %}>
+                {{ 'search.sort.price_high_to_low' | t }}
+              </option>
+              <option value="title-ascending" {% if request.query.sort_by == 'title-ascending' %}selected{% endif %}>
+                {{ 'search.sort.name_a_to_z' | t }}
+              </option>
+              <option value="title-descending" {% if request.query.sort_by == 'title-descending' %}selected{% endif %}>
+                {{ 'search.sort.name_z_to_a' | t }}
+              </option>
+              <option value="created-descending" {% if request.query.sort_by == 'created-descending' %}selected{% endif %}>
+                {{ 'search.sort.newest' | t }}
+              </option>
+            </select>
+          </div>
+        {% endif %}
+
+        <!-- Results Count -->
+        {% if search_performed %}
+          <div class="search-controls__count">
+            <span class="search-controls__count-text">
+              {{ 'search.results_count' | t: count: results_count }}
+            </span>
+          </div>
+        {% endif %}
+      </div>
     </div>
   {% endif %}
-{% endif %}
+
+  <!-- Search Filters Sidebar -->
+  {% if enable_filtering %}
+    <div class="search-filters" data-search-filters>
+      <div class="search-filters__header">
+        <h3 class="search-filters__title">{{ 'search.filters' | t }}</h3>
+        <button class="search-filters__clear" data-clear-filters>
+          {{ 'search.clear_filters' | t }}
+        </button>
+      </div>
+
+      <div class="search-filters__content">
+        <!-- Price Filter -->
+        <div class="search-filters__group">
+          <h4 class="search-filters__group-title">{{ 'search.filter.price' | t }}</h4>
+          <div class="search-filters__price-range">
+            <input type="range" 
+                   class="search-filters__price-min" 
+                   min="0" 
+                   max="1000" 
+                   value="0"
+                   data-filter-type="price_min">
+            <input type="range" 
+                   class="search-filters__price-max" 
+                   min="0" 
+                   max="1000" 
+                   value="1000"
+                   data-filter-type="price_max">
+          </div>
+          <div class="search-filters__price-display">
+            <span class="search-filters__price-min-display">$0</span>
+            <span class="search-filters__price-separator">-</span>
+            <span class="search-filters__price-max-display">$1000</span>
+          </div>
+        </div>
+
+        <!-- Availability Filter -->
+        <div class="search-filters__group">
+          <h4 class="search-filters__group-title">{{ 'search.filter.availability' | t }}</h4>
+          <div class="search-filters__checkbox">
+            <input type="checkbox" 
+                   id="filter-in-stock" 
+                   class="search-filters__checkbox-input"
+                   data-filter-type="availability" 
+                   value="in_stock">
+            <label for="filter-in-stock" class="search-filters__checkbox-label">
+              {{ 'search.filter.in_stock' | t }}
+            </label>
+          </div>
+          <div class="search-filters__checkbox">
+            <input type="checkbox" 
+                   id="filter-on-sale" 
+                   class="search-filters__checkbox-input"
+                   data-filter-type="availability" 
+                   value="on_sale">
+            <label for="filter-on-sale" class="search-filters__checkbox-label">
+              {{ 'search.filter.on_sale' | t }}
+            </label>
+          </div>
+        </div>
+
+        <!-- Vendor Filter -->
+        {% if search.results.size > 0 %}
+          {% assign vendors = search.results | map: 'vendor' | uniq %}
+          {% if vendors.size > 1 %}
+            <div class="search-filters__group">
+              <h4 class="search-filters__group-title">{{ 'search.filter.vendor' | t }}</h4>
+              {% for vendor in vendors limit: 10 %}
+                <div class="search-filters__checkbox">
+                  <input type="checkbox" 
+                         id="filter-vendor-{{ forloop.index }}" 
+                         class="search-filters__checkbox-input"
+                         data-filter-type="vendor" 
+                         value="{{ vendor | escape }}">
+                  <label for="filter-vendor-{{ forloop.index }}" class="search-filters__checkbox-label">
+                    {{ vendor }}
+                  </label>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endif %}
+
+        <!-- Product Type Filter -->
+        {% if search.results.size > 0 %}
+          {% assign product_types = search.results | map: 'type' | uniq %}
+          {% if product_types.size > 1 %}
+            <div class="search-filters__group">
+              <h4 class="search-filters__group-title">{{ 'search.filter.product_type' | t }}</h4>
+              {% for type in product_types limit: 10 %}
+                <div class="search-filters__checkbox">
+                  <input type="checkbox" 
+                         id="filter-type-{{ forloop.index }}" 
+                         class="search-filters__checkbox-input"
+                         data-filter-type="product_type" 
+                         value="{{ type | escape }}">
+                  <label for="filter-type-{{ forloop.index }}" class="search-filters__checkbox-label">
+                    {{ type }}
+                  </label>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+
+  <!-- Search Results -->
+  <div class="search-results-container">
+    {% if search_performed %}
+      {% if results_count == 0 %}
+        <div class="search-no-results">
+          <div class="search-no-results__icon">
+            {% render 'icons', icon: 'search' %}
+          </div>
+          <h2 class="search-no-results__title">{{ 'search.no_results_title' | t }}</h2>
+          <p class="search-no-results__text">
+            {{ 'search.no_results_text' | t: terms: search_query }}
+          </p>
+          <div class="search-no-results__suggestions">
+            <h3 class="search-no-results__suggestions-title">{{ 'search.suggestions_title' | t }}</h3>
+            <ul class="search-no-results__suggestions-list">
+              <li>{{ 'search.suggestion.check_spelling' | t }}</li>
+              <li>{{ 'search.suggestion.try_different_keywords' | t }}</li>
+              <li>{{ 'search.suggestion.try_general_keywords' | t }}</li>
+              <li>{{ 'search.suggestion.try_fewer_keywords' | t }}</li>
+            </ul>
+          </div>
+          <div class="search-no-results__popular">
+            <h3 class="search-no-results__popular-title">{{ 'search.popular_searches' | t }}</h3>
+            <div class="search-no-results__popular-tags">
+              <a href="/search?q=sustainable" class="search-no-results__popular-tag">sustainable</a>
+              <a href="/search?q=organic" class="search-no-results__popular-tag">organic</a>
+              <a href="/search?q=eco-friendly" class="search-no-results__popular-tag">eco-friendly</a>
+              <a href="/search?q=natural" class="search-no-results__popular-tag">natural</a>
+            </div>
+          </div>
+        </div>
+      {% else %}
+        <div class="search-results" data-search-results>
+          {% paginate search.results by results_per_page %}
+            <div class="search-results__grid">
+              {% for result in search.results %}
+                <div class="search-result" data-product-id="{{ result.id }}">
+                  {% if show_product_images %}
+                    <div class="search-result__image">
+                      <a href="{{ result.url }}" class="search-result__image-link">
+                        {% if result.featured_image %}
+                          {% render 'image', 
+                            image: result.featured_image, 
+                            class: 'search-result__img',
+                            width: 300,
+                            height: 300,
+                            loading: 'lazy'
+                          %}
+                        {% else %}
+                          <div class="search-result__placeholder">
+                            {{ 'product-1' | placeholder_svg_tag: 'search-result__placeholder-svg' }}
+                          </div>
+                        {% endif %}
+                      </a>
+                    </div>
+                  {% endif %}
+
+                  <div class="search-result__content">
+                    <h3 class="search-result__title">
+                      <a href="{{ result.url }}" class="search-result__title-link">
+                        {{ result.title }}
+                      </a>
+                    </h3>
+
+                    {% if result.vendor %}
+                      <div class="search-result__vendor">{{ result.vendor }}</div>
+                    {% endif %}
+
+                    {% if show_product_prices and result.price %}
+                      <div class="search-result__price">
+                        {% if result.compare_at_price > result.price %}
+                          <span class="search-result__price-compare">{{ result.compare_at_price | money }}</span>
+                          <span class="search-result__price-sale">{{ result.price | money }}</span>
+                        {% else %}
+                          <span class="search-result__price-regular">{{ result.price | money }}</span>
+                        {% endif %}
+                      </div>
+                    {% endif %}
+
+                    <div class="search-result__actions">
+                      {% if enable_quick_add %}
+                        <button class="search-result__quick-add button button--secondary" 
+                                data-product-id="{{ result.id }}"
+                                data-variant-id="{{ result.selected_or_first_available_variant.id }}">
+                          {{ 'search.quick_add' | t }}
+                        </button>
+                      {% endif %}
+                      
+                      {% if enable_wishlist %}
+                        <button class="search-result__wishlist" 
+                                data-product-id="{{ result.id }}"
+                                aria-label="{{ 'search.add_to_wishlist' | t }}">
+                          {% render 'icons', icon: 'heart' %}
+                        </button>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+
+            <!-- Pagination -->
+            <div class="search-pagination" data-search-pagination>
+              {{ paginate | default_pagination }}
+            </div>
+          {% endpaginate %}
+        </div>
+      {% endif %}
+    {% else %}
+      <div class="search-empty">
+        <div class="search-empty__icon">
+          {% render 'icons', icon: 'search' %}
+        </div>
+        <h2 class="search-empty__title">{{ 'search.start_searching' | t }}</h2>
+        <p class="search-empty__text">{{ 'search.start_searching_text' | t }}</p>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Search Loading State -->
+  <div class="search-loading" data-search-loading style="display: none;">
+    <div class="search-loading__spinner">
+      <div class="search-loading__spinner-inner"></div>
+    </div>
+    <p class="search-loading__text">{{ 'search.loading' | t }}</p>
+  </div>
+</div>
 
 {% stylesheet %}
   .search-results {
@@ -64,7 +384,105 @@
 
 {% schema %}
 {
-  "name": "t:general.search",
-  "settings": []
+  "name": "Search Results",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Search Features"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_ajax_search",
+      "label": "Enable AJAX Search",
+      "default": true,
+      "info": "Update search results without page reload"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_autocomplete",
+      "label": "Enable Autocomplete",
+      "default": true,
+      "info": "Show search suggestions as you type"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_filtering",
+      "label": "Enable Filtering",
+      "default": true,
+      "info": "Allow users to filter search results"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sorting",
+      "label": "Enable Sorting",
+      "default": true,
+      "info": "Allow users to sort search results"
+    },
+    {
+      "type": "header",
+      "content": "Display Options"
+    },
+    {
+      "type": "range",
+      "id": "results_per_page",
+      "label": "Results per page",
+      "min": 12,
+      "max": 48,
+      "step": 4,
+      "default": 20
+    },
+    {
+      "type": "checkbox",
+      "id": "show_product_images",
+      "label": "Show product images",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_product_prices",
+      "label": "Show product prices",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_quick_add",
+      "label": "Enable quick add to cart",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_wishlist",
+      "label": "Enable wishlist",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "color",
+      "id": "primary_color",
+      "label": "Primary color",
+      "default": "#2d5016"
+    }
+  ]
 }
 {% endschema %}

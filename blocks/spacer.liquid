@@ -1,0 +1,152 @@
+{% doc %}
+  Renders a spacer block for flexible layout spacing.
+
+  @example
+  {% content_for 'block', type: 'spacer', id: 'spacer' %}
+{% enddoc %}
+
+{%- liquid
+  assign spacer_height = block.settings.spacer_height | default: 40
+  assign spacer_height_mobile = block.settings.spacer_height_mobile | default: 20
+  assign background_color = block.settings.background_color
+  assign border = block.settings.border
+  assign border_color = block.settings.border_color | default: 'var(--color-border)'
+  assign border_width = block.settings.border_width | default: 1
+  
+  assign spacer_style = 'height: ' | append: spacer_height | append: 'px;'
+  
+  if background_color != blank
+    assign spacer_style = spacer_style | append: ' background-color: ' | append: background_color | append: ';'
+  endif
+  
+  if border
+    assign spacer_style = spacer_style | append: ' border-top: ' | append: border_width | append: 'px solid ' | append: border_color | append: ';'
+  endif
+-%}
+
+<div 
+  class="spacer-block"
+  style="{{ spacer_style }} --spacer-height-mobile: {{ spacer_height_mobile }}px;"
+  {{ block.shopify_attributes }}
+>
+  <!-- Spacer content -->
+</div>
+
+{% stylesheet %}
+  .spacer-block {
+    width: 100%;
+    display: block;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .spacer-block::before {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  /* Mobile responsive spacing */
+  @media (max-width: 768px) {
+    .spacer-block {
+      height: var(--spacer-height-mobile, 20px) !important;
+    }
+  }
+
+  /* Accessibility improvements */
+  @media (prefers-reduced-motion: reduce) {
+    .spacer-block {
+      transition: none;
+    }
+  }
+
+  /* Print styles */
+  @media print {
+    .spacer-block {
+      background-color: transparent !important;
+      border: none !important;
+      height: 20px !important;
+    }
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .spacer-block {
+      border-width: 2px !important;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Spacer",
+  "settings": [
+    {
+      "type": "range",
+      "id": "spacer_height",
+      "label": "Spacer height",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 40,
+      "info": "Height of the spacer on desktop"
+    },
+    {
+      "type": "range",
+      "id": "spacer_height_mobile",
+      "label": "Spacer height (mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 20,
+      "info": "Height of the spacer on mobile devices"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "info": "Optional background color for the spacer"
+    },
+    {
+      "type": "checkbox",
+      "id": "border",
+      "label": "Show border",
+      "default": false,
+      "info": "Add a top border to the spacer"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#e0e0e0",
+      "info": "Color of the border (only applies if border is enabled)"
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "label": "Border width",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "default": 1,
+      "info": "Width of the border (only applies if border is enabled)"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Spacer",
+      "settings": {
+        "spacer_height": 40,
+        "spacer_height_mobile": 20
+      }
+    }
+  ]
+}
+{% endschema %}

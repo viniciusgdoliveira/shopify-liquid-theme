@@ -1,0 +1,66 @@
+{% comment %}
+  Active Filters Component
+  Shows currently applied filters with remove options
+  
+  Parameters:
+  - filters: Array of filter objects
+{% endcomment %}
+
+{% liquid
+  assign active_filters_count = 0
+  
+  for filter in filters
+    if filter.type == 'list'
+      assign active_filters_count = active_filters_count | plus: filter.active_values.size
+    elsif filter.type == 'price_range' and filter.min_value.value or filter.max_value.value
+      assign active_filters_count = active_filters_count | plus: 1
+    endif
+  endfor
+%}
+
+{% if active_filters_count > 0 %}
+  <div class="facet-active-filters">
+    <div class="facet-active-filters__header">
+      <h3 class="facet-active-filters__title heading h6">
+        {{ 'collection.general.active_filters' | t }}
+        <span class="facet-active-filters__count">({{ active_filters_count }})</span>
+      </h3>
+      <a href="{{ collection.url }}" class="facet-active-filters__clear link text--subdued">
+        {{ 'collection.general.clear_all' | t }}
+      </a>
+    </div>
+
+    <div class="facet-active-filters__content">
+      {% for filter in filters %}
+        {% case filter.type %}
+          {% when 'list' %}
+            {% for value in filter.active_values %}
+              <div class="facet-active-filter">
+                <span class="facet-active-filter__label">
+                  {{ filter.label }}: {{ value.label }}
+                </span>
+                <a href="{{ value.url_to_remove }}" class="facet-active-filter__remove" title="{{ 'collection.general.remove_filter' | t }}">
+                  {% render 'icons', icon: 'close', size: 12 %}
+                </a>
+              </div>
+            {% endfor %}
+
+          {% when 'price_range' %}
+            {% if filter.min_value.value or filter.max_value.value %}
+              <div class="facet-active-filter">
+                <span class="facet-active-filter__label">
+                  {{ filter.label }}: 
+                  {% if filter.min_value.value %}{{ filter.min_value.value | money }}{% endif %}
+                  {% if filter.min_value.value and filter.max_value.value %} - {% endif %}
+                  {% if filter.max_value.value %}{{ filter.max_value.value | money }}{% endif %}
+                </span>
+                <a href="{{ filter.url_to_remove }}" class="facet-active-filter__remove" title="{{ 'collection.general.remove_filter' | t }}">
+                  {% render 'icons', icon: 'close', size: 12 %}
+                </a>
+              </div>
+            {% endif %}
+        {% endcase %}
+      {% endfor %}
+    </div>
+  </div>
+{% endif %}

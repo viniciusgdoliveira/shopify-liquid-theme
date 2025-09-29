@@ -1,0 +1,381 @@
+{% liquid
+  assign section_id = section.settings.custom_id | default: section.id
+  assign section_class = 'customer-activate-account'
+%}
+
+<div id="{{ section_id }}" class="{{ section_class }} page-width">
+  <div class="customer-activate-account__wrapper">
+    <div class="customer-activate-account__container">
+      <div class="customer-activate-account__form-container">
+        <div class="customer-activate-account__header">
+          <h1 class="customer-activate-account__title">{{ 'customer.activate_account.title' | t }}</h1>
+          <p class="customer-activate-account__subtitle">{{ 'customer.activate_account.subtitle' | t }}</p>
+        </div>
+
+        {% form 'activate_customer_password', class: 'customer-activate-account__form', novalidate: 'novalidate' %}
+          {% if form.errors %}
+            <div class="customer-activate-account__errors" role="alert">
+              <h2 class="customer-activate-account__errors-title">{{ 'templates.contact.form.error_heading' | t }}</h2>
+              <ul class="customer-activate-account__errors-list">
+                {% for field in form.errors %}
+                  <li class="customer-activate-account__errors-item">
+                    {% if field == 'form' %}
+                      {{ form.errors.messages[field] }}
+                    {% else %}
+                      <a href="#{{ field }}">{{ form.errors.translated_fields[field] | capitalize }} {{ form.errors.messages[field] }}</a>
+                    {% endif %}
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+
+          <div class="customer-activate-account__field">
+            <label for="CustomerPassword" class="customer-activate-account__label">
+              {{ 'customer.activate_account.password' | t }}
+            </label>
+            <input
+              type="password"
+              name="customer[password]"
+              id="CustomerPassword"
+              class="customer-activate-account__input"
+              required
+              aria-describedby="{% if form.errors contains 'password' %}CustomerPassword-error{% endif %}"
+            >
+            {% if form.errors contains 'password' %}
+              <span id="CustomerPassword-error" class="customer-activate-account__field-error">
+                {{ form.errors.messages.password }}
+              </span>
+            {% endif %}
+          </div>
+
+          <div class="customer-activate-account__field">
+            <label for="CustomerPasswordConfirmation" class="customer-activate-account__label">
+              {{ 'customer.activate_account.password_confirmation' | t }}
+            </label>
+            <input
+              type="password"
+              name="customer[password_confirmation]"
+              id="CustomerPasswordConfirmation"
+              class="customer-activate-account__input"
+              required
+              aria-describedby="{% if form.errors contains 'password_confirmation' %}CustomerPasswordConfirmation-error{% endif %}"
+            >
+            {% if form.errors contains 'password_confirmation' %}
+              <span id="CustomerPasswordConfirmation-error" class="customer-activate-account__field-error">
+                {{ form.errors.messages.password_confirmation }}
+              </span>
+            {% endif %}
+          </div>
+
+          <div class="customer-activate-account__actions">
+            <button type="submit" class="btn btn--primary customer-activate-account__submit">
+              {{ 'customer.activate_account.submit' | t }}
+            </button>
+            <button type="submit" name="decline" class="btn btn--secondary customer-activate-account__decline">
+              {{ 'customer.activate_account.decline' | t }}
+            </button>
+          </div>
+        {% endform %}
+
+        {% if section.settings.show_welcome_message %}
+          <div class="customer-activate-account__welcome">
+            <h3 class="customer-activate-account__welcome-title">{{ 'customer.activate_account.welcome_title' | t }}</h3>
+            <p class="customer-activate-account__welcome-message">{{ 'customer.activate_account.welcome_message' | t }}</p>
+          </div>
+        {% endif %}
+
+        {% if section.settings.show_account_benefits %}
+          <div class="customer-activate-account__benefits">
+            <h3 class="customer-activate-account__benefits-title">{{ 'customer.activate_account.benefits_title' | t }}</h3>
+            <ul class="customer-activate-account__benefits-list">
+              <li class="customer-activate-account__benefits-item">{{ 'customer.activate_account.benefit_1' | t }}</li>
+              <li class="customer-activate-account__benefits-item">{{ 'customer.activate_account.benefit_2' | t }}</li>
+              <li class="customer-activate-account__benefits-item">{{ 'customer.activate_account.benefit_3' | t }}</li>
+            </ul>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+.customer-activate-account {
+  padding: 4rem 0;
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+}
+
+.customer-activate-account__wrapper {
+  width: 100%;
+}
+
+.customer-activate-account__container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.customer-activate-account__header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.customer-activate-account__title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--color-text-primary);
+}
+
+.customer-activate-account__subtitle {
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.customer-activate-account__form-container {
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  padding: 2rem;
+}
+
+.customer-activate-account__form {
+  display: grid;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.customer-activate-account__field {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.customer-activate-account__label {
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.customer-activate-account__input {
+  padding: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.customer-activate-account__input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.1);
+}
+
+.customer-activate-account__input:invalid {
+  border-color: var(--color-error);
+}
+
+.customer-activate-account__field-error {
+  color: var(--color-error);
+  font-size: 0.875rem;
+}
+
+.customer-activate-account__actions {
+  display: grid;
+  gap: 1rem;
+}
+
+.customer-activate-account__submit,
+.customer-activate-account__decline {
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.customer-activate-account__decline {
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+}
+
+.customer-activate-account__welcome,
+.customer-activate-account__benefits {
+  padding: 1.5rem;
+  background-color: var(--color-background-secondary);
+  border-radius: var(--border-radius-md);
+  margin-bottom: 1rem;
+}
+
+.customer-activate-account__welcome-title,
+.customer-activate-account__benefits-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: var(--color-text-primary);
+}
+
+.customer-activate-account__welcome-message {
+  color: var(--color-text-secondary);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.customer-activate-account__benefits-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.customer-activate-account__benefits-item {
+  padding: 0.5rem 0;
+  color: var(--color-text-secondary);
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+.customer-activate-account__benefits-item::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--color-success);
+  font-weight: bold;
+}
+
+.customer-activate-account__errors {
+  padding: 1rem;
+  background-color: var(--color-error);
+  color: white;
+  border-radius: var(--border-radius-md);
+  margin-bottom: 1.5rem;
+}
+
+.customer-activate-account__errors-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.customer-activate-account__errors-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.customer-activate-account__errors-item {
+  margin-bottom: 0.25rem;
+}
+
+.customer-activate-account__errors-item a {
+  color: white;
+  text-decoration: underline;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 749px) {
+  .customer-activate-account {
+    padding: 2rem 0;
+  }
+  
+  .customer-activate-account__form-container {
+    padding: 1.5rem;
+  }
+  
+  .customer-activate-account__welcome,
+  .customer-activate-account__benefits {
+    padding: 1rem;
+  }
+}
+{% endstylesheet %}
+
+{% javascript %}
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.querySelector('.customer-activate-account__form');
+  
+  if (form) {
+    form.addEventListener('submit', function(e) {
+      const passwordInput = document.getElementById('CustomerPassword');
+      const confirmPasswordInput = document.getElementById('CustomerPasswordConfirmation');
+      
+      // Check password match
+      if (passwordInput && confirmPasswordInput) {
+        if (passwordInput.value !== confirmPasswordInput.value) {
+          e.preventDefault();
+          confirmPasswordInput.classList.add('error');
+          confirmPasswordInput.setCustomValidity('Passwords do not match');
+        } else {
+          confirmPasswordInput.classList.remove('error');
+          confirmPasswordInput.setCustomValidity('');
+        }
+      }
+
+      // Check password strength
+      if (passwordInput && passwordInput.value.length < 8) {
+        e.preventDefault();
+        passwordInput.classList.add('error');
+        passwordInput.setCustomValidity('Password must be at least 8 characters long');
+      } else if (passwordInput) {
+        passwordInput.classList.remove('error');
+        passwordInput.setCustomValidity('');
+      }
+    });
+
+    // Real-time password confirmation check
+    const passwordInput = document.getElementById('CustomerPassword');
+    const confirmPasswordInput = document.getElementById('CustomerPasswordConfirmation');
+    
+    if (passwordInput && confirmPasswordInput) {
+      confirmPasswordInput.addEventListener('input', function() {
+        if (this.value !== passwordInput.value) {
+          this.classList.add('error');
+        } else {
+          this.classList.remove('error');
+        }
+      });
+    }
+  }
+});
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Customer Activate Account",
+  "tag": "section",
+  "class": "customer-activate-account",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Activation Options"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_welcome_message",
+      "label": "Show Welcome Message",
+      "default": true,
+      "info": "Display welcome message to new customers"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_auto_login",
+      "label": "Enable Auto Login",
+      "default": true,
+      "info": "Automatically log in customer after activation"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_account_benefits",
+      "label": "Show Account Benefits",
+      "default": true,
+      "info": "Display benefits of having an account"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Customer Activate Account"
+    }
+  ]
+}
+{% endschema %}

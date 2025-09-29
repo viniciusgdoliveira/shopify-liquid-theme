@@ -1,0 +1,248 @@
+{% doc %}
+  Renders a heading block with customizable styling and behavior.
+
+  @example
+  {% content_for 'block', type: 'heading', id: 'heading' %}
+{% enddoc %}
+
+{%- liquid
+  assign heading_text = block.settings.heading_text | default: 'Heading'
+  assign heading_level = block.settings.heading_level | default: 'h2'
+  assign heading_style = block.settings.heading_style | default: 'title'
+  assign text_alignment = block.settings.text_alignment | default: 'left'
+  assign text_color = block.settings.text_color
+  assign margin_top = block.settings.margin_top | default: 0
+  assign margin_bottom = block.settings.margin_bottom | default: 0
+  
+  assign heading_classes = 'heading heading--' | append: heading_style
+  
+  if text_color != blank
+    assign heading_style_attr = 'style="color: ' | append: text_color | append: '; margin-top: ' | append: margin_top | append: 'px; margin-bottom: ' | append: margin_bottom | append: 'px;"'
+  else
+    assign heading_style_attr = 'style="margin-top: ' | append: margin_top | append: 'px; margin-bottom: ' | append: margin_bottom | append: 'px;"'
+  endif
+-%}
+
+<div 
+  class="heading-block heading-block--{{ text_alignment }}"
+  style="--heading-align: {{ text_alignment }}"
+  {{ block.shopify_attributes }}
+>
+  {% case heading_level %}
+    {% when 'h1' %}
+      <h1 class="{{ heading_classes }}" {{ heading_style_attr }}>
+        {{ heading_text | t }}
+      </h1>
+    {% when 'h2' %}
+      <h2 class="{{ heading_classes }}" {{ heading_style_attr }}>
+        {{ heading_text | t }}
+      </h2>
+    {% when 'h3' %}
+      <h3 class="{{ heading_classes }}" {{ heading_style_attr }}>
+        {{ heading_text | t }}
+      </h3>
+    {% when 'h4' %}
+      <h4 class="{{ heading_classes }}" {{ heading_style_attr }}>
+        {{ heading_text | t }}
+      </h4>
+    {% when 'h5' %}
+      <h5 class="{{ heading_classes }}" {{ heading_style_attr }}>
+        {{ heading_text | t }}
+      </h5>
+    {% when 'h6' %}
+      <h6 class="{{ heading_classes }}" {{ heading_style_attr }}>
+        {{ heading_text | t }}
+      </h6>
+  {% endcase %}
+</div>
+
+{% stylesheet %}
+  .heading-block {
+    text-align: var(--heading-align);
+  }
+
+  .heading {
+    font-family: var(--font-family-primary);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-tight);
+    letter-spacing: var(--letter-spacing-tight);
+    color: var(--color-text-primary);
+    margin: 0;
+    word-wrap: break-word;
+    hyphens: auto;
+  }
+
+  /* Heading Styles */
+  .heading--display {
+    font-size: clamp(var(--font-size-4xl), 5vw, var(--font-size-7xl));
+    font-weight: var(--font-weight-black);
+    line-height: var(--line-height-tight);
+    letter-spacing: var(--letter-spacing-tight);
+  }
+
+  .heading--title {
+    font-size: clamp(var(--font-size-2xl), 4vw, var(--font-size-5xl));
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-snug);
+    letter-spacing: var(--letter-spacing-tight);
+  }
+
+  .heading--subtitle {
+    font-size: clamp(var(--font-size-xl), 3vw, var(--font-size-3xl));
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-snug);
+    letter-spacing: var(--letter-spacing-normal);
+  }
+
+  .heading--body {
+    font-size: clamp(var(--font-size-lg), 2.5vw, var(--font-size-2xl));
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-normal);
+    letter-spacing: var(--letter-spacing-normal);
+  }
+
+  /* Heading Alignments */
+  .heading-block--left {
+    text-align: left;
+  }
+
+  .heading-block--center {
+    text-align: center;
+  }
+
+  .heading-block--right {
+    text-align: right;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .heading--display {
+      font-size: clamp(var(--font-size-3xl), 8vw, var(--font-size-5xl));
+    }
+    
+    .heading--title {
+      font-size: clamp(var(--font-size-xl), 6vw, var(--font-size-3xl));
+    }
+    
+    .heading--subtitle {
+      font-size: clamp(var(--font-size-lg), 5vw, var(--font-size-2xl));
+    }
+    
+    .heading--body {
+      font-size: clamp(var(--font-size-base), 4vw, var(--font-size-xl));
+    }
+  }
+
+  /* Accessibility improvements */
+  @media (prefers-reduced-motion: reduce) {
+    .heading {
+      transition: none;
+    }
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .heading {
+      font-weight: var(--font-weight-black);
+    }
+  }
+
+  /* Print styles */
+  @media print {
+    .heading {
+      color: black !important;
+      page-break-after: avoid;
+    }
+  }
+
+  /* Focus styles for screen readers */
+  .heading:focus {
+    outline: var(--border-width-2) solid var(--color-primary);
+    outline-offset: var(--space-1);
+    border-radius: var(--radius-sm);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Heading",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading_text",
+      "label": "t:blocks.heading.heading_text",
+      "default": "Heading"
+    },
+    {
+      "type": "select",
+      "id": "heading_level",
+      "label": "t:blocks.heading.heading_level",
+      "options": [
+        { "value": "h1", "label": "t:blocks.heading.heading_level.h1" },
+        { "value": "h2", "label": "t:blocks.heading.heading_level.h2" },
+        { "value": "h3", "label": "t:blocks.heading.heading_level.h3" },
+        { "value": "h4", "label": "t:blocks.heading.heading_level.h4" },
+        { "value": "h5", "label": "t:blocks.heading.heading_level.h5" },
+        { "value": "h6", "label": "t:blocks.heading.heading_level.h6" }
+      ],
+      "default": "h2",
+      "info": "t:blocks.heading.heading_level_info"
+    },
+    {
+      "type": "select",
+      "id": "heading_style",
+      "label": "t:blocks.heading.heading_style",
+      "options": [
+        { "value": "display", "label": "t:blocks.heading.heading_style.display" },
+        { "value": "title", "label": "t:blocks.heading.heading_style.title" },
+        { "value": "subtitle", "label": "t:blocks.heading.heading_style.subtitle" },
+        { "value": "body", "label": "t:blocks.heading.heading_style.body" }
+      ],
+      "default": "title"
+    },
+    {
+      "type": "text_alignment",
+      "id": "text_alignment",
+      "label": "t:blocks.heading.text_alignment",
+      "default": "left"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "t:blocks.heading.text_color",
+      "info": "t:blocks.heading.text_color_info"
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "label": "t:blocks.heading.margin_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "label": "t:blocks.heading.margin_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    }
+  ],
+  "presets": [
+    {
+      "name": "Heading",
+      "settings": {
+        "heading_text": "Heading",
+        "heading_level": "h2",
+        "heading_style": "title",
+        "text_alignment": "left"
+      }
+    }
+  ]
+}
+{% endschema %}

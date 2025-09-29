@@ -1,0 +1,227 @@
+{% doc %}
+  Renders a divider block for visual content separation.
+
+  @example
+  {% content_for 'block', type: 'divider', id: 'divider' %}
+{% enddoc %}
+
+{%- liquid
+  assign divider_style = block.settings.divider_style | default: 'line'
+  assign divider_color = block.settings.divider_color | default: 'var(--color-border)'
+  assign divider_thickness = block.settings.divider_thickness | default: 1
+  assign divider_width = block.settings.divider_width | default: 100
+  assign margin_top = block.settings.margin_top | default: 24
+  assign margin_bottom = block.settings.margin_bottom | default: 24
+  
+  assign divider_classes = 'divider-block divider-block--' | append: divider_style
+  assign divider_style_attr = 'style="--divider-color: ' | append: divider_color | append: '; --divider-thickness: ' | append: divider_thickness | append: 'px; --divider-width: ' | append: divider_width | append: '%; margin-top: ' | append: margin_top | append: 'px; margin-bottom: ' | append: margin_bottom | append: 'px;"'
+-%}
+
+<div 
+  class="{{ divider_classes }}"
+  {{ divider_style_attr }}
+  {{ block.shopify_attributes }}
+>
+  {% case divider_style %}
+    {% when 'line' %}
+      <div class="divider-block__line"></div>
+    {% when 'dots' %}
+      <div class="divider-block__dots">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    {% when 'dashes' %}
+      <div class="divider-block__dashes">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    {% when 'none' %}
+      <!-- No visual divider -->
+    {% else %}
+      <div class="divider-block__line"></div>
+  {% endcase %}
+</div>
+
+{% stylesheet %}
+  .divider-block {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+  }
+
+  .divider-block__line {
+    width: var(--divider-width, 100%);
+    height: var(--divider-thickness, 1px);
+    background-color: var(--divider-color, var(--color-border));
+    border: none;
+  }
+
+  .divider-block__dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+  }
+
+  .divider-block__dots span {
+    width: var(--divider-thickness, 1px);
+    height: var(--divider-thickness, 1px);
+    background-color: var(--divider-color, var(--color-border));
+    border-radius: 50%;
+    display: block;
+  }
+
+  .divider-block__dashes {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-1);
+  }
+
+  .divider-block__dashes span {
+    width: calc(var(--divider-thickness, 1px) * 8);
+    height: var(--divider-thickness, 1px);
+    background-color: var(--divider-color, var(--color-border));
+    display: block;
+  }
+
+  /* Divider Styles */
+  .divider-block--dots .divider-block__dots span {
+    width: calc(var(--divider-thickness, 1px) * 4);
+    height: calc(var(--divider-thickness, 1px) * 4);
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .divider-block {
+      margin-top: calc(var(--margin-top, 24px) * 0.75);
+      margin-bottom: calc(var(--margin-bottom, 24px) * 0.75);
+    }
+    
+    .divider-block__dashes span {
+      width: calc(var(--divider-thickness, 1px) * 6);
+    }
+  }
+
+  /* Accessibility improvements */
+  @media (prefers-reduced-motion: reduce) {
+    .divider-block {
+      transition: none;
+    }
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .divider-block__line,
+    .divider-block__dots span,
+    .divider-block__dashes span {
+      background-color: var(--color-text-primary);
+    }
+  }
+
+  /* Print styles */
+  @media print {
+    .divider-block {
+      margin-top: 12px;
+      margin-bottom: 12px;
+    }
+    
+    .divider-block__line,
+    .divider-block__dots span,
+    .divider-block__dashes span {
+      background-color: black;
+    }
+  }
+
+  /* Focus styles for screen readers */
+  .divider-block:focus {
+    outline: var(--border-width-2) solid var(--color-primary);
+    outline-offset: var(--space-1);
+    border-radius: var(--radius-sm);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Divider",
+  "settings": [
+    {
+      "type": "select",
+      "id": "divider_style",
+      "label": "Divider style",
+      "options": [
+        { "value": "line", "label": "Line" },
+        { "value": "dots", "label": "Dots" },
+        { "value": "dashes", "label": "Dashes" },
+        { "value": "none", "label": "None" }
+      ],
+      "default": "line"
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Divider color",
+      "default": "#e0e0e0",
+      "info": "Color of the divider line, dots, or dashes"
+    },
+    {
+      "type": "range",
+      "id": "divider_thickness",
+      "label": "Divider thickness",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "default": 1,
+      "info": "Thickness of the divider"
+    },
+    {
+      "type": "range",
+      "id": "divider_width",
+      "label": "Divider width",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100,
+      "info": "Width of the divider as a percentage"
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "label": "Margin top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "label": "Margin bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    }
+  ],
+  "presets": [
+    {
+      "name": "Divider",
+      "settings": {
+        "divider_style": "line",
+        "divider_color": "#e0e0e0",
+        "divider_thickness": 1,
+        "divider_width": 100
+      }
+    }
+  ]
+}
+{% endschema %}

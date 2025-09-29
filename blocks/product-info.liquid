@@ -1,0 +1,283 @@
+{% doc %}
+  Renders a product information block with customizable display options.
+
+  @example
+  {% content_for 'block', type: 'product-info', id: 'product-info' %}
+{% enddoc %}
+
+{%- liquid
+  assign show_vendor = block.settings.show_vendor | default: false
+  assign show_sku = block.settings.show_sku | default: false
+  assign show_product_type = block.settings.show_product_type | default: false
+  assign show_tags = block.settings.show_tags | default: false
+  assign show_description = block.settings.show_description | default: true
+  assign description_length = block.settings.description_length | default: 'full'
+  assign custom_description_text = block.settings.custom_description_text
+  assign text_alignment = block.settings.text_alignment | default: 'left'
+  assign text_style = block.settings.text_style | default: 'body'
+  
+  assign info_classes = 'product-info product-info--' | append: text_style | append: ' product-info--' | append: text_alignment
+-%}
+
+<div class="{{ info_classes }}" {{ block.shopify_attributes }}>
+  {%- if show_vendor and product.vendor != blank -%}
+    <div class="product-info__vendor">
+      <span class="product-info__label">{{ 'blocks.product_info.vendor' | t }}:</span>
+      <span class="product-info__value">{{ product.vendor }}</span>
+    </div>
+  {%- endif -%}
+
+  {%- if show_sku and product.selected_or_first_available_variant.sku != blank -%}
+    <div class="product-info__sku">
+      <span class="product-info__label">{{ 'blocks.product_info.sku' | t }}:</span>
+      <span class="product-info__value">{{ product.selected_or_first_available_variant.sku }}</span>
+    </div>
+  {%- endif -%}
+
+  {%- if show_product_type and product.type != blank -%}
+    <div class="product-info__type">
+      <span class="product-info__label">{{ 'blocks.product_info.product_type' | t }}:</span>
+      <span class="product-info__value">{{ product.type }}</span>
+    </div>
+  {%- endif -%}
+
+  {%- if show_tags and product.tags.size > 0 -%}
+    <div class="product-info__tags">
+      <span class="product-info__label">{{ 'blocks.product_info.tags' | t }}:</span>
+      <div class="product-info__tags-list">
+        {%- for tag in product.tags -%}
+          <span class="product-info__tag">{{ tag }}</span>
+          {%- unless forloop.last -%}, {% endunless -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- endif -%}
+
+  {%- if show_description -%}
+    <div class="product-info__description">
+      {%- case description_length -%}
+        {%- when 'full' -%}
+          {{ product.description }}
+        {%- when 'excerpt' -%}
+          {%- if product.description.size > 150 -%}
+            {{ product.description | truncate: 150 }}
+          {%- else -%}
+            {{ product.description }}
+          {%- endif -%}
+        {%- when 'custom' -%}
+          {%- if custom_description_text != blank -%}
+            {{ custom_description_text }}
+          {%- else -%}
+            {{ product.description }}
+          {%- endif -%}
+      {%- endcase -%}
+    </div>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  .product-info {
+    font-family: var(--font-family-primary);
+    color: var(--color-text-primary);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .product-info__vendor,
+  .product-info__sku,
+  .product-info__type,
+  .product-info__tags,
+  .product-info__description {
+    margin-bottom: var(--space-3);
+  }
+
+  .product-info__vendor:last-child,
+  .product-info__sku:last-child,
+  .product-info__type:last-child,
+  .product-info__tags:last-child,
+  .product-info__description:last-child {
+    margin-bottom: 0;
+  }
+
+  .product-info__label {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-secondary);
+    margin-right: var(--space-2);
+  }
+
+  .product-info__value {
+    color: var(--color-text-primary);
+  }
+
+  .product-info__tags-list {
+    display: inline;
+  }
+
+  .product-info__tag {
+    color: var(--color-text-secondary);
+    font-style: italic;
+  }
+
+  .product-info__description {
+    color: var(--color-text-primary);
+  }
+
+  .product-info__description p {
+    margin-bottom: var(--space-2);
+  }
+
+  .product-info__description p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Text Styles */
+  .product-info--body {
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .product-info--small {
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-normal);
+  }
+
+  .product-info--large {
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-loose);
+  }
+
+  /* Text Alignments */
+  .product-info--left {
+    text-align: left;
+  }
+
+  .product-info--center {
+    text-align: center;
+  }
+
+  .product-info--right {
+    text-align: right;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .product-info__vendor,
+    .product-info__sku,
+    .product-info__type,
+    .product-info__tags,
+    .product-info__description {
+      margin-bottom: var(--space-2);
+    }
+    
+    .product-info--large {
+      font-size: var(--font-size-base);
+    }
+  }
+
+  /* Accessibility improvements */
+  @media (prefers-reduced-motion: reduce) {
+    .product-info {
+      transition: none;
+    }
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .product-info__label {
+      font-weight: var(--font-weight-bold);
+    }
+  }
+
+  /* Print styles */
+  @media print {
+    .product-info {
+      color: black;
+    }
+    
+    .product-info__label {
+      color: black;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Product Info",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show vendor",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sku",
+      "label": "Show SKU",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_product_type",
+      "label": "Show product type",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_tags",
+      "label": "Show tags",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_description",
+      "label": "Show description",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "description_length",
+      "label": "Description length",
+      "options": [
+        { "value": "full", "label": "Full description" },
+        { "value": "excerpt", "label": "Excerpt (150 characters)" },
+        { "value": "custom", "label": "Custom text" }
+      ],
+      "default": "full"
+    },
+    {
+      "type": "textarea",
+      "id": "custom_description_text",
+      "label": "Custom description text",
+      "info": "Only used when description length is set to 'Custom text'"
+    },
+    {
+      "type": "text_alignment",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "text_style",
+      "label": "Text style",
+      "options": [
+        { "value": "small", "label": "Small" },
+        { "value": "body", "label": "Body" },
+        { "value": "large", "label": "Large" }
+      ],
+      "default": "body"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Info",
+      "settings": {
+        "show_description": true,
+        "description_length": "full",
+        "text_alignment": "left",
+        "text_style": "body"
+      }
+    }
+  ]
+}
+{% endschema %}

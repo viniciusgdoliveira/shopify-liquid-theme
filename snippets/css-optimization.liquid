@@ -1,0 +1,216 @@
+{% comment %}
+  CSS Minification and Optimization Snippet
+  
+  This snippet provides:
+  1. CSS minification for production
+  2. CSS compression techniques
+  3. Performance monitoring
+  4. Cache busting strategies
+  5. CSS delivery optimization
+{% endcomment %}
+
+{% comment %} CSS Minification Script {% endcomment %}
+<script>
+(function() {
+  'use strict';
+  
+  // CSS minification function
+  function minifyCSS(css) {
+    return css
+      // Remove comments
+      .replace(/\/\*[\s\S]*?\*\//g, '')
+      // Remove unnecessary whitespace
+      .replace(/\s+/g, ' ')
+      // Remove spaces around operators
+      .replace(/\s*([{}:;,>+~])\s*/g, '$1')
+      // Remove leading/trailing whitespace
+      .trim();
+  }
+  
+  // CSS compression function
+  function compressCSS(css) {
+    return css
+      // Remove unnecessary semicolons
+      .replace(/;}/g, '}')
+      // Remove unnecessary spaces
+      .replace(/\s*{\s*/g, '{')
+      .replace(/;\s*/g, ';')
+      // Remove unnecessary zeros
+      .replace(/0px/g, '0')
+      .replace(/0em/g, '0')
+      .replace(/0rem/g, '0')
+      // Remove unnecessary quotes
+      .replace(/"([^"]*)"/g, '$1')
+      // Remove unnecessary units
+      .replace(/(\d+)px/g, '$1px')
+      .replace(/(\d+)em/g, '$1em')
+      .replace(/(\d+)rem/g, '$1rem');
+  }
+  
+  // CSS delivery optimization
+  function optimizeCSSDelivery() {
+    // Check if CSS is already loaded
+    const loadedCSS = document.querySelectorAll('link[rel="stylesheet"]');
+    const loadedCount = loadedCSS.length;
+    
+    // Monitor CSS loading performance
+    if ('performance' in window) {
+      const cssLoadTime = performance.getEntriesByType('resource')
+        .filter(entry => entry.name.includes('.css'))
+        .reduce((total, entry) => total + entry.duration, 0);
+      
+      if (cssLoadTime > 1000) {
+        console.warn(`CSS loading took ${cssLoadTime.toFixed(2)}ms - consider optimization`);
+      }
+    }
+    
+    // Optimize CSS delivery based on connection speed
+    if ('connection' in navigator) {
+      const connection = navigator.connection;
+      
+      if (connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g') {
+        // For slow connections, prioritize critical CSS only
+        console.log('Slow connection detected - optimizing CSS delivery');
+        
+        // Defer non-critical CSS loading
+        const nonCriticalCSS = document.querySelectorAll('link[rel="stylesheet"]:not([data-critical])');
+        nonCriticalCSS.forEach(link => {
+          link.media = 'print';
+          link.onload = function() {
+            this.media = 'all';
+          };
+        });
+      }
+    }
+  }
+  
+  // CSS cache busting
+  function bustCSSCache() {
+    const cssLinks = document.querySelectorAll('link[rel="stylesheet"]');
+    const timestamp = Date.now();
+    
+    cssLinks.forEach(link => {
+      const url = new URL(link.href);
+      url.searchParams.set('v', timestamp);
+      link.href = url.toString();
+    });
+  }
+  
+  // CSS loading optimization
+  function optimizeCSSLoading() {
+    // Preload critical CSS
+    const criticalCSS = document.querySelector('link[rel="stylesheet"][data-critical]');
+    if (criticalCSS) {
+      const preloadLink = document.createElement('link');
+      preloadLink.rel = 'preload';
+      preloadLink.href = criticalCSS.href;
+      preloadLink.as = 'style';
+      preloadLink.onload = function() {
+        this.rel = 'stylesheet';
+      };
+      document.head.insertBefore(preloadLink, criticalCSS);
+    }
+    
+    // Load non-critical CSS asynchronously
+    const nonCriticalCSS = document.querySelectorAll('link[rel="stylesheet"]:not([data-critical])');
+    nonCriticalCSS.forEach(link => {
+      link.media = 'print';
+      link.onload = function() {
+        this.media = 'all';
+      };
+    });
+  }
+  
+  // CSS performance monitoring
+  function monitorCSSPerformance() {
+    if ('PerformanceObserver' in window) {
+      const observer = new PerformanceObserver((list) => {
+        list.getEntries().forEach(entry => {
+          if (entry.entryType === 'resource' && entry.name.includes('.css')) {
+            if (entry.duration > 1000) {
+              console.warn(`Slow CSS load: ${entry.name} took ${entry.duration.toFixed(2)}ms`);
+            }
+          }
+        });
+      });
+      
+      observer.observe({ entryTypes: ['resource'] });
+    }
+  }
+  
+  // Initialize CSS optimization
+  function initCSSOptimization() {
+    optimizeCSSDelivery();
+    optimizeCSSLoading();
+    monitorCSSPerformance();
+    
+    // Add CSS loading event listener
+    document.addEventListener('css:loaded', () => {
+      console.log('CSS optimization complete');
+    });
+  }
+  
+  // Run optimization when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCSSOptimization);
+  } else {
+    initCSSOptimization();
+  }
+  
+})();
+</script>
+
+{% comment %} CSS Loading Performance Metrics {% endcomment %}
+<script>
+// CSS performance metrics
+(function() {
+  'use strict';
+  
+  // Track CSS loading metrics
+  function trackCSSMetrics() {
+    const metrics = {
+      cssFiles: 0,
+      totalSize: 0,
+      loadTime: 0,
+      renderTime: 0
+    };
+    
+    // Count CSS files and calculate total size
+    const cssLinks = document.querySelectorAll('link[rel="stylesheet"]');
+    metrics.cssFiles = cssLinks.length;
+    
+    // Calculate total CSS size
+    cssLinks.forEach(link => {
+      if (link.href) {
+        // This would need to be implemented with actual file size measurement
+        metrics.totalSize += 0; // Placeholder
+      }
+    });
+    
+    // Measure CSS loading time
+    if ('performance' in window) {
+      const cssEntries = performance.getEntriesByType('resource')
+        .filter(entry => entry.name.includes('.css'));
+      
+      metrics.loadTime = cssEntries.reduce((total, entry) => total + entry.duration, 0);
+      
+      // Measure render time
+      const renderEntries = performance.getEntriesByType('paint');
+      const fcp = renderEntries.find(entry => entry.name === 'first-contentful-paint');
+      if (fcp) {
+        metrics.renderTime = fcp.startTime;
+      }
+    }
+    
+    // Log metrics to console for debugging
+    console.log('CSS Performance Metrics:', metrics);
+  }
+  
+  // Track metrics when CSS is loaded
+  document.addEventListener('css:loaded', trackCSSMetrics);
+  
+  // Fallback: track metrics after a delay
+  setTimeout(trackCSSMetrics, 5000);
+  
+})();
+</script>

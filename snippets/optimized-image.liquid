@@ -1,0 +1,124 @@
+{% comment %}
+  Performance Optimization Snippet
+  Handles lazy loading, image optimization, and Core Web Vitals optimization
+{% endcomment %}
+
+{% liquid
+  assign image_width = image_width | default: 800
+  assign image_height = image_height | default: 600
+  assign image_alt = image_alt | default: ''
+  assign image_class = image_class | default: ''
+  assign lazy_loading = lazy_loading | default: true
+  assign priority = priority | default: false
+  assign sizes = sizes | default: '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
+%}
+
+{% if image %}
+  {% liquid
+    assign image_url = image | image_url: width: image_width
+    assign image_url_2x = image | image_url: width: image_width | times: 2
+    assign image_url_3x = image | image_url: width: image_width | times: 3
+    
+    # Generate WebP URLs for better performance
+    assign webp_url = image | image_url: width: image_width, format: 'webp'
+    assign webp_url_2x = image | image_url: width: image_width | times: 2, format: 'webp'
+    assign webp_url_3x = image | image_url: width: image_width | times: 3, format: 'webp'
+    
+    # Generate AVIF URLs for even better performance (if supported)
+    assign avif_url = image | image_url: width: image_width, format: 'avif'
+    assign avif_url_2x = image | image_url: width: image_width | times: 2, format: 'avif'
+    assign avif_url_3x = image | image_url: width: image_width | times: 3, format: 'avif'
+    
+    # Generate placeholder for better CLS
+    assign placeholder_url = image | image_url: width: 20, format: 'webp'
+  %}
+
+  <picture class="optimized-image {{ image_class }}">
+    <!-- AVIF format (best compression) -->
+    <source 
+      type="image/avif" 
+      srcset="{{ avif_url }} 1x, {{ avif_url_2x }} 2x, {{ avif_url_3x }} 3x"
+      sizes="{{ sizes }}"
+    >
+    
+    <!-- WebP format (good compression) -->
+    <source 
+      type="image/webp" 
+      srcset="{{ webp_url }} 1x, {{ webp_url_2x }} 2x, {{ webp_url_3x }} 3x"
+      sizes="{{ sizes }}"
+    >
+    
+    <!-- Fallback JPEG/PNG -->
+    <img
+      src="{{ image_url }}"
+      srcset="{{ image_url }} 1x, {{ image_url_2x }} 2x, {{ image_url_3x }} 3x"
+      sizes="{{ sizes }}"
+      alt="{{ image_alt | escape }}"
+      width="{{ image_width }}"
+      height="{{ image_height }}"
+      {% if lazy_loading and priority == false %}
+        loading="lazy"
+      {% elsif priority %}
+        loading="eager"
+        fetchpriority="high"
+      {% endif %}
+      {% if placeholder_url %}
+        data-placeholder="{{ placeholder_url }}"
+      {% endif %}
+      class="optimized-image__img"
+      onload="this.classList.add('loaded')"
+      onerror="this.classList.add('error')"
+    >
+  </picture>
+
+  {% comment %} Add CSS for smooth loading {% endcomment %}
+  <style>
+    .optimized-image {
+      position: relative;
+      display: block;
+      overflow: hidden;
+    }
+    
+    .optimized-image__img {
+      width: 100%;
+      height: auto;
+      transition: opacity 0.3s ease;
+      opacity: 0;
+    }
+    
+    .optimized-image__img.loaded {
+      opacity: 1;
+    }
+    
+    .optimized-image__img.error {
+      opacity: 1;
+      background-color: var(--color-background-secondary);
+    }
+    
+    /* Placeholder while loading */
+    .optimized-image__img:not(.loaded) {
+      background-image: url('{{ placeholder_url }}');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+    
+    /* Reduced motion support */
+    @media (prefers-reduced-motion: reduce) {
+      .optimized-image__img {
+        transition: none;
+      }
+    }
+  </style>
+{% else %}
+  {% comment %} Fallback for missing image {% endcomment %}
+  <div class="optimized-image optimized-image--placeholder {{ image_class }}">
+    <div class="optimized-image__placeholder" role="img" aria-label="{{ image_alt | escape }}">
+      <svg width="{{ image_width }}" height="{{ image_height }}" viewBox="0 0 {{ image_width }} {{ image_height }}" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="{{ image_width }}" height="{{ image_height }}" fill="var(--color-background-secondary)"/>
+        <path d="M{{ image_width | divided_by: 2 | minus: 50 }} {{ image_height | divided_by: 2 | minus: 30 }}h100v60h-100z" fill="var(--color-border)"/>
+        <circle cx="{{ image_width | divided_by: 2 | minus: 20 }}" cy="{{ image_height | divided_by: 2 | minus: 20 }}" r="15" fill="var(--color-border)"/>
+      </svg>
+    </div>
+  </div>
+{% endif %}

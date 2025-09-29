@@ -1,0 +1,361 @@
+{% liquid
+  assign section_id = section.settings.custom_id | default: section.id
+  assign section_class = 'customer-account'
+%}
+
+<div id="{{ section_id }}" class="{{ section_class }} page-width">
+  <div class="customer-account__wrapper">
+    <!-- Account Header -->
+    <div class="customer-account__header">
+      <h1 class="customer-account__title">{{ 'customer.account.title' | t }}</h1>
+      <p class="customer-account__welcome">{{ 'customer.account.welcome' | t: first_name: customer.first_name }}</p>
+    </div>
+
+    <!-- Account Navigation -->
+    <nav class="customer-account__nav" role="navigation" aria-label="{{ 'customer.account.navigation' | t }}">
+      <ul class="customer-account__nav-list">
+        <li class="customer-account__nav-item">
+          <a href="{{ routes.account_url }}" class="customer-account__nav-link{% if request.page_type == 'customers/account' %} customer-account__nav-link--active{% endif %}">
+            {{ 'customer.account.overview' | t }}
+          </a>
+        </li>
+        <li class="customer-account__nav-item">
+          <a href="{{ routes.account_orders_url }}" class="customer-account__nav-link{% if request.page_type == 'customers/orders' %} customer-account__nav-link--active{% endif %}">
+            {{ 'customer.orders.title' | t }}
+          </a>
+        </li>
+        <li class="customer-account__nav-item">
+          <a href="{{ routes.account_addresses_url }}" class="customer-account__nav-link{% if request.page_type == 'customers/addresses' %} customer-account__nav-link--active{% endif %}">
+            {{ 'customer.addresses.title' | t }}
+          </a>
+        </li>
+        <li class="customer-account__nav-item">
+          <a href="{{ routes.account_logout_url }}" class="customer-account__nav-link">
+            {{ 'customer.log_out' | t }}
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Account Content -->
+    <div class="customer-account__content">
+      {% if section.settings.enable_order_history and customer.orders.size > 0 %}
+        <div class="customer-account__orders">
+          <h2 class="customer-account__orders-title">{{ 'customer.orders.title' | t }}</h2>
+          <div class="customer-account__orders-list">
+            {% for order in customer.orders limit: 5 %}
+              <div class="customer-account__order">
+                <div class="customer-account__order-info">
+                  <h3 class="customer-account__order-number">
+                    <a href="{{ order.customer_url }}">{{ 'customer.orders.order_number' | t: number: order.name }}</a>
+                  </h3>
+                  <p class="customer-account__order-date">{{ order.created_at | date: format: 'date' }}</p>
+                  <p class="customer-account__order-total">{{ order.total_price | money }}</p>
+                </div>
+                <div class="customer-account__order-status">
+                  <span class="customer-account__order-status-badge customer-account__order-status-badge--{{ order.fulfillment_status | default: 'unfulfilled' }}">
+                    {{ order.fulfillment_status | default: 'Unfulfilled' | capitalize }}
+                  </span>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+          {% if customer.orders.size > 5 %}
+            <div class="customer-account__orders-more">
+              <a href="{{ routes.account_orders_url }}" class="btn btn--secondary">
+                {{ 'customer.account.view_all_orders' | t }}
+              </a>
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {% if section.settings.enable_addresses %}
+        <div class="customer-account__addresses">
+          <h2 class="customer-account__addresses-title">{{ 'customer.addresses.title' | t }}</h2>
+          {% if customer.addresses.size > 0 %}
+            <div class="customer-account__addresses-list">
+              {% for address in customer.addresses limit: 3 %}
+                <div class="customer-account__address">
+                  <div class="customer-account__address-info">
+                    <h3 class="customer-account__address-name">{{ address.first_name }} {{ address.last_name }}</h3>
+                    <div class="customer-account__address-details">
+                      {{ address | format_address }}
+                    </div>
+                  </div>
+                  <div class="customer-account__address-actions">
+                    <a href="{{ address.url }}" class="btn btn--small btn--secondary">
+                      {{ 'customer.addresses.edit' | t }}
+                    </a>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+            {% if customer.addresses.size > 3 %}
+              <div class="customer-account__addresses-more">
+                <a href="{{ routes.account_addresses_url }}" class="btn btn--secondary">
+                  {{ 'customer.account.view_all_addresses' | t }}
+                </a>
+              </div>
+            {% endif %}
+          {% else %}
+            <div class="customer-account__addresses-empty">
+              <p>{{ 'customer.addresses.none' | t }}</p>
+              <a href="{{ routes.account_addresses_url }}" class="btn btn--primary">
+                {{ 'customer.addresses.add_new' | t }}
+              </a>
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {% if section.settings.enable_wishlist %}
+        <div class="customer-account__wishlist">
+          <h2 class="customer-account__wishlist-title">{{ 'customer.wishlist.title' | t }}</h2>
+          <div class="customer-account__wishlist-empty">
+            <p>{{ 'customer.wishlist.empty' | t }}</p>
+            <a href="{{ routes.all_products_collection_url }}" class="btn btn--primary">
+              {{ 'customer.wishlist.start_shopping' | t }}
+            </a>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+.customer-account {
+  padding: 2rem 0;
+}
+
+.customer-account__wrapper {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.customer-account__header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.customer-account__title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--color-text-primary);
+}
+
+.customer-account__welcome {
+  font-size: 1.125rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.customer-account__nav {
+  margin-bottom: 3rem;
+}
+
+.customer-account__nav-list {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex-wrap: wrap;
+}
+
+.customer-account__nav-link {
+  padding: 0.75rem 1.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  text-decoration: none;
+  color: var(--color-text-primary);
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.customer-account__nav-link:hover,
+.customer-account__nav-link--active {
+  background-color: var(--color-primary);
+  color: var(--color-text-inverse);
+  border-color: var(--color-primary);
+}
+
+.customer-account__content {
+  display: grid;
+  gap: 3rem;
+}
+
+.customer-account__orders-title,
+.customer-account__addresses-title,
+.customer-account__wishlist-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: var(--color-text-primary);
+}
+
+.customer-account__orders-list,
+.customer-account__addresses-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.customer-account__order,
+.customer-account__address {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  background-color: var(--color-background);
+}
+
+.customer-account__order-info,
+.customer-account__address-info {
+  flex: 1;
+}
+
+.customer-account__order-number a {
+  color: var(--color-text-primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.customer-account__order-number a:hover {
+  color: var(--color-primary);
+}
+
+.customer-account__order-date,
+.customer-account__order-total {
+  margin: 0.25rem 0;
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+}
+
+.customer-account__order-status-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--border-radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.customer-account__order-status-badge--fulfilled {
+  background-color: var(--color-success);
+  color: white;
+}
+
+.customer-account__order-status-badge--unfulfilled {
+  background-color: var(--color-warning);
+  color: white;
+}
+
+.customer-account__address-name {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--color-text-primary);
+}
+
+.customer-account__address-details {
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+.customer-account__addresses-empty,
+.customer-account__wishlist-empty {
+  text-align: center;
+  padding: 3rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  background-color: var(--color-background-secondary);
+}
+
+.customer-account__addresses-empty p,
+.customer-account__wishlist-empty p {
+  margin-bottom: 1rem;
+  color: var(--color-text-secondary);
+}
+
+.customer-account__orders-more,
+.customer-account__addresses-more {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 749px) {
+  .customer-account__nav-list {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .customer-account__order,
+  .customer-account__address {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .customer-account__order-status,
+  .customer-account__address-actions {
+    align-self: flex-start;
+  }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Customer Account",
+  "tag": "section",
+  "class": "customer-account",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Account Features"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_order_history",
+      "label": "Enable Order History",
+      "default": true,
+      "info": "Show recent orders on account page"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_addresses",
+      "label": "Enable Address Management",
+      "default": true,
+      "info": "Show saved addresses on account page"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_wishlist",
+      "label": "Enable Wishlist",
+      "default": true,
+      "info": "Show wishlist section on account page"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_order_status",
+      "label": "Show Order Status",
+      "default": true,
+      "info": "Display order fulfillment status"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_order_tracking",
+      "label": "Show Order Tracking",
+      "default": true,
+      "info": "Display order tracking information"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Customer Account"
+    }
+  ]
+}
+{% endschema %}

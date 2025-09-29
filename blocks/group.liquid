@@ -1,25 +1,33 @@
 {% doc %}
-  Renders a group of blocks with configurable layout direction, gap and
-  alignment.
+  Renders a group of blocks with configurable layout direction, gap, alignment,
+  background styling, and animation options.
 
-  All settings apply to only one dimension to reduce configuration complexity.
-
-  This component is a wrapper concerned only with rendering its children in
-  the specified layout direction with appropriate padding and alignment.
+  This component is a wrapper concerned with rendering its children in
+  the specified layout direction with appropriate styling and animations.
 
   @example
   {% content_for 'block', type: 'group', id: 'group' %}
 {% enddoc %}
 
 <div
-  class="group {{ block.settings.layout_direction }}"
+  class="group {{ block.settings.layout_direction }}{% if block.settings.background_color != blank %} group--has-background{% endif %}{% if block.settings.border %} group--has-border{% endif %}{% if block.settings.shadow != 'none' %} group--shadow-{{ block.settings.shadow }}{% endif %}{% if block.settings.animation != 'none' %} group--animate-{{ block.settings.animation }}{% endif %}"
   style="
     --padding: {{ block.settings.padding }}px;
     --alignment: {{ block.settings.alignment }};
+    --background-color: {{ block.settings.background_color | default: 'transparent' }};
+    --border-color: {{ block.settings.border_color | default: '#e0e0e0' }};
+    --border-width: {{ block.settings.border_width | default: 1 }}px;
+    --border-radius: {{ block.settings.border_radius | default: 0 }}px;
+    --gap-desktop: {{ block.settings.gap_desktop | default: 16 }}px;
+    --gap-mobile: {{ block.settings.gap_mobile | default: 12 }}px;
+    --animation-delay: {{ block.settings.animation_delay | default: 0 }}ms;
+    --animation-duration: {{ block.settings.animation_duration | default: 600 }}ms;
   "
   {{ block.shopify_attributes }}
 >
-  {% content_for 'blocks' %}
+  <div class="group__content">
+    {% content_for 'blocks' %}
+  </div>
 </div>
 
 {% stylesheet %}
@@ -28,6 +36,15 @@
     flex-wrap: nowrap;
     overflow: hidden;
     width: 100%;
+    background-color: var(--background-color);
+    border-radius: var(--border-radius);
+    transition: all 0.3s ease;
+  }
+
+  .group__content {
+    display: flex;
+    width: 100%;
+    gap: var(--gap-desktop);
   }
 
   .group--horizontal {
@@ -37,10 +54,135 @@
     padding: 0 var(--padding);
   }
 
+  .group--horizontal .group__content {
+    flex-direction: row;
+    align-items: center;
+  }
+
   .group--vertical {
     flex-direction: column;
     align-items: var(--alignment);
     padding: var(--padding) 0;
+  }
+
+  .group--vertical .group__content {
+    flex-direction: column;
+    align-items: var(--alignment);
+  }
+
+  /* Background Styling */
+  .group--has-background {
+    padding: var(--padding);
+  }
+
+  /* Border Styling */
+  .group--has-border {
+    border: var(--border-width) solid var(--border-color);
+  }
+
+  /* Shadow Styling */
+  .group--shadow-small {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .group--shadow-medium {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  .group--shadow-large {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Animation Styles */
+  .group--animate-fade-in {
+    opacity: 0;
+    animation: fadeIn var(--animation-duration) ease var(--animation-delay) forwards;
+  }
+
+  .group--animate-slide-up {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: slideUp var(--animation-duration) ease var(--animation-delay) forwards;
+  }
+
+  .group--animate-scale {
+    opacity: 0;
+    transform: scale(0.95);
+    animation: scaleIn var(--animation-duration) ease var(--animation-delay) forwards;
+  }
+
+  /* Animation Keyframes */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  /* Hover Effects */
+  .group:hover.group--shadow-small {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  .group:hover.group--shadow-medium {
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.2);
+  }
+
+  .group:hover.group--shadow-large {
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.25);
+  }
+
+  /* Responsive Design */
+  @media screen and (max-width: 768px) {
+    .group__content {
+      gap: var(--gap-mobile);
+    }
+
+    .group--horizontal {
+      flex-direction: column;
+      align-items: var(--alignment);
+      padding: var(--padding) 0;
+    }
+
+    .group--horizontal .group__content {
+      flex-direction: column;
+      align-items: var(--alignment);
+    }
+
+    .group--has-background {
+      padding: calc(var(--padding) * 0.75);
+    }
+  }
+
+  /* Accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    .group--animate-fade-in,
+    .group--animate-slide-up,
+    .group--animate-scale {
+      opacity: 1;
+      transform: none;
+      animation: none;
+    }
   }
 {% endstylesheet %}
 
@@ -80,6 +222,123 @@
       "max": 200,
       "step": 2,
       "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.styling"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:labels.background_color",
+      "info": "t:labels.background_color_info"
+    },
+    {
+      "type": "checkbox",
+      "id": "border",
+      "label": "t:labels.border",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "t:labels.border_color",
+      "default": "#e0e0e0",
+      "info": "t:labels.border_color_info"
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "label": "t:labels.border_width",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "t:labels.border_radius",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "shadow",
+      "label": "t:labels.shadow",
+      "options": [
+        { "value": "none", "label": "t:options.shadow.none" },
+        { "value": "small", "label": "t:options.shadow.small" },
+        { "value": "medium", "label": "t:options.shadow.medium" },
+        { "value": "large", "label": "t:options.shadow.large" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.spacing"
+    },
+    {
+      "type": "range",
+      "id": "gap_desktop",
+      "label": "t:labels.gap_desktop",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "gap_mobile",
+      "label": "t:labels.gap_mobile",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "t:labels.animation"
+    },
+    {
+      "type": "select",
+      "id": "animation",
+      "label": "t:labels.animation",
+      "options": [
+        { "value": "none", "label": "t:options.animation.none" },
+        { "value": "fade-in", "label": "t:options.animation.fade_in" },
+        { "value": "slide-up", "label": "t:options.animation.slide_up" },
+        { "value": "scale", "label": "t:options.animation.scale" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "range",
+      "id": "animation_delay",
+      "label": "t:labels.animation_delay",
+      "min": 0,
+      "max": 2000,
+      "step": 100,
+      "unit": "ms",
+      "default": 0,
+      "info": "t:labels.animation_delay_info"
+    },
+    {
+      "type": "range",
+      "id": "animation_duration",
+      "label": "t:labels.animation_duration",
+      "min": 200,
+      "max": 1500,
+      "step": 100,
+      "unit": "ms",
+      "default": 600,
+      "info": "t:labels.animation_duration_info"
     }
   ],
   "presets": [
@@ -98,6 +357,19 @@
       "settings": {
         "layout_direction": "group--horizontal",
         "padding": 0
+      }
+    },
+    {
+      "name": "t:general.card",
+      "category": "t:general.layout",
+      "settings": {
+        "layout_direction": "group--vertical",
+        "alignment": "center",
+        "padding": 24,
+        "background_color": "#ffffff",
+        "border": true,
+        "border_radius": 8,
+        "shadow": "small"
       }
     }
   ]

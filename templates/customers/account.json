@@ -1,0 +1,17 @@
+{
+  "sections": {
+    "main": {
+      "type": "customer-account",
+      "settings": {
+        "enable_order_history": true,
+        "enable_addresses": true,
+        "enable_wishlist": true,
+        "show_order_status": true,
+        "show_order_tracking": true
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

@@ -1,0 +1,760 @@
+{% comment %}
+  Collection JavaScript functionality
+  Extracted from collection.liquid section for reusability
+{% endcomment %}
+
+{% javascript %}
+class CollectionFilters extends HTMLElement {
+  constructor() {
+    super();
+    this.productsContainer = document.querySelector('[data-collection-products]');
+    this.sortSelect = document.querySelector('[data-collection-sort]');
+    this.viewToggle = document.querySelectorAll('[data-view]');
+    this.priceFilter = document.querySelector('[data-price-filter]');
+    this.brandFilter = document.querySelector('[data-brand-filter]');
+    this.colorFilter = document.querySelector('[data-color-filter]');
+    this.sizeFilter = document.querySelector('[data-size-filter]');
+    this.availabilityFilter = document.querySelector('[data-availability-filter]');
+    this.clearFiltersBtn = document.querySelector('[data-clear-filters]');
+    this.productCount = document.querySelector('.collection__count-text');
+    
+    this.currentFilters = {
+      price: { min: 0, max: 1000 },
+      brand: [],
+      color: [],
+      size: [],
+      availability: []
+    };
+    
+    this.init();
+  }
+
+  init() {
+    if (this.sortSelect) {
+      this.sortSelect.addEventListener('change', this.handleSort.bind(this));
+    }
+
+    if (this.viewToggle.length) {
+      this.viewToggle.forEach(btn => {
+        btn.addEventListener('click', this.handleViewToggle.bind(this));
+      });
+    }
+
+    if (this.priceFilter) {
+      this.initPriceFilter();
+    }
+
+    if (this.brandFilter) {
+      this.initBrandFilter();
+    }
+
+    if (this.colorFilter) {
+      this.initColorFilter();
+    }
+
+    if (this.sizeFilter) {
+      this.initSizeFilter();
+    }
+
+    if (this.availabilityFilter) {
+      this.initAvailabilityFilter();
+    }
+
+    if (this.clearFiltersBtn) {
+      this.clearFiltersBtn.addEventListener('click', this.clearAllFilters.bind(this));
+    }
+
+    // Initialize URL state
+    this.initURLState();
+    
+    // Initialize load more functionality
+    this.initLoadMore();
+    
+    // Initialize quick view functionality
+    this.initQuickView();
+  }
+
+  handleSort(event) {
+    const sortValue = event.target.value;
+    const url = new URL(window.location);
+    url.searchParams.set('sort_by', sortValue);
+    window.location.href = url.toString();
+  }
+
+  handleViewToggle(event) {
+    const view = event.target.dataset.view;
+    const productsGrid = document.querySelector('.collection__products-grid');
+    
+    // Update active button
+    this.viewToggle.forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    // Update grid class
+    productsGrid.className = productsGrid.className.replace(/collection__products-grid--(grid|list)/, '');
+    productsGrid.classList.add(`collection__products-grid--${view}`);
+    
+    // Store preference
+    localStorage.setItem('collection-view', view);
+  }
+
+  initPriceFilter() {
+    const minRange = this.priceFilter.querySelector('[data-price-min]');
+    const maxRange = this.priceFilter.querySelector('[data-price-max]');
+    const minDisplay = this.priceFilter.querySelector('[data-price-min-display]');
+    const maxDisplay = this.priceFilter.querySelector('[data-price-max-display]');
+
+    if (minRange && maxRange && minDisplay && maxDisplay) {
+      // Debounced filter application (Shopify best practice)
+      const debouncedApplyFilters = this.debounce(() => {
+        this.applyFilters();
+      }, 300);
+
+      minRange.addEventListener('input', () => {
+        minDisplay.textContent = `$${minRange.value}`;
+        debouncedApplyFilters();
+      });
+
+      maxRange.addEventListener('input', () => {
+        maxDisplay.textContent = `$${maxRange.value}`;
+        debouncedApplyFilters();
+      });
+    }
+  }
+
+  // Debounce utility to prevent excessive API calls
+  debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  }
+
+  initBrandFilter() {
+    const checkboxes = this.brandFilter.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', this.applyFilters.bind(this));
+    });
+  }
+
+  initColorFilter() {
+    const checkboxes = this.colorFilter.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', this.applyFilters.bind(this));
+    });
+  }
+
+  initSizeFilter() {
+    const checkboxes = this.sizeFilter.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', this.applyFilters.bind(this));
+    });
+  }
+
+  initAvailabilityFilter() {
+    const checkboxes = this.availabilityFilter.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', this.applyFilters.bind(this));
+    });
+  }
+
+  applyFilters() {
+    this.updateCurrentFilters();
+    this.updateURL();
+    this.performAJAXFilter();
+  }
+
+  updateCurrentFilters() {
+    // Update price filter
+    if (this.priceFilter) {
+      const minRange = this.priceFilter.querySelector('[data-price-min]');
+      const maxRange = this.priceFilter.querySelector('[data-price-max]');
+      if (minRange && maxRange) {
+        this.currentFilters.price.min = parseInt(minRange.value);
+        this.currentFilters.price.max = parseInt(maxRange.value);
+      }
+    }
+
+    // Update brand filter
+    if (this.brandFilter) {
+      const checkboxes = this.brandFilter.querySelectorAll('input[type="checkbox"]:checked');
+      this.currentFilters.brand = Array.from(checkboxes).map(cb => cb.value);
+    }
+
+    // Update color filter
+    if (this.colorFilter) {
+      const checkboxes = this.colorFilter.querySelectorAll('input[type="checkbox"]:checked');
+      this.currentFilters.color = Array.from(checkboxes).map(cb => cb.value);
+    }
+
+    // Update size filter
+    if (this.sizeFilter) {
+      const checkboxes = this.sizeFilter.querySelectorAll('input[type="checkbox"]:checked');
+      this.currentFilters.size = Array.from(checkboxes).map(cb => cb.value);
+    }
+
+    // Update availability filter
+    if (this.availabilityFilter) {
+      const checkboxes = this.availabilityFilter.querySelectorAll('input[type="checkbox"]:checked');
+      this.currentFilters.availability = Array.from(checkboxes).map(cb => cb.value);
+    }
+  }
+
+  updateURL() {
+    const url = new URL(window.location);
+    
+    // Clear existing filter params
+    url.searchParams.delete('filter.v.price.gte');
+    url.searchParams.delete('filter.v.price.lte');
+    url.searchParams.delete('filter.v.vendor');
+    url.searchParams.delete('filter.v.tag');
+    
+    // Add price filters
+    if (this.currentFilters.price.min > 0) {
+      url.searchParams.set('filter.v.price.gte', this.currentFilters.price.min * 100);
+    }
+    if (this.currentFilters.price.max < 1000) {
+      url.searchParams.set('filter.v.price.lte', this.currentFilters.price.max * 100);
+    }
+    
+    // Add brand filters
+    this.currentFilters.brand.forEach(brand => {
+      url.searchParams.append('filter.v.vendor', brand);
+    });
+    
+    // Add color and size filters
+    [...this.currentFilters.color, ...this.currentFilters.size].forEach(tag => {
+      url.searchParams.append('filter.v.tag', tag);
+    });
+    
+    // Update URL without page reload
+    window.history.replaceState({}, '', url.toString());
+  }
+
+  async performAJAXFilter() {
+    if (!this.productsContainer) return;
+    
+    // Show loading state
+    this.productsContainer.style.opacity = '0.5';
+    this.productsContainer.style.pointerEvents = 'none';
+    this.productsContainer.style.transition = 'opacity 0.3s ease';
+    
+    try {
+      // Use locale-aware URL (Shopify best practice)
+      const baseUrl = window.Shopify?.routes?.root || '';
+      const url = new URL(window.location);
+      const response = await fetch(url.toString(), {
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          'Accept': 'text/html',
+        }
+      });
+      
+      if (response.ok) {
+        const html = await response.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        
+        // Update products container with smooth transition
+        const newProductsContainer = doc.querySelector('[data-collection-products]');
+        if (newProductsContainer) {
+          // Fade out, update, fade in
+          setTimeout(() => {
+            this.productsContainer.innerHTML = newProductsContainer.innerHTML;
+            this.reinitializeQuickAdd();
+          }, 150);
+        }
+        
+        // Update product count
+        const newProductCount = doc.querySelector('.collection__count-text');
+        if (newProductCount && this.productCount) {
+          this.productCount.textContent = newProductCount.textContent;
+        }
+
+        // Update pagination if present
+        const newPagination = doc.querySelector('.collection__pagination');
+        const currentPagination = document.querySelector('.collection__pagination');
+        if (newPagination && currentPagination) {
+          currentPagination.innerHTML = newPagination.innerHTML;
+        }
+      } else {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Filter request failed:', error);
+      this.showFilterError('Failed to apply filters. Please try again.');
+    } finally {
+      // Hide loading state with smooth transition
+      setTimeout(() => {
+        this.productsContainer.style.opacity = '1';
+        this.productsContainer.style.pointerEvents = 'auto';
+      }, 150);
+    }
+  }
+
+  showFilterError(message) {
+    // Create or update error message
+    let errorElement = document.querySelector('.collection__filter-error');
+    if (!errorElement) {
+      errorElement = document.createElement('div');
+      errorElement.className = 'collection__filter-error';
+      errorElement.style.cssText = `
+        background: #fef2f2;
+        color: #dc2626;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin: 1rem 0;
+        text-align: center;
+        border: 1px solid #fecaca;
+      `;
+      this.productsContainer.parentNode.insertBefore(errorElement, this.productsContainer);
+    }
+    errorElement.textContent = message;
+    
+    // Auto-hide after 5 seconds
+    setTimeout(() => {
+      if (errorElement) {
+        errorElement.remove();
+      }
+    }, 5000);
+  }
+
+  initURLState() {
+    const url = new URL(window.location);
+    
+    // Initialize price filters from URL
+    const priceMin = url.searchParams.get('filter.v.price.gte');
+    const priceMax = url.searchParams.get('filter.v.price.lte');
+    
+    if (this.priceFilter) {
+      const minRange = this.priceFilter.querySelector('[data-price-min]');
+      const maxRange = this.priceFilter.querySelector('[data-price-max]');
+      const minDisplay = this.priceFilter.querySelector('[data-price-min-display]');
+      const maxDisplay = this.priceFilter.querySelector('[data-price-max-display]');
+      
+      if (priceMin && minRange && minDisplay) {
+        minRange.value = parseInt(priceMin) / 100;
+        minDisplay.textContent = `$${minRange.value}`;
+      }
+      
+      if (priceMax && maxRange && maxDisplay) {
+        maxRange.value = parseInt(priceMax) / 100;
+        maxDisplay.textContent = `$${maxRange.value}`;
+      }
+    }
+    
+    // Initialize brand filters from URL
+    const brandFilters = url.searchParams.getAll('filter.v.vendor');
+    if (this.brandFilter) {
+      brandFilters.forEach(brand => {
+        const checkbox = this.brandFilter.querySelector(`input[value="${brand}"]`);
+        if (checkbox) checkbox.checked = true;
+      });
+    }
+    
+    // Initialize tag filters from URL
+    const tagFilters = url.searchParams.getAll('filter.v.tag');
+    if (this.colorFilter) {
+      tagFilters.forEach(tag => {
+        const checkbox = this.colorFilter.querySelector(`input[value="${tag}"]`);
+        if (checkbox) checkbox.checked = true;
+      });
+    }
+    
+    if (this.sizeFilter) {
+      tagFilters.forEach(tag => {
+        const checkbox = this.sizeFilter.querySelector(`input[value="${tag}"]`);
+        if (checkbox) checkbox.checked = true;
+      });
+    }
+  }
+
+  reinitializeQuickAdd() {
+    const quickAddButtons = this.productsContainer.querySelectorAll('[data-quick-add]');
+    quickAddButtons.forEach(button => {
+      button.addEventListener('click', this.handleQuickAdd.bind(this));
+    });
+    
+    // Re-initialize quick view buttons
+    const quickViewButtons = this.productsContainer.querySelectorAll('[data-quick-view]');
+    quickViewButtons.forEach(button => {
+      button.addEventListener('click', this.handleQuickView.bind(this));
+    });
+  }
+
+  initQuickView() {
+    const quickViewButtons = document.querySelectorAll('[data-quick-view]');
+    quickViewButtons.forEach(button => {
+      button.addEventListener('click', this.handleQuickView.bind(this));
+    });
+    
+    // Close modal handlers
+    const closeButtons = document.querySelectorAll('[data-quick-view-close]');
+    closeButtons.forEach(button => {
+      button.addEventListener('click', this.closeQuickView.bind(this));
+    });
+    
+    // Close on escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        this.closeQuickView();
+      }
+    });
+  }
+
+  async handleQuickView(event) {
+    const button = event.target.closest('[data-quick-view]');
+    const productId = button.dataset.quickView;
+    
+    if (!productId) return;
+    
+    const modal = document.querySelector('[data-quick-view-modal]');
+    const modalBody = document.querySelector('[data-quick-view-body]');
+    
+    // Show modal
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    
+    // Show loading state
+    modalBody.innerHTML = '<div style="text-align: center; padding: 2rem;">Loading...</div>';
+    
+    try {
+      // Fetch product data
+      const response = await fetch(`/products/${productId}.js`);
+      if (response.ok) {
+        const product = await response.json();
+        this.renderQuickViewProduct(product, modalBody);
+      } else {
+        throw new Error('Failed to fetch product');
+      }
+    } catch (error) {
+      console.error('Quick view failed:', error);
+      modalBody.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--color-error);">Failed to load product. Please try again.</div>';
+    }
+  }
+
+  renderQuickViewProduct(product, container) {
+    const selectedVariant = product.variants[0];
+    const price = selectedVariant.price;
+    const comparePrice = selectedVariant.compare_at_price;
+    
+    let variantsHtml = '';
+    if (product.options.length > 1) {
+      product.options.forEach((option, index) => {
+        if (option.name !== 'Title') {
+          variantsHtml += `
+            <div class="quick-view-product__variants">
+              <label class="quick-view-product__variant-label">${option.name}</label>
+              <div class="quick-view-product__variant-options" data-option-index="${index}">
+                ${option.values.map(value => `
+                  <button type="button" class="quick-view-product__variant-option" data-value="${value}">
+                    ${value}
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+          `;
+        }
+      });
+    }
+    
+    container.innerHTML = `
+      <div class="quick-view-product">
+        <div class="quick-view-product__image">
+          <img src="${product.featured_image}" alt="${product.title}" />
+        </div>
+        <div class="quick-view-product__content">
+          <h2 class="quick-view-product__title">${product.title}</h2>
+          <div class="quick-view-product__price">
+            ${comparePrice && comparePrice > price ? 
+              `<span style="color: var(--color-sale);">$${(price / 100).toFixed(2)}</span> 
+               <span style="text-decoration: line-through; color: var(--color-text-secondary); margin-left: 0.5rem;">$${(comparePrice / 100).toFixed(2)}</span>` :
+              `$${(price / 100).toFixed(2)}`
+            }
+          </div>
+          ${product.description ? `<div class="quick-view-product__description">${product.description}</div>` : ''}
+          <form class="quick-view-product__form" data-product-form="${product.id}">
+            ${variantsHtml}
+            <div class="quick-view-product__quantity">
+              <label class="quick-view-product__quantity-label">Quantity</label>
+              <div class="quick-view-product__quantity-input">
+                <button type="button" class="quick-view-product__quantity-btn" data-quantity-decrease>-</button>
+                <input type="number" class="quick-view-product__quantity-value" value="1" min="1" data-quantity-input>
+                <button type="button" class="quick-view-product__quantity-btn" data-quantity-increase>+</button>
+              </div>
+            </div>
+            <button type="submit" class="quick-view-product__add-to-cart" ${!selectedVariant.available ? 'disabled' : ''}>
+              ${selectedVariant.available ? 'Add to Cart' : 'Sold Out'}
+            </button>
+          </form>
+        </div>
+      </div>
+    `;
+    
+    // Initialize variant selection and quantity controls
+    this.initQuickViewControls(product);
+  }
+
+  initQuickViewControls(product) {
+    const modalBody = document.querySelector('[data-quick-view-body]');
+    
+    // Variant selection
+    const variantOptions = modalBody.querySelectorAll('.quick-view-product__variant-option');
+    variantOptions.forEach(option => {
+      option.addEventListener('click', (e) => {
+        const group = e.target.closest('.quick-view-product__variant-options');
+        const siblings = group.querySelectorAll('.quick-view-product__variant-option');
+        siblings.forEach(sibling => sibling.classList.remove('selected'));
+        e.target.classList.add('selected');
+        
+        // Update price and availability (simplified)
+        this.updateQuickViewVariant(product);
+      });
+    });
+    
+    // Quantity controls
+    const decreaseBtn = modalBody.querySelector('[data-quantity-decrease]');
+    const increaseBtn = modalBody.querySelector('[data-quantity-increase]');
+    const quantityInput = modalBody.querySelector('[data-quantity-input]');
+    
+    decreaseBtn.addEventListener('click', () => {
+      const currentValue = parseInt(quantityInput.value);
+      if (currentValue > 1) {
+        quantityInput.value = currentValue - 1;
+      }
+    });
+    
+    increaseBtn.addEventListener('click', () => {
+      const currentValue = parseInt(quantityInput.value);
+      quantityInput.value = currentValue + 1;
+    });
+    
+    // Form submission
+    const form = modalBody.querySelector('[data-product-form]');
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      this.addToCartFromQuickView(product, parseInt(quantityInput.value));
+    });
+  }
+
+  updateQuickViewVariant(product) {
+    // Simplified variant update - in a real implementation, 
+    // you'd calculate the correct variant based on selected options
+    const selectedVariant = product.variants[0];
+    const addToCartBtn = document.querySelector('.quick-view-product__add-to-cart');
+    
+    addToCartBtn.disabled = !selectedVariant.available;
+    addToCartBtn.textContent = selectedVariant.available ? 'Add to Cart' : 'Sold Out';
+  }
+
+  async addToCartFromQuickView(product, quantity) {
+    const addToCartBtn = document.querySelector('.quick-view-product__add-to-cart');
+    const originalText = addToCartBtn.textContent;
+    
+    addToCartBtn.disabled = true;
+    addToCartBtn.textContent = 'Adding...';
+    
+    try {
+      const response = await fetch('/cart/add.js', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: product.variants[0].id,
+          quantity: quantity
+        })
+      });
+      
+      if (response.ok) {
+        addToCartBtn.textContent = 'Added!';
+        addToCartBtn.style.background = 'var(--color-success)';
+        
+        // Close modal after a delay
+        setTimeout(() => {
+          this.closeQuickView();
+        }, 1500);
+      } else {
+        throw new Error('Failed to add to cart');
+      }
+    } catch (error) {
+      console.error('Add to cart failed:', error);
+      addToCartBtn.textContent = 'Error - Try Again';
+      addToCartBtn.style.background = 'var(--color-error)';
+    } finally {
+      setTimeout(() => {
+        addToCartBtn.disabled = false;
+        addToCartBtn.textContent = originalText;
+        addToCartBtn.style.background = 'var(--color-primary)';
+      }, 2000);
+    }
+  }
+
+  closeQuickView() {
+    const modal = document.querySelector('[data-quick-view-modal]');
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  initLoadMore() {
+    const loadMoreBtn = document.querySelector('[data-load-more]');
+    if (loadMoreBtn) {
+      loadMoreBtn.addEventListener('click', this.handleLoadMore.bind(this));
+    }
+  }
+
+  async handleLoadMore(event) {
+    const button = event.target.closest('[data-load-more]');
+    const nextUrl = button.dataset.loadMore;
+    const loadMoreText = button.querySelector('.collection__load-more-text');
+    const loadMoreSpinner = button.querySelector('.collection__load-more-spinner');
+    
+    if (!nextUrl) return;
+    
+    // Show loading state
+    button.disabled = true;
+    loadMoreText.style.display = 'none';
+    loadMoreSpinner.style.display = 'inline-block';
+    
+    try {
+      const response = await fetch(nextUrl, {
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+        }
+      });
+      
+      if (response.ok) {
+        const html = await response.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        
+        // Get new products
+        const newProducts = doc.querySelectorAll('.collection__product');
+        const productsGrid = this.productsContainer.querySelector('.collection__products-grid');
+        
+        // Append new products
+        newProducts.forEach(product => {
+          productsGrid.appendChild(product);
+        });
+        
+        // Update pagination
+        const newPagination = doc.querySelector('.collection__pagination');
+        const currentPagination = document.querySelector('.collection__pagination');
+        
+        if (newPagination && currentPagination) {
+          currentPagination.innerHTML = newPagination.innerHTML;
+          // Re-initialize load more button
+          this.initLoadMore();
+        }
+        
+        // Re-initialize quick add buttons for new products
+        this.reinitializeQuickAdd();
+        
+        // Scroll to show new products
+        const lastProduct = productsGrid.lastElementChild;
+        if (lastProduct) {
+          lastProduct.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }
+    } catch (error) {
+      console.error('Load more failed:', error);
+      // Fallback to page navigation
+      window.location.href = nextUrl;
+    } finally {
+      // Hide loading state
+      button.disabled = false;
+      loadMoreText.style.display = 'inline-block';
+      loadMoreSpinner.style.display = 'none';
+    }
+  }
+
+  clearAllFilters() {
+    // Reset all filter inputs
+    if (this.priceFilter) {
+      const minRange = this.priceFilter.querySelector('[data-price-min]');
+      const maxRange = this.priceFilter.querySelector('[data-price-max]');
+      const minDisplay = this.priceFilter.querySelector('[data-price-min-display]');
+      const maxDisplay = this.priceFilter.querySelector('[data-price-max-display]');
+      
+      if (minRange) minRange.value = minRange.min;
+      if (maxRange) maxRange.value = maxRange.max;
+      if (minDisplay) minDisplay.textContent = `$${minRange.min}`;
+      if (maxDisplay) maxDisplay.textContent = `$${maxRange.max}`;
+    }
+
+    if (this.brandFilter) {
+      const checkboxes = this.brandFilter.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach(checkbox => checkbox.checked = false);
+    }
+
+    if (this.colorFilter) {
+      const checkboxes = this.colorFilter.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach(checkbox => checkbox.checked = false);
+    }
+
+    if (this.sizeFilter) {
+      const checkboxes = this.sizeFilter.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach(checkbox => checkbox.checked = false);
+    }
+
+    if (this.availabilityFilter) {
+      const checkboxes = this.availabilityFilter.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach(checkbox => checkbox.checked = false);
+    }
+
+    // Clear URL parameters
+    const url = new URL(window.location);
+    url.searchParams.delete('filter.v.price.gte');
+    url.searchParams.delete('filter.v.price.lte');
+    url.searchParams.delete('filter.v.vendor');
+    url.searchParams.delete('filter.v.tag');
+    window.history.replaceState({}, '', url.toString());
+
+    this.applyFilters();
+  }
+}
+
+customElements.define('collection-filters', CollectionFilters);
+
+// Quick Add functionality
+class QuickAdd extends HTMLElement {
+  constructor() {
+    super();
+    this.addEventListener('click', this.handleQuickAdd.bind(this));
+  }
+
+  handleQuickAdd(event) {
+    event.preventDefault();
+    const productId = this.dataset.quickAdd;
+    
+    // Add to cart logic would go here
+    console.log('Quick add product:', productId);
+    
+    // Show success message
+    this.textContent = 'Added!';
+    this.style.background = 'var(--color-success)';
+    
+    setTimeout(() => {
+      this.textContent = 'Quick Add';
+      this.style.background = 'var(--color-primary)';
+    }, 2000);
+  }
+}
+
+customElements.define('quick-add', QuickAdd);
+
+// Initialize saved view preference
+document.addEventListener('DOMContentLoaded', function() {
+  const savedView = localStorage.getItem('collection-view');
+  if (savedView) {
+    const viewBtn = document.querySelector(`[data-view="${savedView}"]`);
+    if (viewBtn) {
+      viewBtn.click();
+    }
+  }
+});
+{% endjavascript %}

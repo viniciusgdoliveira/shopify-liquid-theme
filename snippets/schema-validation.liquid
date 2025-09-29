@@ -1,0 +1,410 @@
+{% comment %}
+  Schema Validation Snippet
+  Provides comprehensive validation for theme settings and section schemas
+{% endcomment %}
+
+{% liquid
+  assign validation_errors = ''
+  assign validation_warnings = ''
+  
+  # Validate required settings
+  assign required_settings = 'type_primary_font,type_secondary_font,colors_primary,colors_secondary,container_max_width'
+  assign required_array = required_settings | split: ','
+  
+  for setting in required_array
+    assign setting_value = settings[setting]
+    if setting_value == blank
+      assign validation_errors = validation_errors | append: 'Missing required setting: ' | append: setting | append: '; '
+    endif
+  endfor
+  
+  # Validate color settings
+  assign color_settings = 'colors_primary,colors_secondary,colors_accent,colors_background'
+  assign color_array = color_settings | split: ','
+  
+  for color_setting in color_array
+    assign color_value = settings[color_setting]
+    if color_value != blank
+      # Check if color is valid hex/rgb
+      unless color_value contains '#' or color_value contains 'rgb' or color_value contains 'hsl'
+        assign validation_warnings = validation_warnings | append: 'Invalid color format for ' | append: color_setting | append: ': ' | append: color_value | append: '; '
+      endunless
+    endif
+  endfor
+  
+  # Validate font settings
+  assign font_settings = 'type_primary_font,type_secondary_font'
+  assign font_array = font_settings | split: ','
+  
+  for font_setting in font_array
+    assign font_value = settings[font_setting]
+    if font_value != blank
+      # Check if font is valid
+      unless font_value contains '_' or font_value contains ' '
+        assign validation_warnings = validation_warnings | append: 'Invalid font format for ' | append: font_setting | append: ': ' | append: font_value | append: '; '
+      endunless
+    endif
+  endfor
+  
+  # Validate range settings
+  assign range_settings = 'font_size_base,container_padding,spacing_md'
+  assign range_array = range_settings | split: ','
+  
+  for range_setting in range_array
+    assign range_value = settings[range_setting]
+    if range_value != blank
+      assign range_number = range_value | plus: 0
+      if range_number < 0
+        assign validation_warnings = validation_warnings | append: 'Negative value for ' | append: range_setting | append: ': ' | append: range_value | append: '; '
+      endif
+    endif
+  endfor
+  
+  # Validate URL settings
+  assign url_settings = 'theme_documentation_url,theme_support_url'
+  assign url_array = url_settings | split: ','
+  
+  for url_setting in url_array
+    assign url_value = settings[url_setting]
+    if url_value != blank
+      unless url_value contains 'http' or url_value contains 'mailto:'
+        assign validation_warnings = validation_warnings | append: 'Invalid URL format for ' | append: url_setting | append: ': ' | append: url_value | append: '; '
+      endunless
+    endif
+  endfor
+%}
+
+{% if validation_errors != blank or validation_warnings != blank %}
+  <div class="schema-validation" style="display: none;" data-validation-errors="{{ validation_errors | escape }}" data-validation-warnings="{{ validation_warnings | escape }}">
+    <!-- Validation results stored in data attributes for JavaScript processing -->
+  </div>
+{% endif %}
+
+<script>
+(function() {
+  'use strict';
+  
+  // Schema validation class
+  class SchemaValidator {
+    constructor() {
+      this.errors = [];
+      this.warnings = [];
+      this.init();
+    }
+    
+    init() {
+      this.loadValidationResults();
+      this.validateCurrentSettings();
+      this.setupRealTimeValidation();
+    }
+    
+    loadValidationResults() {
+      const validationElement = document.querySelector('.schema-validation');
+      if (validationElement) {
+        const errors = validationElement.dataset.validationErrors;
+        const warnings = validationElement.dataset.validationWarnings;
+        
+        if (errors) {
+          this.errors = errors.split('; ').filter(error => error.trim() !== '');
+        }
+        
+        if (warnings) {
+          this.warnings = warnings.split('; ').filter(warning => warning.trim() !== '');
+        }
+        
+        this.displayResults();
+      }
+    }
+    
+    validateCurrentSettings() {
+      // Validate color contrast ratios
+      this.validateColorContrast();
+      
+      // Validate responsive breakpoints
+      this.validateBreakpoints();
+      
+      // Validate performance settings
+      this.validatePerformanceSettings();
+    }
+    
+    validateColorContrast() {
+      const primaryColor = this.getSettingValue('colors_primary');
+      const backgroundColor = this.getSettingValue('colors_background');
+      
+      if (primaryColor && backgroundColor) {
+        const contrastRatio = this.calculateContrastRatio(primaryColor, backgroundColor);
+        
+        if (contrastRatio < 4.5) {
+          this.warnings.push(`Low color contrast ratio: ${contrastRatio.toFixed(2)}. WCAG AA requires at least 4.5:1`);
+        }
+      }
+    }
+    
+    validateBreakpoints() {
+      const breakpoints = [
+        'breakpoint_sm',
+        'breakpoint_md', 
+        'breakpoint_lg',
+        'breakpoint_xl'
+      ];
+      
+      const values = breakpoints.map(bp => this.getSettingValue(bp)).filter(val => val !== null);
+      
+      for (let i = 1; i < values.length; i++) {
+        if (values[i] <= values[i-1]) {
+          this.errors.push(`Breakpoint ${breakpoints[i]} (${values[i]}px) must be greater than ${breakpoints[i-1]} (${values[i-1]}px)`);
+        }
+      }
+    }
+    
+    validatePerformanceSettings() {
+      const imageQuality = this.getSettingValue('image_quality');
+      const lazyLoading = this.getSettingValue('enable_lazy_loading');
+      
+      if (imageQuality && imageQuality > 90) {
+        this.warnings.push('High image quality setting may impact performance. Consider using 80-90% for better loading times.');
+      }
+      
+      if (lazyLoading === false) {
+        this.warnings.push('Lazy loading is disabled. This may impact Core Web Vitals performance.');
+      }
+    }
+    
+    setupRealTimeValidation() {
+      // Monitor for theme editor changes
+      if (window.Shopify && window.Shopify.theme) {
+        window.Shopify.theme.on('setting:change', (setting) => {
+          this.validateSetting(setting);
+        });
+      }
+    }
+    
+    validateSetting(setting) {
+      const { id, value } = setting;
+      
+      switch (id) {
+        case 'colors_primary':
+        case 'colors_secondary':
+        case 'colors_accent':
+          this.validateColor(value, id);
+          break;
+        case 'type_primary_font':
+        case 'type_secondary_font':
+          this.validateFont(value, id);
+          break;
+        case 'container_max_width':
+          this.validateContainerWidth(value);
+          break;
+      }
+    }
+    
+    validateColor(color, settingId) {
+      if (!this.isValidColor(color)) {
+        this.addError(`Invalid color format for ${settingId}: ${color}`);
+      }
+    }
+    
+    validateFont(font, settingId) {
+      if (!this.isValidFont(font)) {
+        this.addError(`Invalid font format for ${settingId}: ${font}`);
+      }
+    }
+    
+    validateContainerWidth(width) {
+      const widthNumber = parseInt(width);
+      if (widthNumber < 320 || widthNumber > 1920) {
+        this.addWarning(`Container width ${width}px may not be optimal for all devices. Consider values between 320px and 1920px.`);
+      }
+    }
+    
+    isValidColor(color) {
+      const hexPattern = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+      const rgbPattern = /^rgb\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*\)$/;
+      const rgbaPattern = /^rgba\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*[\d.]+\s*\)$/;
+      const hslPattern = /^hsl\(\s*\d+\s*,\s*\d+%\s*,\s*\d+%\s*\)$/;
+      
+      return hexPattern.test(color) || rgbPattern.test(color) || rgbaPattern.test(color) || hslPattern.test(color);
+    }
+    
+    isValidFont(font) {
+      return font && font.length > 0 && !font.includes('undefined');
+    }
+    
+    calculateContrastRatio(color1, color2) {
+      const rgb1 = this.hexToRgb(color1);
+      const rgb2 = this.hexToRgb(color2);
+      
+      if (!rgb1 || !rgb2) return 0;
+      
+      const lum1 = this.getLuminance(rgb1);
+      const lum2 = this.getLuminance(rgb2);
+      
+      const brightest = Math.max(lum1, lum2);
+      const darkest = Math.min(lum1, lum2);
+      
+      return (brightest + 0.05) / (darkest + 0.05);
+    }
+    
+    hexToRgb(hex) {
+      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+      } : null;
+    }
+    
+    getLuminance(rgb) {
+      const { r, g, b } = rgb;
+      const [rs, gs, bs] = [r, g, b].map(c => {
+        c = c / 255;
+        return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+      });
+      return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
+    }
+    
+    getSettingValue(settingId) {
+      // This would need to be implemented based on how settings are accessed
+      // For now, return null as placeholder
+      return null;
+    }
+    
+    addError(message) {
+      this.errors.push(message);
+      this.displayResults();
+    }
+    
+    addWarning(message) {
+      this.warnings.push(message);
+      this.displayResults();
+    }
+    
+    displayResults() {
+      if (this.errors.length > 0 || this.warnings.length > 0) {
+        this.createValidationPanel();
+      }
+    }
+    
+    createValidationPanel() {
+      // Remove existing panel
+      const existingPanel = document.querySelector('.schema-validation-panel');
+      if (existingPanel) {
+        existingPanel.remove();
+      }
+      
+      // Create new panel
+      const panel = document.createElement('div');
+      panel.className = 'schema-validation-panel';
+      panel.innerHTML = this.generatePanelHTML();
+      
+      // Add to page
+      document.body.appendChild(panel);
+    }
+    
+    generatePanelHTML() {
+      let html = '<div class="validation-panel">';
+      html += '<h3>Theme Settings Validation</h3>';
+      
+      if (this.errors.length > 0) {
+        html += '<div class="validation-errors">';
+        html += '<h4>Errors:</h4>';
+        html += '<ul>';
+        this.errors.forEach(error => {
+          html += `<li>${error}</li>`;
+        });
+        html += '</ul>';
+        html += '</div>';
+      }
+      
+      if (this.warnings.length > 0) {
+        html += '<div class="validation-warnings">';
+        html += '<h4>Warnings:</h4>';
+        html += '<ul>';
+        this.warnings.forEach(warning => {
+          html += `<li>${warning}</li>`;
+        });
+        html += '</ul>';
+        html += '</div>';
+      }
+      
+      html += '</div>';
+      return html;
+    }
+  }
+  
+  // Initialize validator
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => new SchemaValidator());
+  } else {
+    new SchemaValidator();
+  }
+})();
+</script>
+
+<style>
+.schema-validation-panel {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 10000;
+  max-width: 400px;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.validation-panel {
+  padding: 20px;
+}
+
+.validation-panel h3 {
+  margin: 0 0 15px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.validation-errors {
+  margin-bottom: 15px;
+}
+
+.validation-errors h4 {
+  color: #d32f2f;
+  margin: 0 0 8px 0;
+  font-size: 14px;
+}
+
+.validation-warnings h4 {
+  color: #f57c00;
+  margin: 0 0 8px 0;
+  font-size: 14px;
+}
+
+.validation-panel ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.validation-panel li {
+  margin-bottom: 5px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.validation-errors li {
+  color: #d32f2f;
+}
+
+.validation-warnings li {
+  color: #f57c00;
+}
+
+/* Hide validation panel in production */
+@media (max-width: 768px) {
+  .schema-validation-panel {
+    display: none;
+  }
+}
+</style>

@@ -1,20 +1,91 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
+    "search_header": {
+      "type": "multirow",
+      "settings": {
+        "heading": "Search Results",
+        "layout": "search_header",
+        "show_search_title": true,
+        "show_search_query": true,
+        "show_result_count": true,
+        "enable_search_suggestions": true,
+        "enable_autocomplete": true
+      }
+    },
+    "search_filters": {
+      "type": "multirow",
+      "settings": {
+        "heading": "Search Filters",
+        "layout": "search_filters",
+        "show_filtering": true,
+        "show_sorting": true,
+        "show_product_count": true,
+        "enable_ajax_filtering": true,
+        "show_price_filter": true,
+        "show_category_filter": true,
+        "show_brand_filter": true,
+        "show_availability_filter": true,
+        "enable_filter_sidebar": true,
+        "enable_mobile_filters": true,
+        "show_search_suggestions": true,
+        "enable_typo_tolerance": true
+      }
+    },
     "main": {
       "type": "search",
-      "settings": {}
+      "settings": {
+        "enable_ajax_search": true,
+        "enable_search_suggestions": true,
+        "enable_autocomplete": true,
+        "show_product_images": true,
+        "show_product_prices": true,
+        "show_product_ratings": true,
+        "enable_quick_add": true,
+        "enable_wishlist": true,
+        "show_search_highlights": true,
+        "enable_typo_tolerance": true,
+        "show_no_results_suggestions": true,
+        "enable_search_analytics": true
+      }
+    },
+    "search_suggestions": {
+      "type": "multirow",
+      "settings": {
+        "heading": "Search Suggestions",
+        "layout": "search_suggestions",
+        "show_popular_searches": true,
+        "show_recent_searches": true,
+        "show_category_suggestions": true,
+        "show_brand_suggestions": true,
+        "enable_trending_searches": true
+      }
+    },
+    "search_recommendations": {
+      "type": "collection-product-icons",
+      "settings": {
+        "heading": "Popular Products",
+        "products_to_show": 8,
+        "columns_desktop": 4,
+        "image_ratio": "adapt",
+        "image_shape": "default",
+        "show_secondary_image": true,
+        "show_vendor": false,
+        "show_rating": true,
+        "enable_quick_add": true,
+        "columns_mobile": "2",
+        "swipe_on_mobile": false,
+        "padding_top": 36,
+        "padding_bottom": 36,
+        "color_scheme": "background-1",
+        "enable_carousel": true
+      }
     }
   },
   "order": [
-    "main"
+    "search_header",
+    "search_filters",
+    "main",
+    "search_suggestions",
+    "search_recommendations"
   ]
 }

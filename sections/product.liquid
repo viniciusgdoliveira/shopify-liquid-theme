@@ -125,53 +125,66 @@
         </div>
       {% endif %}
 
-      {% form 'product', product, id: product_form_id, class: 'form', novalidate: 'novalidate', data-type: 'add-to-cart-form' %}
-        <input type="hidden" name="id" value="{{ current_variant.id }}" disabled>
+      <product-form>
+        {% form 'product', product, id: product_form_id, class: 'form', novalidate: 'novalidate', data-type: 'add-to-cart-form' %}
+          <input type="hidden" name="id" value="{{ current_variant.id }}" disabled>
 
-        {% unless product.has_only_default_variant %}
-          <div class="product__variants">
-            {% for option in product.options_with_values %}
-              <fieldset class="product__option">
-                <legend class="product__option-name">{{ option.name }}</legend>
-                <div class="product__option-values">
-                  {% for value in option.values %}
-                    <input 
-                      type="radio" 
-                      id="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}"
-                      name="{{ option.name }}"
-                      value="{{ value | escape }}"
-                      form="{{ product_form_id }}"
-                      {% if option.selected_value == value %}checked{% endif %}
-                    >
-                    <label for="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}">
-                      {{ value }}
-                    </label>
-                  {% endfor %}
-                </div>
-              </fieldset>
-            {% endfor %}
-          </div>
+          {% unless product.has_only_default_variant %}
+          <variant-selector data-section="{{ section.id }}" data-url="{{ product.url }}" data-update-url="true">
+            <div class="product__variants">
+              {% for option in product.options_with_values %}
+                <fieldset class="product__option">
+                  <legend class="product__option-name">{{ option.name }}</legend>
+                  <div class="product__option-values">
+                    {% for value in option.values %}
+                      <input 
+                        type="radio" 
+                        id="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}"
+                        name="{{ option.name }}"
+                        value="{{ value | escape }}"
+                        form="{{ product_form_id }}"
+                        {% if option.selected_value == value %}checked{% endif %}
+                      >
+                      <label for="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}">
+                        {{ value }}
+                      </label>
+                    {% endfor %}
+                  </div>
+                </fieldset>
+              {% endfor %}
+            </div>
+          </variant-selector>
         {% endunless %}
+
+        <script type="application/json" data-product-json>
+          {{ product | json }}
+        </script>
+        
+        <script type="application/json" data-variants-json>
+          {{ product.variants | json }}
+        </script>
 
         <div class="product__quantity">
           <label for="Quantity-{{ section.id }}" class="visually-hidden">{{ 'products.product.quantity.label' | t }}</label>
-          <div class="quantity-input">
-            <button type="button" class="quantity-input__button quantity-input__button--minus" aria-label="{{ 'products.product.quantity.decrease' | t: product: product.title | escape }}">
-              {% render 'icons', icon: 'minus' %}
-            </button>
-            <input 
-              type="number" 
-              id="Quantity-{{ section.id }}"
-              name="quantity" 
-              min="1" 
-              value="1" 
-              class="quantity-input__input"
-              form="{{ product_form_id }}"
-            >
-            <button type="button" class="quantity-input__button quantity-input__button--plus" aria-label="{{ 'products.product.quantity.increase' | t: product: product.title | escape }}">
-              {% render 'icons', icon: 'plus' %}
-            </button>
-          </div>
+          <quantity-input>
+            <div class="quantity-input">
+              <button type="button" name="minus" class="quantity-input__button quantity-input__button--minus" aria-label="{{ 'products.product.quantity.decrease' | t: product: product.title | escape }}">
+                {% render 'icons', icon: 'minus' %}
+              </button>
+              <input 
+                type="number" 
+                id="Quantity-{{ section.id }}"
+                name="quantity" 
+                min="1" 
+                value="1" 
+                class="quantity-input__input"
+                form="{{ product_form_id }}"
+              >
+              <button type="button" name="plus" class="quantity-input__button quantity-input__button--plus" aria-label="{{ 'products.product.quantity.increase' | t: product: product.title | escape }}">
+                {% render 'icons', icon: 'plus' %}
+              </button>
+            </div>
+          </quantity-input>
         </div>
 
         <div class="product__buttons">
@@ -193,9 +206,19 @@
             </div>
           </button>
 
-          {% if section.settings.show_payment_button %}
-            {{ form | payment_button }}
-          {% endif %}
+          {% comment %} Buy Now Button - Shopify Payment Button {% endcomment %}
+          {%- if settings.enable_buy_now and current_variant.available -%}
+            <div class="product__buy-now-wrapper">
+              {{ form | payment_button }}
+            </div>
+          {%- endif -%}
+
+          {% comment %} Accelerated Checkout Buttons {% endcomment %}
+          {%- if settings.enable_accelerated_checkout and section.settings.show_payment_button -%}
+            <div class="product__payment-buttons">
+              {{ form | payment_button }}
+            </div>
+          {%- endif -%}
         </div>
 
         {% if section.settings.enable_pickup_availability %}
@@ -203,7 +226,8 @@
             {% render 'pickup-availability', variant: current_variant %}
           </div>
         {% endif %}
-      {% endform %}
+        {% endform %}
+      </product-form>
 
       {% if section.settings.show_share_buttons %}
         <div class="product__share">
@@ -215,524 +239,10 @@
   </div>
 </div>
 
-{% stylesheet %}
-.product {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2rem;
-  padding: 2rem 0;
-}
-
-@media screen and (min-width: 750px) {
-  .product--media-left {
-    grid-template-columns: 1fr 1fr;
-  }
-  
-  .product--media-right {
-    grid-template-columns: 1fr 1fr;
-  }
-  
-  .product--media-right .product__media-wrapper {
-    order: 2;
-  }
-}
-
-.product__media {
-  position: relative;
-}
-
-.product__media-item {
-  display: none;
-}
-
-.product__media-item.active {
-  display: block;
-}
-
-.product__image {
-  width: 100%;
-  height: auto;
-  border-radius: 0.5rem;
-}
-
-.product__media-thumbnails {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 1rem;
-  overflow-x: auto;
-}
-
-.product__media-thumbnail {
-  flex: 0 0 auto;
-  border: 2px solid transparent;
-  border-radius: 0.25rem;
-  cursor: pointer;
-  transition: border-color 0.2s ease;
-}
-
-.product__media-thumbnail.active {
-  border-color: var(--color-primary);
-}
-
-.product__thumbnail-image {
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 0.25rem;
-}
-
-.product__info-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.product__vendor {
-  font-size: 0.875rem;
-  color: var(--color-text-secondary);
-}
-
-.product__title {
-  font-size: 2rem;
-  font-weight: 700;
-  margin: 0;
-  color: var(--color-text-primary);
-}
-
-.product__sku {
-  font-size: 0.875rem;
-  color: var(--color-text-secondary);
-}
-
-.product__price {
-  font-size: 1.5rem;
-  font-weight: 600;
-}
-
-.price--sale .price__regular {
-  text-decoration: line-through;
-  color: var(--color-text-secondary);
-}
-
-.price--sale .price__sale {
-  color: var(--color-sale);
-}
-
-.product__description {
-  color: var(--color-text-secondary);
-  line-height: 1.6;
-}
-
-.product__variants {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.product__option {
-  border: none;
-  padding: 0;
-  margin: 0;
-}
-
-.product__option-name {
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: var(--color-text-primary);
-}
-
-.product__option-values {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.product__option-values input[type="radio"] {
-  position: absolute;
-  opacity: 0;
-}
-
-.product__option-values label {
-  padding: 0.5rem 1rem;
-  border: 1px solid var(--color-border);
-  border-radius: 0.25rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  background: var(--color-background);
-}
-
-.product__option-values input[type="radio"]:checked + label {
-  background: var(--color-primary);
-  color: var(--color-text-inverse);
-  border-color: var(--color-primary);
-}
-
-.product__quantity {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.quantity-input {
-  display: flex;
-  align-items: center;
-  border: 1px solid var(--color-border);
-  border-radius: 0.25rem;
-  overflow: hidden;
-}
-
-.quantity-input__button {
-  padding: 0.5rem;
-  border: none;
-  background: var(--color-background-secondary);
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.quantity-input__button:hover {
-  background: var(--color-background-tertiary);
-}
-
-.quantity-input__input {
-  width: 4rem;
-  padding: 0.5rem;
-  border: none;
-  text-align: center;
-  background: var(--color-background);
-}
-
-.product__buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.button--full-width {
-  width: 100%;
-}
-
-.product__add-to-cart {
-  padding: 1rem 2rem;
-  font-size: 1rem;
-  font-weight: 600;
-  border-radius: 0.5rem;
-  transition: all 0.2s ease;
-}
-
-.product__add-to-cart:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.product__share {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--color-border);
-}
-
-.product__share-label {
-  font-weight: 600;
-  color: var(--color-text-primary);
-}
-
-.loading-overlay__spinner {
-  width: 1rem;
-  height: 1rem;
-  border: 2px solid transparent;
-  border-top: 2px solid currentColor;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.hidden {
-  display: none;
-}
-
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-{% endstylesheet %}
-
-{% javascript %}
-class ProductForm extends HTMLElement {
-  constructor() {
-    super();
-    this.form = this.querySelector('form');
-    this.form.querySelector('[name=id]').disabled = false;
-    this.form.addEventListener('submit', this.onSubmitHandler.bind(this));
-    this.cartNotification = document.querySelector('cart-notification');
-  }
-
-  onSubmitHandler(evt) {
-    evt.preventDefault();
-    const submitButton = this.querySelector('[type="submit"]');
-    if (submitButton.classList.contains('loading')) return;
-
-    this.handleErrorMessage();
-    this.cartNotification?.setActiveElement(document.activeElement);
-
-    const config = fetchConfig('javascript');
-    config.headers['X-Requested-With'] = 'XMLHttpRequest';
-    delete config.headers['Content-Type'];
-
-    const formData = new FormData(this.form);
-    if (this.cartNotification) {
-      formData.append('sections', this.cartNotification.getSectionsToRender().map(section => section.id));
-      formData.append('sections_url', window.location.pathname);
-      this.cartNotification.renderContents(formData);
-    }
-
-    submitButton.classList.add('loading');
-    submitButton.querySelector('.loading-overlay__spinner').classList.remove('hidden');
-
-    fetch(`${routes.cart_add_url}`, config)
-      .then(response => response.json())
-      .then(response => {
-        if (response.status) {
-          this.handleErrorMessage(response.description);
-          return;
-        }
-
-        if (!this.cartNotification) {
-          window.location = window.routes.cart_url;
-          return;
-        }
-
-        this.cartNotification.renderContents(response);
-        this.cartNotification.open();
-      })
-      .catch(e => {
-        console.error(e);
-      })
-      .finally(() => {
-        submitButton.classList.remove('loading');
-        submitButton.querySelector('.loading-overlay__spinner').classList.add('hidden');
-      });
-  }
-
-  handleErrorMessage(errorMessage = false) {
-    this.errorMessageWrapper = this.errorMessageWrapper || this.querySelector('.product-form__error-message');
-    this.errorMessage = this.errorMessage || this.errorMessageWrapper.querySelector('.error-message');
-
-    this.errorMessageWrapper.toggleAttribute('hidden', !errorMessage);
-
-    if (errorMessage) {
-      this.errorMessage.textContent = errorMessage;
-    }
-  }
-}
-
-customElements.define('product-form', ProductForm);
-
-// Variant selector
-class VariantSelector extends HTMLElement {
-  constructor() {
-    super();
-    this.addEventListener('change', this.onVariantChange);
-  }
-
-  onVariantChange() {
-    this.updateOptions();
-    this.updateMasterId();
-    this.toggleAddButton(true, '', false);
-    this.updatePickupAvailability();
-    this.removeErrorMessage();
-
-    if (!this.currentVariant) {
-      this.toggleAddButton(true, '', true);
-      this.setUnavailable();
-    } else {
-      this.updateMedia();
-      this.updateURL();
-      this.updateVariantInput();
-      this.renderProductInfo();
-    }
-  }
-
-  updateOptions() {
-    this.options = Array.from(this.querySelectorAll('input[type="radio"]:checked'), input => {
-      return input.value;
-    });
-  }
-
-  updateMasterId() {
-    this.currentVariant = this.getVariantData().find(variant => {
-      return !variant.options.map((option, index) => {
-        return this.options[index] === option;
-      }).includes(false);
-    });
-  }
-
-  updateMedia() {
-    if (!this.currentVariant) return;
-    if (!this.currentVariant.featured_media) return;
-
-    const mediaGallery = document.querySelector(`[id^="MediaGallery-${this.dataset.section}"]`);
-    if (!mediaGallery) return;
-
-    const mediaId = `${this.dataset.section}-${this.currentVariant.featured_media.id}`;
-    const activeMedia = mediaGallery.querySelector(`[data-media-id="${mediaId}"]`);
-    if (!activeMedia) return;
-
-    mediaGallery.querySelectorAll('[data-media-id]').forEach((item) => {
-      item.classList.remove('active');
-    });
-    activeMedia.classList.add('active');
-  }
-
-  updateURL() {
-    if (!this.currentVariant || this.dataset.updateUrl === 'false') return;
-    window.history.replaceState({}, '', `${this.dataset.url}?variant=${this.currentVariant.id}`);
-  }
-
-  updateVariantInput() {
-    const productForms = document.querySelectorAll(`#product-form-${this.dataset.section}, #product-form-installment`);
-    productForms.forEach(productForm => {
-      const input = productForm.querySelector('input[name="id"]');
-      input.value = this.currentVariant.id;
-      input.dispatchEvent(new Event('change', { bubbles: true }));
-    });
-  }
-
-  updatePickupAvailability() {
-    const pickUpAvailability = document.querySelector('pickup-availability');
-    if (!pickUpAvailability) return;
-
-    if (this.currentVariant && this.currentVariant.available) {
-      pickUpAvailability.setAttribute('variant-id', this.currentVariant.id);
-    } else {
-      pickUpAvailability.removeAttribute('variant-id');
-    }
-  }
-
-  removeErrorMessage() {
-    const section = this.closest('section');
-    if (!section) return;
-
-    const productForm = section.querySelector('product-form');
-    if (productForm) productForm.handleErrorMessage();
-  }
-
-  renderProductInfo() {
-    fetch(`${this.dataset.url}?variant=${this.currentVariant.id}&section_id=${this.dataset.section}`)
-      .then((response) => response.text())
-      .then((responseText) => {
-        const html = new DOMParser().parseFromString(responseText, 'text/html');
-        const destination = document.getElementById(`price-${this.dataset.section}`);
-        const source = html.getElementById(`price-${this.dataset.section}`);
-        if (source && destination) destination.innerHTML = source.innerHTML;
-
-        const price = document.getElementById(`price-${this.dataset.section}`);
-
-        if (price) price.classList.remove('visibility-hidden');
-        this.toggleAddButton(!this.currentVariant.available, window.variantStrings.soldOut);
-      });
-  }
-
-  toggleAddButton(disable = true, text, modifyClass = true) {
-    const productForm = document.getElementById(`product-form-${this.dataset.section}`);
-    if (!productForm) return;
-
-    const addButton = productForm.querySelector('[name="add"]');
-    const addButtonText = productForm.querySelector('[name="add"] > span');
-
-    if (!addButton) return;
-
-    if (disable) {
-      addButton.setAttribute('disabled', 'disabled');
-      if (text) addButtonText.textContent = text;
-    } else {
-      addButton.removeAttribute('disabled');
-      addButtonText.textContent = window.variantStrings.addToCart;
-    }
-
-    if (!modifyClass) return;
-  }
-
-  setUnavailable() {
-    const button = document.getElementById(`product-form-${this.dataset.section}`)?.querySelector('[name="add"]');
-    if (!button) return;
-    button.setAttribute('disabled', 'disabled');
-    button.textContent = window.variantStrings.unavailable;
-  }
-
-  getVariantData() {
-    this.variantData = this.variantData || JSON.parse(this.querySelector('[type="application/json"]').textContent);
-    return this.variantData;
-  }
-}
-
-customElements.define('variant-selector', VariantSelector);
-
-// Quantity selector
-class QuantityInput extends HTMLElement {
-  constructor() {
-    super();
-    this.input = this.querySelector('input');
-    this.changeEvent = new Event('change', { bubbles: true });
-
-    this.querySelectorAll('button').forEach(
-      (button) => button.addEventListener('click', this.onButtonClick.bind(this))
-    );
-  }
-
-  onButtonClick(event) {
-    event.preventDefault();
-    const previousValue = this.input.value;
-
-    event.target.name === 'plus' ? this.input.stepUp() : this.input.stepDown();
-    if (previousValue !== this.input.value) this.input.dispatchEvent(this.changeEvent);
-  }
-}
-
-customElements.define('quantity-input', QuantityInput);
-
-// Media gallery navigation
-document.addEventListener('DOMContentLoaded', function() {
-  const mediaGallery = document.querySelector('[data-media-gallery]');
-  if (!mediaGallery) return;
-  
-  const mediaItems = mediaGallery.querySelectorAll('.product__media-item');
-  const thumbnails = mediaGallery.querySelectorAll('.product__media-thumbnail');
-  
-  thumbnails.forEach(thumbnail => {
-    thumbnail.addEventListener('click', (e) => {
-      e.preventDefault();
-      const mediaId = thumbnail.dataset.mediaId;
-      
-      // Show selected media
-      mediaItems.forEach(item => {
-        item.classList.remove('active');
-        if (item.dataset.mediaId === mediaId) {
-          item.classList.add('active');
-        }
-      });
-      
-      // Update active thumbnail
-      thumbnails.forEach(thumb => {
-        thumb.classList.remove('active');
-      });
-      thumbnail.classList.add('active');
-    });
-  });
-});
-{% endjavascript %}
+{% comment %}
+  Product section styles are now loaded from assets/product.css
+  Product section scripts are now loaded from assets/product.js
+{% endcomment %}
 
 {% schema %}
 {

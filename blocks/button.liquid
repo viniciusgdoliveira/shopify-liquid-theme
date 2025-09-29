@@ -1,0 +1,312 @@
+{% doc %}
+  Renders a button block with customizable styling and behavior.
+
+  @example
+  {% content_for 'block', type: 'button', id: 'button' %}
+{% enddoc %}
+
+{%- liquid
+  assign button_text = block.settings.button_text | default: 'Button'
+  assign button_url = block.settings.button_url
+  assign button_style = block.settings.button_style | default: 'primary'
+  assign button_size = block.settings.button_size | default: 'medium'
+  assign button_alignment = block.settings.button_alignment | default: 'left'
+  assign open_new_tab = block.settings.open_new_tab
+  assign icon_name = block.settings.icon
+  assign button_classes = 'btn btn--' | append: button_style | append: ' btn--' | append: button_size
+  
+  if icon_name != blank
+    assign button_classes = button_classes | append: ' btn--with-icon'
+  endif
+  
+  if open_new_tab
+    assign aria_label = button_text | append: ' - ' | append: 'Opens in new tab'
+  else
+    assign aria_label = button_text
+  endif
+-%}
+
+<div 
+  class="button-block button-block--{{ button_alignment }}"
+  style="--button-align: {{ button_alignment }}"
+  {{ block.shopify_attributes }}
+>
+  {%- if button_url != blank -%}
+    <a 
+      href="{{ button_url }}" 
+      class="{{ button_classes }}"
+      {% if open_new_tab %}target="_blank" rel="noopener"{% endif %}
+      aria-label="{{ aria_label | t }}"
+      {% if open_new_tab %}title="{{ 'blocks.button.open_in_new_tab' | t }}"{% endif %}
+    >
+      {%- if icon_name != blank -%}
+        <span class="btn__icon">
+          {% render 'icons', icon: icon_name, size: 'sm' %}
+        </span>
+      {%- endif -%}
+      <span class="btn__text">{{ button_text | t }}</span>
+    </a>
+  {%- else -%}
+    <button 
+      type="button" 
+      class="{{ button_classes }}"
+      aria-label="{{ aria_label | t }}"
+    >
+      {%- if icon_name != blank -%}
+        <span class="btn__icon">
+          {% render 'icons', icon: icon_name, size: 'sm' %}
+        </span>
+      {%- endif -%}
+      <span class="btn__text">{{ button_text | t }}</span>
+    </button>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  .button-block {
+    text-align: var(--button-align);
+    margin: var(--space-4) 0;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    font-family: var(--font-family-primary);
+    font-weight: var(--font-weight-semibold);
+    text-decoration: none;
+    border: var(--border-width-1) solid transparent;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: var(--transition-button-hover);
+    position: relative;
+    overflow: hidden;
+    white-space: nowrap;
+    user-select: none;
+  }
+
+  .btn:focus-visible {
+    outline: var(--border-width-2) solid var(--color-primary);
+    outline-offset: var(--space-1);
+  }
+
+  .btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  /* Button Sizes */
+  .btn--small {
+    height: var(--button-height-sm);
+    padding: 0 var(--button-padding-x-sm);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-tight);
+  }
+
+  .btn--medium {
+    height: var(--button-height-base);
+    padding: 0 var(--button-padding-x-base);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-normal);
+  }
+
+  .btn--large {
+    height: var(--button-height-lg);
+    padding: 0 var(--button-padding-x-lg);
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-relaxed);
+  }
+
+  /* Button Styles */
+  .btn--primary {
+    background-color: var(--color-primary);
+    color: var(--color-text-inverse);
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-button);
+  }
+
+  .btn--primary:hover {
+    background-color: var(--color-primary-hover);
+    border-color: var(--color-primary-hover);
+    box-shadow: var(--shadow-button-hover);
+    transform: translateY(-1px);
+  }
+
+  .btn--secondary {
+    background-color: var(--color-background);
+    color: var(--color-text-primary);
+    border-color: var(--color-border);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .btn--secondary:hover {
+    background-color: var(--color-background-secondary);
+    border-color: var(--color-border-dark);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+  }
+
+  .btn--outline {
+    background-color: transparent;
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+  }
+
+  .btn--outline:hover {
+    background-color: var(--color-primary);
+    color: var(--color-text-inverse);
+    transform: translateY(-1px);
+  }
+
+  .btn--ghost {
+    background-color: transparent;
+    color: var(--color-text-primary);
+    border-color: transparent;
+  }
+
+  .btn--ghost:hover {
+    background-color: var(--color-background-secondary);
+    color: var(--color-primary);
+  }
+
+  /* Icon Support */
+  .btn--with-icon .btn__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .btn--with-icon .btn__text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* Button Alignments */
+  .button-block--left {
+    text-align: left;
+  }
+
+  .button-block--center {
+    text-align: center;
+  }
+
+  .button-block--right {
+    text-align: right;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .btn--large {
+      height: var(--button-height-base);
+      padding: 0 var(--button-padding-x-base);
+      font-size: var(--font-size-base);
+    }
+  }
+
+  /* Accessibility improvements */
+  @media (prefers-reduced-motion: reduce) {
+    .btn {
+      transition: none;
+    }
+    
+    .btn:hover {
+      transform: none;
+    }
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .btn {
+      border-width: var(--border-width-2);
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:general.button",
+  "settings": [
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "t:blocks.button.button_text",
+      "default": "Button"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "t:blocks.button.button_url",
+      "info": "t:blocks.button.button_url_info"
+    },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "t:blocks.button.button_style",
+      "options": [
+        { "value": "primary", "label": "t:blocks.button.button_style.primary" },
+        { "value": "secondary", "label": "t:blocks.button.button_style.secondary" },
+        { "value": "outline", "label": "t:blocks.button.button_style.outline" },
+        { "value": "ghost", "label": "t:blocks.button.button_style.ghost" }
+      ],
+      "default": "primary"
+    },
+    {
+      "type": "select",
+      "id": "button_size",
+      "label": "t:blocks.button.button_size",
+      "options": [
+        { "value": "small", "label": "t:blocks.button.button_size.small" },
+        { "value": "medium", "label": "t:blocks.button.button_size.medium" },
+        { "value": "large", "label": "t:blocks.button.button_size.large" }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "text_alignment",
+      "id": "button_alignment",
+      "label": "t:blocks.button.button_alignment",
+      "default": "left"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_new_tab",
+      "label": "t:blocks.button.open_new_tab",
+      "default": false,
+      "info": "t:blocks.button.open_new_tab_info"
+    },
+    {
+      "type": "select",
+      "id": "icon",
+      "label": "t:blocks.button.icon",
+      "options": [
+        { "value": "", "label": "t:blocks.button.icon.none" },
+        { "value": "arrow-right", "label": "t:blocks.button.icon.arrow_right" },
+        { "value": "arrow-left", "label": "t:blocks.button.icon.arrow_left" },
+        { "value": "cart", "label": "t:blocks.button.icon.cart" },
+        { "value": "heart", "label": "t:blocks.button.icon.heart" },
+        { "value": "search", "label": "t:blocks.button.icon.search" },
+        { "value": "user", "label": "t:blocks.button.icon.user" },
+        { "value": "star", "label": "t:blocks.button.icon.star" },
+        { "value": "check", "label": "t:blocks.button.icon.check" },
+        { "value": "plus", "label": "t:blocks.button.icon.plus" },
+        { "value": "minus", "label": "t:blocks.button.icon.minus" },
+        { "value": "external-link", "label": "t:blocks.button.icon.external_link" }
+      ],
+      "default": ""
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:general.button",
+      "settings": {
+        "button_text": "Learn More",
+        "button_style": "primary",
+        "button_size": "medium"
+      }
+    }
+  ]
+}
+{% endschema %}

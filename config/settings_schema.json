@@ -1,11 +1,11 @@
 [
   {
     "name": "theme_info",
-    "theme_name": "Mush",
-    "theme_version": "0.1.0",
+    "theme_name": "EcoVibe",
+    "theme_version": "1.0.0",
     "theme_author": "viniciusgdoliveira",
-    "theme_documentation_url": "https://help.shopify.com/manual/online-store/themes",
-    "theme_support_url": "https://support.shopify.com/"
+    "theme_documentation_url": "https://viniciusgdoliveira.dev/shopify/liquid/docs",
+    "theme_support_url": "https://viniciusgdoliveira.dev/contact"
   },
   {
     "name": "Typography",
@@ -119,6 +119,26 @@
         "unit": "px",
         "label": "5X large text",
         "default": 48
+      },
+      {
+        "type": "range",
+        "id": "font_size_6xl",
+        "min": 48,
+        "max": 80,
+        "step": 1,
+        "unit": "px",
+        "label": "6X large text",
+        "default": 60
+      },
+      {
+        "type": "range",
+        "id": "font_size_7xl",
+        "min": 56,
+        "max": 96,
+        "step": 1,
+        "unit": "px",
+        "label": "7X large text",
+        "default": 72
       },
       {
         "type": "header",
@@ -1110,6 +1130,315 @@
         "unit": "px",
         "label": "Grid gap",
         "default": 16
+      }
+    ]
+  },
+  {
+    "name": "Cart Settings",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Cart Behavior"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_ajax_cart",
+        "label": "Enable AJAX Cart",
+        "default": true,
+        "info": "Update cart without page refresh for better user experience"
+      },
+      {
+        "type": "select",
+        "id": "cart_behavior",
+        "label": "Cart Behavior",
+        "options": [
+          {
+            "value": "drawer",
+            "label": "Cart Drawer Only"
+          },
+          {
+            "value": "page",
+            "label": "Cart Page Only"
+          },
+          {
+            "value": "both",
+            "label": "Both Drawer and Page"
+          }
+        ],
+        "default": "drawer",
+        "info": "Choose how customers interact with their cart"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_quickbuy",
+        "label": "Enable Quick Buy",
+        "default": true,
+        "info": "Add quick buy buttons to collection pages for faster purchases"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_buy_now",
+        "label": "Enable Buy Now Button",
+        "default": false,
+        "info": "Add buy now button to product pages for direct checkout"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_accelerated_checkout",
+        "label": "Enable Accelerated Checkout",
+        "default": true,
+        "info": "Show Shop Pay, Apple Pay, Google Pay buttons for faster checkout"
+      },
+      {
+        "type": "header",
+        "content": "Cart Features"
+      },
+      {
+        "type": "select",
+        "id": "cart_icon",
+        "label": "Cart Icon",
+        "options": [
+          {
+            "value": "shopping_bag",
+            "label": "Shopping Bag"
+          },
+          {
+            "value": "shopping_cart",
+            "label": "Shopping Cart"
+          },
+          {
+            "value": "tote_bag",
+            "label": "Tote Bag"
+          }
+        ],
+        "default": "shopping_bag",
+        "info": "Choose the cart icon style"
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_show_free_shipping_threshold",
+        "label": "Show Free Shipping Threshold",
+        "default": true,
+        "info": "Display free shipping progress bar in cart"
+      },
+      {
+        "type": "text",
+        "id": "cart_free_shipping_threshold",
+        "label": "Free Shipping Threshold",
+        "default": "USD:75.00,BRL:250.00,EUR:65.00",
+        "info": "Format: CURRENCY:AMOUNT,CURRENCY:AMOUNT (e.g., USD:75.00,BRL:250.00)"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_cart_note",
+        "label": "Show Cart Note",
+        "default": true,
+        "info": "Allow customers to add notes to their cart"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_free_shipping_bar",
+        "label": "Show Free Shipping Bar",
+        "default": true,
+        "info": "Display progress bar for free shipping threshold"
+      },
+      {
+        "type": "number",
+        "id": "free_shipping_threshold",
+        "label": "Free Shipping Threshold",
+        "default": 7500,
+        "info": "Amount in cents (e.g., 7500 = $75.00)"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_cart_discounts",
+        "label": "Enable Cart Discounts",
+        "default": true,
+        "info": "Show discount codes and automatic discounts"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_trust_signals",
+        "label": "Show Trust Signals",
+        "default": true,
+        "info": "Display security badges and guarantees"
+      },
+      {
+        "type": "header",
+        "content": "Mobile Optimization"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_sticky_add_to_cart",
+        "label": "Enable Sticky Add to Cart",
+        "default": true,
+        "info": "Show sticky add to cart bar on mobile devices"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_mobile_cart_drawer",
+        "label": "Show Mobile Cart Drawer",
+        "default": true,
+        "info": "Use cart drawer instead of cart page on mobile"
+      },
+      {
+        "type": "header",
+        "content": "Cart Colors"
+      },
+      {
+        "type": "color",
+        "id": "cart_background_color",
+        "label": "Cart Background Color",
+        "default": "#ffffff",
+        "info": "Background color for cart drawer and page"
+      },
+      {
+        "type": "color",
+        "id": "cart_text_color",
+        "label": "Cart Text Color",
+        "default": "#000000",
+        "info": "Text color for cart content"
+      },
+      {
+        "type": "color",
+        "id": "cart_button_color",
+        "label": "Cart Button Color",
+        "default": "#2d5016",
+        "info": "Primary button color in cart"
+      },
+      {
+        "type": "color",
+        "id": "cart_button_hover_color",
+        "label": "Cart Button Hover Color",
+        "default": "#1a2e0a",
+        "info": "Hover state color for cart buttons"
+      }
+    ]
+  },
+  {
+    "name": "Performance",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Animation Settings"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_animations",
+        "label": "Enable Animations",
+        "default": true,
+        "info": "Enable CSS animations and transitions throughout the theme"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_hover_effects",
+        "label": "Enable Hover Effects",
+        "default": true,
+        "info": "Enable hover effects on cards and interactive elements"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_lazy_loading",
+        "label": "Enable Lazy Loading",
+        "default": true,
+        "info": "Load images only when they're needed for better performance"
+      },
+      {
+        "type": "header",
+        "content": "Layout Settings"
+      },
+      {
+        "type": "range",
+        "id": "container_width_override",
+        "label": "Container width override",
+        "min": 1000,
+        "max": 1600,
+        "step": 50,
+        "unit": "px",
+        "default": 1200,
+        "info": "Override maximum width for page containers"
+      },
+      {
+        "type": "range",
+        "id": "spacing_base",
+        "label": "Base spacing",
+        "min": 12,
+        "max": 24,
+        "step": 2,
+        "unit": "px",
+        "default": 16,
+        "info": "Base spacing unit used throughout the theme"
+      }
+    ]
+  },
+  {
+    "name": "Search",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Search Behavior"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_predictive_search",
+        "label": "Enable Predictive Search",
+        "default": true,
+        "info": "Show search suggestions as users type"
+      },
+      {
+        "type": "range",
+        "id": "predictive_search_results_limit",
+        "min": 3,
+        "max": 10,
+        "step": 1,
+        "label": "Predictive Search Results Limit",
+        "default": 5,
+        "info": "Maximum number of results to show in predictive search"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_search_suggestions",
+        "label": "Show Search Suggestions",
+        "default": true,
+        "info": "Display popular search terms and suggestions"
+      },
+      {
+        "type": "header",
+        "content": "Search Results"
+      },
+      {
+        "type": "range",
+        "id": "search_results_per_page",
+        "min": 12,
+        "max": 48,
+        "step": 12,
+        "label": "Search Results Per Page",
+        "default": 24,
+        "info": "Number of results to show per page"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_search_filters",
+        "label": "Show Search Filters",
+        "default": true,
+        "info": "Display filter options on search results page"
+      },
+      {
+        "type": "select",
+        "id": "search_filter_position",
+        "label": "Search Filter Position",
+        "options": [
+          {
+            "value": "sidebar",
+            "label": "Sidebar"
+          },
+          {
+            "value": "drawer",
+            "label": "Drawer"
+          }
+        ],
+        "default": "sidebar",
+        "info": "Position of search filters on results page"
       }
     ]
   }

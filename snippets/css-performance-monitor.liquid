@@ -1,0 +1,342 @@
+{% comment %}
+  CSS Performance Monitoring Snippet
+  
+  This snippet provides:
+  1. Real-time CSS performance monitoring
+  2. Core Web Vitals tracking
+  3. CSS loading analytics
+  4. Performance alerts and recommendations
+  5. Integration with analytics platforms
+{% endcomment %}
+
+{% comment %} CSS Performance Monitoring Script {% endcomment %}
+<script>
+(function() {
+  'use strict';
+  
+  // CSS Performance Monitor Class
+  class CSSPerformanceMonitor {
+    constructor() {
+      this.metrics = {
+        cssFiles: 0,
+        totalSize: 0,
+        loadTime: 0,
+        renderTime: 0,
+        layoutShifts: 0,
+        firstContentfulPaint: 0,
+        largestContentfulPaint: 0,
+        cumulativeLayoutShift: 0
+      };
+      
+      this.init();
+    }
+    
+    init() {
+      this.trackCSSFiles();
+      this.trackCoreWebVitals();
+      this.trackLayoutShifts();
+      this.trackPaintMetrics();
+      this.setupPerformanceObserver();
+    }
+    
+    // Track CSS files and their loading performance
+    trackCSSFiles() {
+      const cssLinks = document.querySelectorAll('link[rel="stylesheet"]');
+      this.metrics.cssFiles = cssLinks.length;
+      
+      // Monitor CSS loading performance
+      cssLinks.forEach(link => {
+        if (link.href) {
+          // Track individual CSS file performance
+          this.trackCSSFilePerformance(link.href);
+        }
+      });
+    }
+    
+    // Track individual CSS file performance
+    trackCSSFilePerformance(href) {
+      if ('performance' in window) {
+        const entries = performance.getEntriesByName(href);
+        entries.forEach(entry => {
+          if (entry.entryType === 'resource') {
+            this.metrics.loadTime += entry.duration;
+            
+            // Alert for slow CSS loads
+            if (entry.duration > 1000) {
+              this.alertSlowCSS(href, entry.duration);
+            }
+          }
+        });
+      }
+    }
+    
+    // Track Core Web Vitals
+    trackCoreWebVitals() {
+      if ('PerformanceObserver' in window) {
+        // First Contentful Paint
+        const fcpObserver = new PerformanceObserver((list) => {
+          list.getEntries().forEach(entry => {
+            if (entry.name === 'first-contentful-paint') {
+              this.metrics.firstContentfulPaint = entry.startTime;
+              this.analyzeFCP(entry.startTime);
+            }
+          });
+        });
+        fcpObserver.observe({ entryTypes: ['paint'] });
+        
+        // Largest Contentful Paint
+        const lcpObserver = new PerformanceObserver((list) => {
+          list.getEntries().forEach(entry => {
+            this.metrics.largestContentfulPaint = entry.startTime;
+            this.analyzeLCP(entry.startTime);
+          });
+        });
+        lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
+      }
+    }
+    
+    // Track layout shifts
+    trackLayoutShifts() {
+      if ('PerformanceObserver' in window) {
+        const clsObserver = new PerformanceObserver((list) => {
+          list.getEntries().forEach(entry => {
+            if (!entry.hadRecentInput) {
+              this.metrics.cumulativeLayoutShift += entry.value;
+              this.metrics.layoutShifts++;
+              
+              // Alert for high CLS
+              if (this.metrics.cumulativeLayoutShift > 0.1) {
+                this.alertHighCLS(this.metrics.cumulativeLayoutShift);
+              }
+            }
+          });
+        });
+        clsObserver.observe({ entryTypes: ['layout-shift'] });
+      }
+    }
+    
+    // Track paint metrics
+    trackPaintMetrics() {
+      if ('performance' in window) {
+        const paintEntries = performance.getEntriesByType('paint');
+        paintEntries.forEach(entry => {
+          if (entry.name === 'first-contentful-paint') {
+            this.metrics.renderTime = entry.startTime;
+          }
+        });
+      }
+    }
+    
+    // Setup performance observer for general monitoring
+    setupPerformanceObserver() {
+      if ('PerformanceObserver' in window) {
+        const observer = new PerformanceObserver((list) => {
+          list.getEntries().forEach(entry => {
+            if (entry.entryType === 'resource' && entry.name.includes('.css')) {
+              this.analyzeCSSResource(entry);
+            }
+          });
+        });
+        
+        observer.observe({ entryTypes: ['resource'] });
+      }
+    }
+    
+    // Analyze First Contentful Paint
+    analyzeFCP(fcpTime) {
+      if (fcpTime > 1800) {
+        this.alertSlowFCP(fcpTime);
+      }
+    }
+    
+    // Analyze Largest Contentful Paint
+    analyzeLCP(lcpTime) {
+      if (lcpTime > 2500) {
+        this.alertSlowLCP(lcpTime);
+      }
+    }
+    
+    // Analyze CSS resource performance
+    analyzeCSSResource(entry) {
+      if (entry.duration > 1000) {
+        this.alertSlowCSS(entry.name, entry.duration);
+      }
+    }
+    
+    // Alert for slow CSS loading
+    alertSlowCSS(href, duration) {
+      console.warn(`Slow CSS load detected: ${href} took ${duration.toFixed(2)}ms`);
+      
+      // Send to analytics
+      this.sendAnalytics('slow_css_load', {
+        href: href,
+        duration: duration
+      });
+    }
+    
+    // Alert for slow First Contentful Paint
+    alertSlowFCP(fcpTime) {
+      console.warn(`Slow First Contentful Paint: ${fcpTime.toFixed(2)}ms`);
+      
+      this.sendAnalytics('slow_fcp', {
+        fcp_time: fcpTime
+      });
+    }
+    
+    // Alert for slow Largest Contentful Paint
+    alertSlowLCP(lcpTime) {
+      console.warn(`Slow Largest Contentful Paint: ${lcpTime.toFixed(2)}ms`);
+      
+      this.sendAnalytics('slow_lcp', {
+        lcp_time: lcpTime
+      });
+    }
+    
+    // Alert for high Cumulative Layout Shift
+    alertHighCLS(clsValue) {
+      console.warn(`High Cumulative Layout Shift: ${clsValue.toFixed(3)}`);
+      
+      this.sendAnalytics('high_cls', {
+        cls_value: clsValue
+      });
+    }
+    
+    // Send analytics data
+    sendAnalytics(eventName, data) {
+      // Google Analytics
+      if (typeof gtag !== 'undefined') {
+        gtag('event', eventName, data);
+      }
+      
+      // Log to console for debugging (remove analytics endpoint)
+      console.log('CSS Performance Event:', eventName, data);
+    }
+    
+    // Get performance report
+    getReport() {
+      return {
+        ...this.metrics,
+        recommendations: this.getRecommendations()
+      };
+    }
+    
+    // Get performance recommendations
+    getRecommendations() {
+      const recommendations = [];
+      
+      if (this.metrics.cssFiles > 10) {
+        recommendations.push('Consider bundling CSS files to reduce HTTP requests');
+      }
+      
+      if (this.metrics.loadTime > 2000) {
+        recommendations.push('CSS loading is slow - consider critical CSS optimization');
+      }
+      
+      if (this.metrics.cumulativeLayoutShift > 0.1) {
+        recommendations.push('High layout shift detected - optimize CSS loading order');
+      }
+      
+      if (this.metrics.firstContentfulPaint > 1800) {
+        recommendations.push('Slow First Contentful Paint - optimize critical CSS');
+      }
+      
+      return recommendations;
+    }
+  }
+  
+  // Initialize CSS Performance Monitor
+  const cssMonitor = new CSSPerformanceMonitor();
+  
+  // Expose monitor globally for debugging
+  window.cssPerformanceMonitor = cssMonitor;
+  
+  // Log performance report after CSS is loaded
+  document.addEventListener('css:loaded', () => {
+    const report = cssMonitor.getReport();
+    console.log('CSS Performance Report:', report);
+    
+    // Send final report to analytics
+    if (typeof gtag !== 'undefined') {
+      gtag('event', 'css_performance_report', report);
+    }
+  });
+  
+})();
+</script>
+
+{% comment %} CSS Performance Dashboard {% endcomment %}
+<script>
+// CSS Performance Dashboard (for development)
+(function() {
+  'use strict';
+  
+  // Only show dashboard in development
+  if (window.location.hostname === 'localhost' || window.location.hostname.includes('myshopify.com')) {
+    // Create performance dashboard
+    function createDashboard() {
+      const dashboard = document.createElement('div');
+      dashboard.id = 'css-performance-dashboard';
+      dashboard.style.cssText = `
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        width: 300px;
+        background: rgba(0, 0, 0, 0.9);
+        color: white;
+        padding: 15px;
+        border-radius: 8px;
+        font-family: monospace;
+        font-size: 12px;
+        z-index: 9999;
+        display: none;
+      `;
+      
+      document.body.appendChild(dashboard);
+      
+      // Toggle dashboard with Ctrl+Shift+P
+      document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.shiftKey && e.key === 'P') {
+          dashboard.style.display = dashboard.style.display === 'none' ? 'block' : 'none';
+        }
+      });
+      
+      // Update dashboard
+      function updateDashboard() {
+        if (window.cssPerformanceMonitor) {
+          const report = window.cssPerformanceMonitor.getReport();
+          
+          dashboard.innerHTML = `
+            <h3 style="margin: 0 0 10px 0; color: #4CAF50;">CSS Performance Dashboard</h3>
+            <div><strong>CSS Files:</strong> ${report.cssFiles}</div>
+            <div><strong>Load Time:</strong> ${report.loadTime.toFixed(2)}ms</div>
+            <div><strong>FCP:</strong> ${report.firstContentfulPaint.toFixed(2)}ms</div>
+            <div><strong>LCP:</strong> ${report.largestContentfulPaint.toFixed(2)}ms</div>
+            <div><strong>CLS:</strong> ${report.cumulativeLayoutShift.toFixed(3)}</div>
+            <div><strong>Layout Shifts:</strong> ${report.layoutShifts}</div>
+            <div style="margin-top: 10px;">
+              <strong>Recommendations:</strong>
+              <ul style="margin: 5px 0; padding-left: 15px;">
+                ${report.recommendations.map(rec => `<li>${rec}</li>`).join('')}
+              </ul>
+            </div>
+            <div style="margin-top: 10px; font-size: 10px; color: #888;">
+              Press Ctrl+Shift+P to toggle
+            </div>
+          `;
+        }
+      }
+      
+      // Update dashboard periodically
+      setInterval(updateDashboard, 1000);
+      updateDashboard();
+    }
+    
+    // Create dashboard when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', createDashboard);
+    } else {
+      createDashboard();
+    }
+  }
+})();
+</script>

@@ -1,0 +1,23 @@
+{
+  "name": "Eco Fashion",
+  "description": "Perfect for sustainable fashion brands, eco-friendly clothing, and ethical retailers. Features clean design with sustainability focus.",
+  "industry": "fashion",
+  "catalog_size": "medium",
+  "demo_store_url": "https://eco-fashion-demo.myshopify.com",
+  "preview_images": [
+    "eco-fashion-homepage.jpg",
+    "eco-fashion-product.jpg",
+    "eco-fashion-collection.jpg"
+  ],
+  "features": [
+    "Sustainability badges",
+    "Material information",
+    "Ethical sourcing details",
+    "Clean product photography",
+    "Mobile-first design"
+  ],
+  "target_audience": "Sustainable fashion brands, eco-friendly clothing retailers, ethical fashion companies",
+  "color_scheme": "Natural greens and earth tones",
+  "typography": "Clean, modern sans-serif fonts",
+  "layout": "Minimalist with focus on product imagery"
+}

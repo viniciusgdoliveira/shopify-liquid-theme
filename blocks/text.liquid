@@ -1,30 +1,173 @@
 {% doc %}
-  Renders a text block.
+  Renders a text block with enhanced styling options.
 
   @example
   {% content_for 'block', type: 'text', id: 'text' %}
 {% enddoc %}
 
 <div
-  class="text {{ block.settings.text_style }}"
-  style="--text-align: {{ block.settings.alignment }}"
+  class="text {{ block.settings.text_style }}{% if block.settings.text_shadow %} text--shadow{% endif %}{% if block.settings.animation_on_scroll %} text--animate-on-scroll text--animate-{{ block.settings.animation_type | default: 'slide-up' }}{% endif %}"
+  style="
+    --text-align: {{ block.settings.alignment }};
+    --text-color: {{ block.settings.text_color | default: 'inherit' }};
+    --background-color: {{ block.settings.background_color | default: 'transparent' }};
+    --padding: {{ block.settings.padding_top }}px {{ block.settings.padding_right }}px {{ block.settings.padding_bottom }}px {{ block.settings.padding_left }}px;
+    --border-radius: {{ block.settings.border_radius }}px;
+    --animation-delay: {{ block.settings.animation_delay | default: 0 }}ms;
+  "
   {{ block.shopify_attributes }}
 >
-  {{ block.settings.text }}
+  <div class="text__content">
+    {{ block.settings.text }}
+  </div>
 </div>
 
 {% stylesheet %}
   .text {
     text-align: var(--text-align);
+    color: var(--text-color);
+    background-color: var(--background-color);
+    padding: var(--padding);
+    border-radius: var(--border-radius);
+    transition: all 0.3s ease;
   }
+  
+  .text__content {
+    position: relative;
+    z-index: 1;
+  }
+  
+  /* Text Styles */
   .text--title {
-    font-size: 2rem;
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
     font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
   }
+  
   .text--subtitle {
-    font-size: 1.5rem;
+    font-size: clamp(1.25rem, 3vw, 1.75rem);
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+  }
+  
+  .text--normal {
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.6;
+  }
+  
+  .text--large {
+    font-size: clamp(1.125rem, 2.5vw, 1.5rem);
+    font-weight: 500;
+    line-height: 1.5;
+  }
+  
+  .text--small {
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+  
+  /* Text Shadow */
+  .text--shadow {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Animation on Scroll */
+  .text--animate-on-scroll {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.6s ease;
+    transition-delay: var(--animation-delay);
+  }
+  
+  .text--animate-on-scroll.animate-in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  /* Animation Variations */
+  .text--animate-on-scroll.text--animate-fade {
+    transform: none;
+  }
+  
+  .text--animate-on-scroll.text--animate-slide-left {
+    transform: translateX(-30px);
+  }
+  
+  .text--animate-on-scroll.text--animate-slide-right {
+    transform: translateX(30px);
+  }
+  
+  .text--animate-on-scroll.text--animate-scale {
+    transform: scale(0.9);
+  }
+  
+  /* Responsive Design */
+  @media screen and (max-width: 768px) {
+    .text--title {
+      font-size: clamp(1.25rem, 5vw, 2rem);
+    }
+    
+    .text--subtitle {
+      font-size: clamp(1rem, 4vw, 1.5rem);
+    }
+    
+    .text {
+      padding: calc(var(--padding-top) * 0.75) calc(var(--padding-right) * 0.75) calc(var(--padding-bottom) * 0.75) calc(var(--padding-left) * 0.75);
+    }
+  }
+  
+  /* Accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    .text--animate-on-scroll {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
   }
 {% endstylesheet %}
+
+{% javascript %}
+// Text Block Animation on Scroll
+document.addEventListener('DOMContentLoaded', function() {
+  const animatedTexts = document.querySelectorAll('.text--animate-on-scroll');
+  
+  if (animatedTexts.length === 0) return;
+  
+  // Check if user prefers reduced motion
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  
+  if (prefersReducedMotion) {
+    // Skip animations for users who prefer reduced motion
+    animatedTexts.forEach(text => {
+      text.classList.add('animate-in');
+    });
+    return;
+  }
+  
+  // Create intersection observer for scroll animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('animate-in');
+        // Unobserve after animation to improve performance
+        observer.unobserve(entry.target);
+      }
+    });
+  }, {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  });
+  
+  // Observe all animated text elements
+  animatedTexts.forEach(text => {
+    observer.observe(text);
+  });
+});
+{% endjavascript %}
 
 {% schema %}
 {
@@ -43,7 +186,9 @@
       "options": [
         { "value": "text--title", "label": "t:options.text_style.title" },
         { "value": "text--subtitle", "label": "t:options.text_style.subtitle" },
-        { "value": "text--normal", "label": "t:options.text_style.normal" }
+        { "value": "text--normal", "label": "t:options.text_style.normal" },
+        { "value": "text--large", "label": "t:options.text_style.large" },
+        { "value": "text--small", "label": "t:options.text_style.small" }
       ],
       "default": "text--title"
     },
@@ -52,8 +197,130 @@
       "id": "alignment",
       "label": "t:labels.alignment",
       "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "t:labels.styling"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "t:labels.text_color",
+      "info": "t:labels.text_color_info"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:labels.background_color",
+      "info": "t:labels.background_color_info"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "t:labels.border_radius",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "checkbox",
+      "id": "text_shadow",
+      "label": "t:labels.text_shadow",
+      "info": "t:labels.text_shadow_info",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "t:labels.spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:labels.padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_right",
+      "label": "t:labels.padding_right",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:labels.padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_left",
+      "label": "t:labels.padding_left",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "t:labels.animation"
+    },
+    {
+      "type": "checkbox",
+      "id": "animation_on_scroll",
+      "label": "t:labels.animation_on_scroll",
+      "info": "t:labels.animation_on_scroll_info",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "animation_type",
+      "label": "t:labels.animation_type",
+      "options": [
+        { "value": "fade", "label": "t:options.animation_type.fade" },
+        { "value": "slide-up", "label": "t:options.animation_type.slide_up" },
+        { "value": "slide-left", "label": "t:options.animation_type.slide_left" },
+        { "value": "slide-right", "label": "t:options.animation_type.slide_right" },
+        { "value": "scale", "label": "t:options.animation_type.scale" }
+      ],
+      "default": "slide-up",
+      "info": "t:labels.animation_type_info"
+    },
+    {
+      "type": "range",
+      "id": "animation_delay",
+      "label": "t:labels.animation_delay",
+      "min": 0,
+      "max": 2000,
+      "step": 100,
+      "unit": "ms",
+      "default": 0,
+      "info": "t:labels.animation_delay_info"
     }
   ],
-  "presets": [{ "name": "t:general.text" }]
+  "presets": [
+    {
+      "name": "t:general.text",
+      "settings": {
+        "text": "Your text here",
+        "text_style": "text--title",
+        "alignment": "left"
+      }
+    }
+  ]
 }
 {% endschema %}

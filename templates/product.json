@@ -19,9 +19,14 @@
         "gallery_layout": "stacked",
         "media_position": "left",
         "image_zoom": "lightbox",
-        "mobile_thumbnails": "hide",
+        "mobile_thumbnails": "show",
         "hide_variants": false,
-        "enable_video_looping": false
+        "enable_video_looping": false,
+        "enable_image_zoom": true,
+        "enable_lightbox": true,
+        "enable_swipe_gestures": true,
+        "show_media_badges": true,
+        "enable_fullscreen": true
       }
     },
     "product_info": {
@@ -35,7 +40,13 @@
         "show_tags": true,
         "show_share_buttons": true,
         "enable_pickup_availability": true,
-        "show_payment_button": true
+        "show_payment_button": true,
+        "show_quantity_selector": true,
+        "show_variant_selector": true,
+        "enable_wishlist": true,
+        "show_product_rating": true,
+        "show_stock_indicator": true,
+        "enable_notify_me": true
       }
     },
     "product_description": {
@@ -44,7 +55,9 @@
         "heading": "Description",
         "layout": "product_description",
         "enable_read_more": true,
-        "truncate_words": 50
+        "truncate_words": 50,
+        "show_collapsible": true,
+        "enable_rich_text": true
       }
     },
     "product_tabs": {
@@ -54,11 +67,26 @@
         "layout": "tabs",
         "tab_1_title": "Description",
         "tab_2_title": "Specifications",
-        "tab_3_title": "Shipping",
-        "tab_4_title": "Reviews"
+        "tab_3_title": "Shipping & Returns",
+        "tab_4_title": "Reviews",
+        "tab_5_title": "Size Guide",
+        "enable_accordion_mobile": true,
+        "show_tab_icons": true
       }
     },
-    "related_products": {
+    "product_reviews": {
+      "type": "multirow",
+      "settings": {
+        "heading": "Customer Reviews",
+        "layout": "reviews",
+        "enable_reviews": true,
+        "show_review_count": true,
+        "show_rating_summary": true,
+        "enable_review_form": true,
+        "reviews_per_page": 5
+      }
+    },
+    "product_recommendations": {
       "type": "collection-product-icons",
       "settings": {
         "heading": "You might also like",
@@ -74,7 +102,9 @@
         "swipe_on_mobile": false,
         "padding_top": 36,
         "padding_bottom": 36,
-        "color_scheme": "background-1"
+        "color_scheme": "background-1",
+        "enable_carousel": true,
+        "show_product_badges": true
       }
     },
     "recently_viewed": {
@@ -93,7 +123,20 @@
         "swipe_on_mobile": false,
         "padding_top": 36,
         "padding_bottom": 36,
-        "color_scheme": "background-2"
+        "color_scheme": "background-2",
+        "enable_carousel": true
+      }
+    },
+    "product_trust_badges": {
+      "type": "multirow",
+      "settings": {
+        "heading": "Trust & Security",
+        "layout": "trust_badges",
+        "show_shipping_info": true,
+        "show_return_policy": true,
+        "show_secure_payment": true,
+        "show_customer_support": true,
+        "show_guarantee": true
       }
     },
     "sticky_add_to_cart": {
@@ -110,7 +153,9 @@
         "show_price": true,
         "show_variant_selector": true,
         "show_quantity_selector": true,
-        "mobile_position": "bottom"
+        "mobile_position": "bottom",
+        "enable_quick_view": true,
+        "show_product_image": true
       }
     }
   },
@@ -120,8 +165,10 @@
     "product_info",
     "product_description",
     "product_tabs",
-    "related_products",
+    "product_reviews",
+    "product_recommendations",
     "recently_viewed",
+    "product_trust_badges",
     "sticky_add_to_cart"
   ]
 }

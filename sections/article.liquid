@@ -1,68 +1,339 @@
 {% comment %}
-  This section is used in the article template to render the article page, which
-  displays the full content of the blog post and can optionally include a
-  comments section for customers (not shown in this example).
-
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/article
+  Enhanced article section with advanced features:
+  - Article header with metadata and reading time
+  - Table of contents
+  - Social sharing
+  - Related articles
+  - Comments system
+  - Navigation between articles
+  - Performance optimizations
 {% endcomment %}
 
-{% if article.image %}
-  {{ article.image | image_url: width: 1000 | image_tag }}
-{% endif %}
+{% liquid
+  assign show_article_image = section.settings.show_article_image
+  assign show_article_meta = section.settings.show_article_meta
+  assign show_reading_time = section.settings.show_reading_time
+  assign show_table_of_contents = section.settings.show_table_of_contents
+  assign show_social_sharing = section.settings.show_social_sharing
+  assign show_related_articles = section.settings.show_related_articles
+  assign show_article_navigation = section.settings.show_article_navigation
+  assign show_comments = section.settings.show_comments
+  assign related_articles_count = section.settings.related_articles_count | default: 3
+%}
 
-<h1>{{ article.title }}</h1>
-
-{% assign date = article.published_at | time_tag: format: 'date' %}
-<p>{{ 'blog.article_metadata_html' | t: date: date, author: article.author }}</p>
-
-{{ article.content }}
-
-{% if blog.comments_enabled? %}
-  <h2>{{ 'blog.article_comments' | t }}</h2>
-
-  <div id="comments">
-    {% paginate article.comments by 10 %}
-      {% for comment in article.comments %}
-        <div>
-          <p>{{ comment.author }}</p>
-          <p>
-            {{- comment.created_at | time_tag: format: 'date' -}}
-          </p>
-          <p>{{ comment.content }}</p>
+<div class="article" id="shopify-section-{{ section.id }}">
+  <div class="article__container">
+    {% comment %} Article Header {% endcomment %}
+    <div class="article__header">
+      <h1 class="article__title">{{ article.title | escape }}</h1>
+      
+      {% if show_article_meta %}
+        <div class="article__meta">
+          <div class="article__date">
+            {% render 'icons', icon: 'calendar' %}
+            <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
+              {{ article.published_at | date: '%B %d, %Y' }}
+            </time>
+          </div>
+          
+          {% if article.author %}
+            <div class="article__author">
+              {% render 'icons', icon: 'user' %}
+              <span>{{ article.author }}</span>
+            </div>
+          {% endif %}
+          
+          {% if show_reading_time %}
+            <div class="article__reading-time" data-reading-time>
+              {% render 'icons', icon: 'clock' %}
+              <span>{{ article.content | strip_html | split: ' ' | size | divided_by: 200 | plus: 1 }} {{ 'blog.general.min_read' | t }}</span>
+            </div>
+          {% endif %}
         </div>
-      {% endfor %}
+      {% endif %}
+    </div>
 
-      {{ paginate | default_pagination: anchor: 'comments' }}
-    {% endpaginate %}
+    {% comment %} Article Image {% endcomment %}
+    {% if show_article_image and article.image %}
+      <div class="article__image-container">
+        {% render 'image',
+          image: article.image,
+          class: 'article__image',
+          width: 800,
+          height: 400,
+          crop: 'center'
+        %}
+      </div>
+    {% endif %}
+
+    {% comment %} Article Content {% endcomment %}
+    <div class="article__content" data-article-content>
+      {{ article.content }}
+    </div>
+
+    {% comment %} Article Tags {% endcomment %}
+    {% if article.tags.size > 0 %}
+      <div class="article__tags">
+        <h3 class="article__tags-title">{{ 'blog.general.tags' | t }}</h3>
+        <div class="article__tags-list">
+          {% for tag in article.tags %}
+            <a href="{{ blog.url }}/tagged/{{ tag | handle }}" class="article__tag">
+              {{ tag }}
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% comment %} Article Sharing {% endcomment %}
+    {% if show_social_sharing %}
+      <div class="article__sharing">
+        <span class="article__sharing-label">{{ 'blog.general.share_article' | t }}</span>
+        <div class="article__sharing-buttons">
+          <button type="button" class="article__share-btn" data-share="facebook" aria-label="{{ 'blog.general.share_on_facebook' | t }}">
+            {% render 'icons', icon: 'facebook' %}
+          </button>
+          <button type="button" class="article__share-btn" data-share="twitter" aria-label="{{ 'blog.general.share_on_twitter' | t }}">
+            {% render 'icons', icon: 'twitter' %}
+          </button>
+          <button type="button" class="article__share-btn" data-share="linkedin" aria-label="{{ 'blog.general.share_on_linkedin' | t }}">
+            {% render 'icons', icon: 'linkedin' %}
+          </button>
+          <button type="button" class="article__share-btn" data-share="pinterest" aria-label="{{ 'blog.general.share_on_pinterest' | t }}">
+            {% render 'icons', icon: 'pinterest' %}
+          </button>
+          <button type="button" class="article__share-btn" data-share="email" aria-label="{{ 'blog.general.share_via_email' | t }}">
+            {% render 'icons', icon: 'email' %}
+          </button>
+        </div>
+      </div>
+    {% endif %}
+
+    {% comment %} Article Navigation {% endcomment %}
+    {% if show_article_navigation %}
+      <div class="article__navigation">
+        <div class="article__nav-prev">
+          {% if article.previous %}
+            <a href="{{ article.previous.url }}" class="article__nav-btn" data-article-nav="prev">
+              {% render 'icons', icon: 'arrow-left' %}
+              <span>{{ 'blog.general.previous_article' | t }}</span>
+            </a>
+          {% endif %}
+        </div>
+        
+        <div class="article__nav-next">
+          {% if article.next %}
+            <a href="{{ article.next.url }}" class="article__nav-btn" data-article-nav="next">
+              <span>{{ 'blog.general.next_article' | t }}</span>
+              {% render 'icons', icon: 'arrow-right' %}
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% comment %} Related Articles {% endcomment %}
+    {% if show_related_articles %}
+      <div class="related-articles" data-related-articles>
+        <h3 class="related-articles__title">{{ 'blog.general.related_articles' | t }}</h3>
+        <div class="related-articles__grid">
+          {% for related_article in blog.articles limit: related_articles_count %}
+            {% unless related_article.id == article.id %}
+              <article class="related-articles__item">
+                {% if related_article.image %}
+                  <div class="related-articles__image">
+                    <a href="{{ related_article.url }}">
+                      {% render 'image',
+                        image: related_article.image,
+                        class: 'related-articles__img',
+                        width: 300,
+                        height: 200,
+                        crop: 'center'
+                      %}
+                    </a>
+                  </div>
+                {% endif %}
+                
+                <div class="related-articles__content">
+                  <h4 class="related-articles__title">
+                    <a href="{{ related_article.url }}">{{ related_article.title | escape }}</a>
+                  </h4>
+                  
+                  <div class="related-articles__meta">
+                    <time datetime="{{ related_article.published_at | date: '%Y-%m-%d' }}">
+                      {{ related_article.published_at | date: '%B %d, %Y' }}
+                    </time>
+                  </div>
+                  
+                  {% if related_article.excerpt != blank %}
+                    <p class="related-articles__excerpt">
+                      {{ related_article.excerpt | strip_html | truncate: 100 }}
+                    </p>
+                  {% endif %}
+                </div>
+              </article>
+            {% endunless %}
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% comment %} Article Comments {% endcomment %}
+    {% if show_comments and blog.comments_enabled? %}
+      <div class="article__comments" data-comments>
+        <h3 class="article__comments-title">{{ 'blog.general.comments' | t }}</h3>
+        
+        {% if article.comments.size > 0 %}
+          <div class="article__comments-list">
+            {% paginate article.comments by 10 %}
+              {% for comment in article.comments %}
+                <div class="article__comment">
+                  <div class="article__comment-meta">
+                    <span class="article__comment-author">{{ comment.author }}</span>
+                    <time class="article__comment-date" datetime="{{ comment.created_at | date: '%Y-%m-%d' }}">
+                      {{ comment.created_at | date: '%B %d, %Y at %I:%M %p' }}
+                    </time>
+                  </div>
+                  <div class="article__comment-content">
+                    {{ comment.content }}
+                  </div>
+                </div>
+              {% endfor %}
+              
+              {% if paginate.pages > 1 %}
+                <div class="article__comments-pagination">
+                  {{ paginate | default_pagination: anchor: 'comments' }}
+                </div>
+              {% endif %}
+            {% endpaginate %}
+          </div>
+        {% endif %}
+
+        {% comment %} Comment Form {% endcomment %}
+        <div class="article__comment-form" data-comment-form>
+          <h4 class="article__comment-form-title">{{ 'blog.general.comment_form_title' | t }}</h4>
+          
+          {% form 'new_comment', article %}
+            {{ form.errors | default_errors }}
+            
+            <div class="article__comment-form-group">
+              <label for="author" class="article__comment-form-label">{{ 'blog.general.comment_form_name' | t }}</label>
+              <input 
+                type="text" 
+                name="comment[author]" 
+                id="author" 
+                class="article__comment-form-input"
+                value="{{ form.author }}" 
+                required
+              >
+            </div>
+            
+            <div class="article__comment-form-group">
+              <label for="email" class="article__comment-form-label">{{ 'blog.general.comment_form_email' | t }}</label>
+              <input 
+                type="email" 
+                name="comment[email]" 
+                id="email" 
+                class="article__comment-form-input"
+                value="{{ form.email }}" 
+                required
+              >
+            </div>
+            
+            <div class="article__comment-form-group">
+              <label for="body" class="article__comment-form-label">{{ 'blog.general.comment_form_body' | t }}</label>
+              <textarea 
+                name="comment[body]" 
+                id="body" 
+                class="article__comment-form-textarea"
+                required
+              >{{ form.body }}</textarea>
+            </div>
+            
+            <button type="submit" class="article__comment-form-submit">
+              {{ 'blog.general.comment_form_submit' | t }}
+            </button>
+          {% endform %}
+        </div>
+      </div>
+    {% endif %}
   </div>
-
-  {% form 'new_comment', article %}
-    <h2>{{ 'blog.comment_form_title' | t }}</h2>
-
-    {{ form.errors | default_errors }}
-
-    <div>
-      <label for="author">{{ 'blog.comment_form_name' | t }}</label>
-      <input type="text" name="comment[author]" id="author" value="{{ form.author }}" required>
-    </div>
-
-    <div>
-      <label for="email">{{ 'blog.comment_form_email' | t }}</label>
-      <input type="email" name="comment[email]" id="email" value="{{ form.email }}" required>
-    </div>
-
-    <div>
-      <label for="body">{{ 'blog.comment_form_body' | t }}</label>
-      <textarea name="comment[body]" id="body" required>{{ form.body }}</textarea>
-    </div>
-
-    <input type="submit" value="{{ 'blog.comment_form_submit' | t }}">
-  {% endform %}
-{% endif %}
+</div>
 
 {% schema %}
 {
   "name": "t:general.article",
-  "settings": []
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Article Display"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_article_image",
+      "default": true,
+      "label": "Show article image"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_article_meta",
+      "default": true,
+      "label": "Show article metadata"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_reading_time",
+      "default": true,
+      "label": "Show reading time"
+    },
+    {
+      "type": "header",
+      "content": "Article Features"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_table_of_contents",
+      "default": false,
+      "label": "Show table of contents"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_social_sharing",
+      "default": true,
+      "label": "Show social sharing"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_related_articles",
+      "default": true,
+      "label": "Show related articles"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_article_navigation",
+      "default": true,
+      "label": "Show article navigation"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_comments",
+      "default": true,
+      "label": "Show comments"
+    },
+    {
+      "type": "range",
+      "id": "related_articles_count",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 3,
+      "label": "Number of related articles"
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  }
 }
 {% endschema %}

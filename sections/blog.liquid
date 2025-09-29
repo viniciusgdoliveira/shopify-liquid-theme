@@ -1,35 +1,368 @@
 {% comment %}
-  This section is used in the blog template to render the blog page listing all
-  articles within a blog.
-
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/blog
+  Enhanced blog section with advanced features:
+  - Article cards with images, excerpts, and metadata
+  - Search and filtering functionality
+  - Pagination with load more
+  - Category and tag filtering
+  - Responsive grid layout
+  - Performance optimizations
 {% endcomment %}
 
-<h1>{{ blog.title }}</h1>
+{% liquid
+  assign articles_per_page = section.settings.articles_per_page | default: 12
+  assign show_blog_description = section.settings.show_blog_description
+  assign show_search = section.settings.show_search
+  assign show_categories = section.settings.show_categories
+  assign show_tags = section.settings.show_tags
+  assign show_reading_time = section.settings.show_reading_time
+  assign enable_infinite_scroll = section.settings.enable_infinite_scroll
+  assign enable_load_more = section.settings.enable_load_more
+  assign columns_desktop = section.settings.columns_desktop | default: 3
+  assign columns_mobile = section.settings.columns_mobile | default: 1
+%}
 
-{% paginate blog.articles by 5 %}
-  {% for article in blog.articles %}
-    <div>
-      {% if article.image %}
-        {{ article.image | image_url: width: 1000 | image_tag }}
+<div class="blog" id="shopify-section-{{ section.id }}">
+  <div class="blog__container">
+    {% comment %} Blog Header {% endcomment %}
+    <div class="blog__header">
+      <h1 class="blog__title">{{ blog.title | escape }}</h1>
+      {% if show_blog_description and blog.description != blank %}
+        <div class="blog__description rte">
+          {{ blog.description }}
+        </div>
       {% endif %}
-      <h2>
-        {{ article.title | link_to: article.url }}
-      </h2>
-      {% assign date = article.published_at | time_tag: format: 'date' %}
-      <p>{{ 'blog.article_metadata_html' | t: date: date, author: article.author }}</p>
-      <p>{{ article.excerpt }}</p>
     </div>
-  {% endfor %}
 
-  {%- if paginate.pages > 1 -%}
-    {{- paginate | default_pagination -}}
-  {%- endif -%}
-{% endpaginate %}
+    {% comment %} Blog Controls {% endcomment %}
+    <div class="blog__controls">
+      <div class="blog__controls-left">
+        <div class="blog__count">
+          <span class="blog__count-text">
+            {% if blog.articles_count == 1 %}
+              {{ 'blog.general.articles_count.one' | t: count: blog.articles_count }}
+            {% else %}
+              {{ 'blog.general.articles_count.other' | t: count: blog.articles_count }}
+            {% endif %}
+          </span>
+        </div>
+      </div>
+
+      <div class="blog__controls-right">
+        {% if show_search %}
+          <div class="blog__search">
+            <input 
+              type="text" 
+              class="blog__search-input" 
+              placeholder="{{ 'blog.general.search_placeholder' | t }}"
+              data-blog-search
+            >
+            <button type="button" class="blog__search-button" aria-label="{{ 'blog.general.search' | t }}">
+              {% render 'icons', icon: 'search' %}
+            </button>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    {% comment %} Blog Filters {% endcomment %}
+    {% if show_categories or show_tags %}
+      <div class="blog__filters">
+        {% if show_categories %}
+          <div class="blog__filter-group">
+            <span class="blog__filter-label">{{ 'blog.general.categories' | t }}</span>
+            <div class="blog__filter-buttons">
+              <button type="button" class="blog__filter-button active" data-blog-category="all">
+                {{ 'blog.general.all_categories' | t }}
+              </button>
+              {% for category in blog.all_tags %}
+                {% if category contains 'Category_' %}
+                  {% assign category_name = category | remove: 'Category_' %}
+                  <button type="button" class="blog__filter-button" data-blog-category="{{ category }}">
+                    {{ category_name }}
+                  </button>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+
+        {% if show_tags %}
+          <div class="blog__filter-group">
+            <span class="blog__filter-label">{{ 'blog.general.tags' | t }}</span>
+            <div class="blog__filter-buttons">
+              <button type="button" class="blog__filter-button active" data-blog-tag="all">
+                {{ 'blog.general.all_tags' | t }}
+              </button>
+              {% for tag in blog.all_tags %}
+                {% unless tag contains 'Category_' %}
+                  <button type="button" class="blog__filter-button" data-blog-tag="{{ tag }}">
+                    {{ tag }}
+                  </button>
+                {% endunless %}
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% comment %} Search Results {% endcomment %}
+    {% if show_search %}
+      <div class="blog__search-results" data-search-results>
+        {{ 'blog.general.showing_articles' | t: count: blog.articles_count }}
+      </div>
+    {% endif %}
+
+    {% comment %} Blog Articles {% endcomment %}
+    <div class="blog__articles" data-blog-articles>
+      {% paginate blog.articles by articles_per_page %}
+        <div class="blog__articles-grid blog__articles-grid--{{ columns_desktop }}-col blog__articles-grid--mobile-{{ columns_mobile }}-col">
+          {% for article in blog.articles %}
+            <article class="blog__article-card" data-article-id="{{ article.id }}" data-article-category="{{ article.tags | where: 'Category_' | first }}" data-article-tags="{{ article.tags | join: ',' }}">
+              {% if article.image %}
+                <div class="blog__article-image">
+                  <a href="{{ article.url }}" class="blog__article-link">
+                    {% render 'image',
+                      image: article.image,
+                      class: 'blog__article-img',
+                      width: 400,
+                      height: 225,
+                      crop: 'center'
+                    %}
+                  </a>
+                </div>
+              {% endif %}
+
+              <div class="blog__article-content">
+                <div class="blog__article-meta">
+                  <div class="blog__article-date">
+                    {% render 'icons', icon: 'calendar' %}
+                    <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
+                      {{ article.published_at | date: '%B %d, %Y' }}
+                    </time>
+                  </div>
+                  {% if article.author %}
+                    <div class="blog__article-author">
+                      {% render 'icons', icon: 'user' %}
+                      <span>{{ article.author }}</span>
+                    </div>
+                  {% endif %}
+                </div>
+
+                <h2 class="blog__article-title">
+                  <a href="{{ article.url }}">{{ article.title | escape }}</a>
+                </h2>
+
+                {% if article.excerpt != blank %}
+                  <div class="blog__article-excerpt">
+                    {{ article.excerpt | strip_html | truncate: 150 }}
+                  </div>
+                {% endif %}
+
+                {% if article.tags.size > 0 %}
+                  <div class="blog__article-tags">
+                    {% for tag in article.tags limit: 3 %}
+                      <a href="{{ blog.url }}/tagged/{{ tag | handle }}" class="blog__article-tag">
+                        {{ tag }}
+                      </a>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+
+                <div class="blog__article-footer">
+                  <a href="{{ article.url }}" class="blog__article-read-more">
+                    {{ 'blog.general.read_more' | t }}
+                  </a>
+                  {% if show_reading_time %}
+                    <div class="blog__article-reading-time" data-reading-time>
+                      {{ article.content | strip_html | split: ' ' | size | divided_by: 200 | plus: 1 }} {{ 'blog.general.min_read' | t }}
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+            </article>
+          {% else %}
+            <div class="blog__empty">
+              <h2 class="blog__empty-title">{{ 'blog.general.no_articles' | t }}</h2>
+              <p class="blog__empty-text">{{ 'blog.general.no_articles_description' | t }}</p>
+            </div>
+          {% endfor %}
+        </div>
+
+        {% comment %} Enhanced Pagination {% endcomment %}
+        {% if paginate.pages > 1 %}
+          <div class="blog__pagination">
+            <div class="blog__pagination-controls">
+              {% comment %} Previous Page {% endcomment %}
+              {% if paginate.previous %}
+                <a href="{{ paginate.previous.url }}" class="blog__pagination-btn blog__pagination-btn--prev" data-pagination="prev">
+                  {% render 'icons', icon: 'arrow-left' %}
+                  <span>{{ 'blog.general.previous' | t }}</span>
+                </a>
+              {% endif %}
+              
+              {% comment %} Page Numbers {% endcomment %}
+              <div class="blog__pagination-numbers">
+                {% for part in paginate.parts %}
+                  {% if part.is_link %}
+                    <a href="{{ part.url }}" class="blog__pagination-number" data-page="{{ part.title }}">
+                      {{ part.title }}
+                    </a>
+                  {% elsif part.title == paginate.current_page %}
+                    <span class="blog__pagination-number blog__pagination-number--current">
+                      {{ part.title }}
+                    </span>
+                  {% else %}
+                    <span class="blog__pagination-number blog__pagination-number--dots">
+                      {{ part.title }}
+                    </span>
+                  {% endif %}
+                {% endfor %}
+              </div>
+              
+              {% comment %} Next Page {% endcomment %}
+              {% if paginate.next %}
+                <a href="{{ paginate.next.url }}" class="blog__pagination-btn blog__pagination-btn--next" data-pagination="next">
+                  <span>{{ 'blog.general.next' | t }}</span>
+                  {% render 'icons', icon: 'arrow-right' %}
+                </a>
+              {% endif %}
+            </div>
+            
+            {% comment %} Load More Button {% endcomment %}
+            {% if enable_load_more and paginate.next %}
+              <div class="blog__pagination-load-more">
+                <button type="button" class="blog__load-more-btn" data-load-more="{{ paginate.next.url }}">
+                  <span class="blog__load-more-text">{{ 'blog.general.load_more' | t }}</span>
+                  <span class="blog__load-more-spinner" style="display: none;">
+                    {% render 'icons', icon: 'spinner' %}
+                  </span>
+                </button>
+              </div>
+            {% endif %}
+          </div>
+        {% endif %}
+      {% endpaginate %}
+    </div>
+  </div>
+</div>
 
 {% schema %}
 {
   "name": "t:general.blog",
-  "settings": []
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Blog Display"
+    },
+    {
+      "type": "range",
+      "id": "articles_per_page",
+      "min": 6,
+      "max": 24,
+      "step": 3,
+      "default": 12,
+      "label": "Articles per page"
+    },
+    {
+      "type": "select",
+      "id": "columns_desktop",
+      "options": [
+        {
+          "value": "1",
+          "label": "1 column"
+        },
+        {
+          "value": "2",
+          "label": "2 columns"
+        },
+        {
+          "value": "3",
+          "label": "3 columns"
+        },
+        {
+          "value": "4",
+          "label": "4 columns"
+        }
+      ],
+      "default": "3",
+      "label": "Desktop columns"
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "options": [
+        {
+          "value": "1",
+          "label": "1 column"
+        },
+        {
+          "value": "2",
+          "label": "2 columns"
+        }
+      ],
+      "default": "1",
+      "label": "Mobile columns"
+    },
+    {
+      "type": "header",
+      "content": "Blog Header"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_blog_description",
+      "default": true,
+      "label": "Show blog description"
+    },
+    {
+      "type": "header",
+      "content": "Blog Features"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "default": true,
+      "label": "Show search"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_categories",
+      "default": true,
+      "label": "Show categories"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_tags",
+      "default": true,
+      "label": "Show tags"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_reading_time",
+      "default": true,
+      "label": "Show reading time"
+    },
+    {
+      "type": "header",
+      "content": "Pagination"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_infinite_scroll",
+      "default": false,
+      "label": "Enable infinite scroll"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_load_more",
+      "default": true,
+      "label": "Enable load more button"
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  }
 }
 {% endschema %}

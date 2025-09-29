@@ -17,7 +17,170 @@
     "checkout": "Finalizar compra",
     "title": "Carrinho",
     "update": "Atualizar",
-    "remove": "Remover"
+    "remove": "Remover",
+    "drawer": {
+      "title": "Seu Carrinho",
+      "title_with_count": "Seu Carrinho ({{ count }})",
+      "close": "Fechar carrinho",
+      "empty_title": "Seu carrinho está vazio",
+      "empty_text": "Comece a comprar para adicionar itens ao seu carrinho",
+      "start_shopping": "Começar a Comprar",
+      "product": "Produto",
+      "quantity": "Quantidade",
+      "total": "Total",
+      "checkout": "Finalizar Compra",
+      "go_to_cart": "Ir para carrinho",
+      "add_order_note": "Adicionar observação",
+      "edit_order_note": "Editar observação",
+      "order_note": "Observação do pedido",
+      "order_note_placeholder": "Adicione instruções especiais para seu pedido...",
+      "order_note_save": "Salvar observação",
+      "we_accept": "Aceitamos",
+      "view_cart": "Ver Carrinho",
+      "checkout": "Finalizar Compra",
+      "subtotal": "Subtotal",
+      "total": "Total",
+      "quantity_label": "Quantidade para {{ product }}",
+      "decrease_quantity": "Diminuir quantidade para {{ product }}",
+      "increase_quantity": "Aumentar quantidade para {{ product }}",
+      "remove_item": "Remover {{ product }} do carrinho",
+      "subscription": "Assinatura",
+      "note_label": "Notas do pedido",
+      "note_placeholder": "Adicione uma nota ao seu pedido",
+      "add_to_cart": "Adicionar ao Carrinho",
+      "sustainability_title": "Compras Sustentáveis",
+      "sustainability_text": "Cada compra ajuda a reduzir nossa pegada de carbono.",
+      "upsells_title": "Você também pode gostar",
+      "free_shipping_remaining": "Adicione mais {{ amount }} para frete grátis",
+      "free_shipping_qualified": "Você se qualifica para frete grátis!",
+      "secure_checkout": "Checkout seguro",
+      "free_shipping": "Frete grátis acima de R$ 75",
+      "shipping_calculator": {
+        "title": "Calcular Frete",
+        "placeholder": "Digite seu CEP",
+        "calculate": "Calcular",
+        "invalid_zip": "Por favor, digite um CEP válido",
+        "error": "Não foi possível calcular as taxas de frete",
+        "no_rates": "Nenhuma taxa de frete disponível para este local"
+      },
+      "shipping_estimator": {
+        "title": "Calcular Frete",
+        "description": "Obtenha uma estimativa dos custos de frete para seu pedido",
+        "country": "País",
+        "province": "Estado/Província",
+        "zip_code": "CEP",
+        "select_country": "Selecione o país",
+        "select_province": "Selecione o estado/província",
+        "zip_placeholder": "Digite o CEP",
+        "estimate": "Calcular Frete"
+      },
+      "express_checkout": {
+        "divider": "Ou finalize com"
+      }
+    },
+    "search": {
+      "predictive": {
+        "results_count": "{{ count }} resultados encontrados",
+        "close": "Fechar busca",
+        "view_all": "Ver todos os resultados para \"{{ terms }}\"",
+        "no_results": "Nenhum resultado encontrado",
+        "new_search": "Tente uma nova busca"
+      }
+    }
+  },
+  "customer": {
+    "account": {
+      "title": "Conta",
+      "welcome": "Bem-vindo de volta, {{ first_name }}!",
+      "navigation": "Navegação da conta",
+      "overview": "Visão geral",
+      "view_all_orders": "Ver todos os pedidos",
+      "view_all_addresses": "Ver todos os endereços"
+    },
+    "login": {
+      "title": "Entrar",
+      "subtitle": "Entre na sua conta",
+      "email": "Email",
+      "password": "Senha",
+      "sign_in": "Entrar",
+      "forgot_password": "Esqueceu sua senha?",
+      "new_customer": "Novo cliente?",
+      "create_account": "Criar conta",
+      "guest_checkout": "Continuar como convidado",
+      "continue_shopping": "Continuar comprando",
+      "existing_customer": "Já tem uma conta?",
+      "subtitle": "Entre na sua conta"
+    },
+    "register": {
+      "title": "Criar conta",
+      "subtitle": "Crie sua conta para começar",
+      "first_name": "Nome",
+      "last_name": "Sobrenome",
+      "email": "Email",
+      "phone": "Telefone",
+      "password": "Senha",
+      "newsletter_signup": "Inscreva-se na nossa newsletter para atualizações e ofertas exclusivas",
+      "terms_conditions": "Concordo com os Termos de Serviço e Política de Privacidade",
+      "create_account": "Criar conta",
+      "existing_customer": "Já tem uma conta?",
+      "sign_in": "Entrar",
+      "success_title": "Conta criada com sucesso!",
+      "success_message": "Bem-vindo! Sua conta foi criada com sucesso."
+    },
+    "activate_account": {
+      "title": "Ative sua conta",
+      "subtitle": "Crie uma senha para ativar sua conta",
+      "password": "Senha",
+      "password_confirmation": "Confirmar senha",
+      "submit": "Ativar conta",
+      "decline": "Recusar convite",
+      "welcome_title": "Bem-vindo à nossa loja!",
+      "welcome_message": "Estamos animados em tê-lo como cliente. Ative sua conta para começar.",
+      "benefits_title": "Benefícios da conta",
+      "benefit_1": "Acompanhe seus pedidos e envios",
+      "benefit_2": "Salve seus itens favoritos",
+      "benefit_3": "Receba ofertas exclusivas e atualizações"
+    },
+    "reset_password": {
+      "title": "Redefinir sua senha",
+      "subtitle": "Digite uma nova senha para sua conta",
+      "password": "Nova senha",
+      "password_confirmation": "Confirmar nova senha",
+      "submit": "Redefinir senha",
+      "success_title": "Senha redefinida com sucesso!",
+      "success_message": "Sua senha foi redefinida. Agora você pode entrar com sua nova senha.",
+      "requirements_title": "Requisitos da senha:",
+      "requirement_length": "Pelo menos 8 caracteres",
+      "requirement_uppercase": "Uma letra maiúscula",
+      "requirement_lowercase": "Uma letra minúscula",
+      "requirement_number": "Um número",
+      "remember_password": "Lembra da sua senha?",
+      "back_to_login": "Voltar para entrar"
+    },
+    "recover_password": {
+      "title": "Redefinir sua senha",
+      "subtitle": "Enviaremos um email para redefinir sua senha",
+      "email": "Email",
+      "submit": "Enviar email de redefinição",
+      "cancel": "Voltar para entrar",
+      "success": "Enviamos um email com um link para atualizar sua senha."
+    },
+    "orders": {
+      "title": "Histórico de pedidos",
+      "order_number": "Pedido {{ number }}"
+    },
+    "addresses": {
+      "title": "Endereços",
+      "edit": "Editar",
+      "none": "Você ainda não salvou nenhum endereço.",
+      "add_new": "Adicionar novo endereço"
+    },
+    "wishlist": {
+      "title": "Lista de desejos",
+      "empty": "Sua lista de desejos está vazia",
+      "start_shopping": "Começar a comprar"
+    },
+    "log_out": "Sair"
   },
   "customers": {
     "login": {
@@ -93,6 +256,7 @@
         "increase": "Aumentar quantidade para {{ product }}"
       },
       "add_to_cart": "Adicionar ao carrinho",
+      "buy_now": "Comprar Agora",
       "sold_out": "Esgotado",
       "unavailable": "Indisponível",
       "share": "Compartilhar",
@@ -136,7 +300,19 @@
       "next": "Próximo",
       "previous_slide": "Slide anterior",
       "next_slide": "Próximo slide",
-      "play_video": "Reproduzir vídeo"
+      "play_video": "Reproduzir vídeo",
+      "skip_to_content": "Pular para o conteúdo principal",
+      "skip_to_navigation": "Pular para a navegação",
+      "site_header": "Cabeçalho do site",
+      "main_content": "Conteúdo principal",
+      "site_footer": "Rodapé do site",
+      "close": "Fechar",
+      "open": "Abrir",
+      "loading": "Carregando",
+      "error": "Erro",
+      "success": "Sucesso",
+      "warning": "Aviso",
+      "info": "Informação"
     },
     "navigation": {
       "home": "Início",
@@ -193,6 +369,112 @@
     },
     "collection_product_icons": {
       "select_collection": "Selecione uma coleção no editor de temas para exibir produtos."
+    }
+  },
+  "blocks": {
+    "button": {
+      "name": "Botão",
+      "button_text": "Texto do botão",
+      "button_url": "URL do botão",
+      "button_url_info": "Deixe em branco para renderizar como um elemento botão em vez de um link",
+      "button_style": "Estilo do botão",
+      "button_style_options": {
+        "primary": "Primário",
+        "secondary": "Secundário", 
+        "outline": "Contorno",
+        "ghost": "Fantasma"
+      },
+      "button_size": "Tamanho do botão",
+      "button_size_options": {
+        "small": "Pequeno",
+        "medium": "Médio",
+        "large": "Grande"
+      },
+      "button_alignment": "Alinhamento do botão",
+      "open_new_tab": "Abrir em nova aba",
+      "open_new_tab_info": "Aplica-se apenas quando a URL do botão é fornecida",
+      "open_in_new_tab": "Abre em nova aba",
+      "icon": "Ícone",
+      "icon_options": {
+        "none": "Nenhum",
+        "arrow_right": "Seta Direita",
+        "arrow_left": "Seta Esquerda",
+        "cart": "Carrinho",
+        "heart": "Coração",
+        "search": "Pesquisar",
+        "user": "Usuário",
+        "star": "Estrela",
+        "check": "Verificar",
+        "plus": "Mais",
+        "minus": "Menos",
+        "external_link": "Link Externo"
+      }
+    },
+    "heading": {
+      "name": "Cabeçalho",
+      "heading_text": "Texto do cabeçalho",
+      "heading_level": "Nível do cabeçalho",
+      "heading_level_options": {
+        "h1": "H1",
+        "h2": "H2",
+        "h3": "H3",
+        "h4": "H4",
+        "h5": "H5",
+        "h6": "H6"
+      },
+      "heading_level_info": "Escolha o nível semântico do cabeçalho para acessibilidade",
+      "heading_style": "Estilo do cabeçalho",
+      "heading_style_options": {
+        "display": "Exibição",
+        "title": "Título",
+        "subtitle": "Subtítulo",
+        "body": "Corpo"
+      },
+      "text_alignment": "Alinhamento do texto",
+      "text_color": "Cor do texto",
+      "text_color_info": "Deixe em branco para usar a cor padrão do tema",
+      "margin_top": "Margem superior",
+      "margin_bottom": "Margem inferior"
+    },
+    "image": {
+      "name": "Imagem",
+      "image": "Imagem",
+      "alt_text": "Texto alternativo",
+      "alt_text_info": "Descreva a imagem para leitores de tela e SEO",
+      "image_fit": "Ajuste da imagem",
+      "image_fit_options": {
+        "cover": "Cobrir",
+        "contain": "Conter",
+        "fill": "Preencher",
+        "scale_down": "Reduzir"
+      },
+      "border_radius": "Raio da borda",
+      "border_radius_info": "Adicione cantos arredondados à imagem",
+      "link_url": "URL do link",
+      "link_url_info": "Torne a imagem clicável adicionando um link",
+      "open_new_tab": "Abrir em nova aba",
+      "open_new_tab_info": "Aplica-se apenas quando a URL do link é fornecida",
+      "lazy_loading": "Carregamento lento",
+      "lazy_loading_info": "Carregue a imagem apenas quando ela entrar em vista para melhor desempenho",
+      "placeholder_text": "Selecione uma imagem"
+    },
+    "product_info": {
+      "name": "Informações do Produto",
+      "vendor": "Marca",
+      "sku": "SKU",
+      "product_type": "Tipo",
+      "tags": "Tags"
+    },
+    "product_form": {
+      "name": "Formulário do Produto",
+      "quantity": "Quantidade",
+      "decrease_quantity": "Diminuir quantidade",
+      "increase_quantity": "Aumentar quantidade",
+      "add_to_cart": "Adicionar ao Carrinho",
+      "buy_now": "Comprar Agora",
+      "sold_out": "Esgotado",
+      "product_options": "Opções do Produto",
+      "product_properties": "Propriedades do Produto"
     }
   },
   "settings": {

@@ -1,0 +1,23 @@
+{
+  "name": "Tech & Electronics",
+  "description": "Ideal for technology companies, electronics retailers, and gadget stores. Features modern design with technical product showcases.",
+  "industry": "electronics",
+  "catalog_size": "large",
+  "demo_store_url": "https://tech-electronics-demo.myshopify.com",
+  "preview_images": [
+    "tech-homepage.jpg",
+    "tech-product.jpg",
+    "tech-collection.jpg"
+  ],
+  "features": [
+    "Technical specifications",
+    "Product comparisons",
+    "Feature highlights",
+    "Modern product galleries",
+    "Responsive design"
+  ],
+  "target_audience": "Technology companies, electronics retailers, gadget stores, tech startups",
+  "color_scheme": "Modern blues and grays",
+  "typography": "Technical, readable fonts",
+  "layout": "Grid-based with emphasis on product details"
+}

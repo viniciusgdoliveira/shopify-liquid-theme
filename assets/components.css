@@ -4,6 +4,220 @@
  */
 
 /* ==========================================================================
+   Z-Index System - Component Layering
+   ========================================================================== */
+
+/* Header and Navigation */
+.header {
+  position: relative;
+  z-index: var(--z-sticky);
+}
+
+.header--sticky {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+}
+
+.header--fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-fixed);
+}
+
+/* Dropdowns and Menus */
+.dropdown {
+  position: relative;
+  z-index: var(--z-dropdown);
+}
+
+.dropdown-menu {
+  position: absolute;
+  z-index: var(--z-dropdown);
+}
+
+.nav-dropdown {
+  position: absolute;
+  z-index: var(--z-dropdown);
+}
+
+/* Modals and Overlays */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: var(--z-modal);
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: var(--z-modal-backdrop);
+}
+
+/* Drawers and Sidebars */
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: var(--z-overlay);
+}
+
+.drawer--left {
+  left: 0;
+  right: auto;
+}
+
+.drawer__overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: var(--z-overlay);
+}
+
+/* Popovers and Tooltips */
+.popover {
+  position: absolute;
+  z-index: var(--z-popover);
+}
+
+.tooltip {
+  position: absolute;
+  z-index: var(--z-tooltip);
+}
+
+/* Toast Notifications */
+.toast {
+  position: fixed;
+  z-index: var(--z-toast);
+}
+
+.toast--top {
+  top: var(--spacing-md);
+}
+
+.toast--bottom {
+  bottom: var(--spacing-md);
+}
+
+/* Product Cards and Hover Effects */
+.product-item {
+  position: relative;
+  z-index: var(--z-base);
+}
+
+.product-item:hover {
+  z-index: var(--z-dropdown);
+}
+
+.product-item__quick-form {
+  position: absolute;
+  z-index: var(--z-dropdown);
+}
+
+/* Search and Predictive Search */
+.predictive-search-container {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: var(--z-popover);
+}
+
+.search-results {
+  position: relative;
+  z-index: var(--z-base);
+}
+
+/* Cart and Mini-Cart */
+.mini-cart {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: var(--z-overlay);
+}
+
+.cart-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: var(--z-overlay);
+}
+
+/* Filters and Facets */
+.filter-panel {
+  position: relative;
+  z-index: var(--z-dropdown);
+}
+
+.facet-filters {
+  position: relative;
+  z-index: var(--z-base);
+}
+
+/* Loading States and Spinners */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: var(--z-modal);
+}
+
+.spinner {
+  position: relative;
+  z-index: var(--z-base);
+}
+
+/* Badges and Labels */
+.badge {
+  position: relative;
+  z-index: var(--z-base);
+}
+
+.product-badge {
+  position: absolute;
+  top: var(--spacing-sm);
+  right: var(--spacing-sm);
+  z-index: var(--z-dropdown);
+}
+
+/* Mobile Specific Z-Index */
+@media screen and (max-width: 768px) {
+  .header--mobile {
+    z-index: var(--z-fixed);
+  }
+  
+  .mobile-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: var(--z-overlay);
+  }
+  
+  .mobile-toolbar {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-sticky);
+  }
+}
+
+/* ==========================================================================
    Card Component
    ========================================================================== */
 
@@ -61,13 +275,13 @@
   background-color: var(--color-background-secondary);
   {% endif %}
   position: relative;
-  z-index: 1;
+  z-index: var(--z-base);
 }
 
 .card-body {
   padding: var(--spacing-lg);
   position: relative;
-  z-index: 1;
+  z-index: var(--z-base);
 }
 
 .card-footer {
@@ -82,7 +296,7 @@
   background-color: var(--color-background-secondary);
   {% endif %}
   position: relative;
-  z-index: 1;
+  z-index: var(--z-base);
 }
 
 .card-title {

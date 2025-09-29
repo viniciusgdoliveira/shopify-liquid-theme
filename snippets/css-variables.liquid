@@ -1,58 +1,126 @@
-{% style %}
-  {% # Loads all font variations with display: swap %}
-  {{ settings.type_primary_font | font_face: font_display: 'swap' }}
-  {{ settings.type_primary_font | font_modify: 'weight', 'bold' | font_face: font_display: 'swap' }}
-  {{ settings.type_primary_font | font_modify: 'weight', 'bold' | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
-  {{ settings.type_primary_font | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
-  
-  {% if settings.type_secondary_font != blank %}
-    {{ settings.type_secondary_font | font_face: font_display: 'swap' }}
-    {{ settings.type_secondary_font | font_modify: 'weight', 'bold' | font_face: font_display: 'swap' }}
-    {{ settings.type_secondary_font | font_modify: 'weight', 'bold' | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
-    {{ settings.type_secondary_font | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
-  {% endif %}
+{%- comment -%}
+  CSS Variables Mapping - Global Settings to CSS Custom Properties
+  This snippet maps theme settings to CSS variables for consistent styling
+{%- endcomment -%}
 
+<style>
   :root {
-    /* Font Families */
-    --font-primary--family: {{ settings.type_primary_font.family }}, {{ settings.type_primary_font.fallback_families }};
-    --font-primary--style: {{ settings.type_primary_font.style }};
-    --font-primary--weight: {{ settings.type_primary_font.weight }};
+    /* Global Cart Settings */
+    --cart-bg-color: {{ settings.cart_background_color | default: '#ffffff' }};
+    --cart-text-color: {{ settings.cart_text_color | default: '#000000' }};
+    --cart-button-color: {{ settings.cart_button_color | default: '#2d5016' }};
+    --cart-button-hover-color: {{ settings.cart_button_hover_color | default: '#1a2e0a' }};
     
-    {% if settings.type_secondary_font != blank %}
-      --font-secondary--family: {{ settings.type_secondary_font.family }}, {{ settings.type_secondary_font.fallback_families }};
-      --font-secondary--style: {{ settings.type_secondary_font.style }};
-      --font-secondary--weight: {{ settings.type_secondary_font.weight }};
-    {% else %}
-      --font-secondary--family: var(--font-primary--family);
-      --font-secondary--style: var(--font-primary--style);
-      --font-secondary--weight: var(--font-primary--weight);
-    {% endif %}
+    /* Typography Settings */
+    --type-primary-font: {{ settings.type_primary_font.family | default: 'work_sans' }};
+    --type-secondary-font: {{ settings.type_secondary_font.family | default: 'work_sans' }};
     
-    /* V Brand Colors */
-    --color-natural-white: {{ settings.v_natural_white | default: '#ffffff' }};
-    --color-natural-black: {{ settings.v_natural_black | default: '#000000' }};
-    --color-stony-cream: {{ settings.v_stony_cream | default: '#f5f5f0' }};
-    --color-taupe-blush: {{ settings.v_taupe_blush | default: '#d4c4a8' }};
-    --color-thunder-green: {{ settings.v_thunder_green | default: '#2d5016' }};
-    --color-navy-night: {{ settings.v_navy_night | default: '#1a1a2e' }};
-    --color-warm-gray: {{ settings.v_warm_gray | default: '#6c6c6c' }};
+    /* Font Size Overrides from Settings */
+    --font-size-xs: {{ settings.font_size_xs | default: 12 }}px;
+    --font-size-sm: {{ settings.font_size_sm | default: 14 }}px;
+    --font-size-base: {{ settings.font_size_base | default: 16 }}px;
+    --font-size-lg: {{ settings.font_size_lg | default: 18 }}px;
+    --font-size-xl: {{ settings.font_size_xl | default: 20 }}px;
+    --font-size-2xl: {{ settings.font_size_2xl | default: 24 }}px;
+    --font-size-3xl: {{ settings.font_size_3xl | default: 30 }}px;
+    --font-size-4xl: {{ settings.font_size_4xl | default: 36 }}px;
+    --font-size-5xl: {{ settings.font_size_5xl | default: 48 }}px;
+    --font-size-6xl: {{ settings.font_size_6xl | default: 60 }}px;
+    --font-size-7xl: {{ settings.font_size_7xl | default: 72 }}px;
     
-    /* V Sustainability Colors */
-    --color-sustainability-green: {{ settings.v_sustainability_green | default: '#28a745' }};
-    --color-sustainability-bg: {{ settings.v_sustainability_bg | default: 'rgba(40, 167, 69, 0.1)' }};
-    --color-sustainability-border: {{ settings.v_sustainability_border | default: 'rgba(40, 167, 69, 0.2)' }};
+    /* Color Overrides from Settings */
+    --color-background: {{ settings.background_color | default: '#ffffff' }};
+    --color-text-primary: {{ settings.text_color | default: '#000000' }};
+    --color-primary: {{ settings.primary_color | default: '#2d5016' }};
+    --color-secondary: {{ settings.secondary_color | default: '#6c6c6c' }};
+    --color-accent: {{ settings.accent_color | default: '#28a745' }};
     
-    /* Animation Settings */
-    --hover-lift-distance: {{ settings.hover_lift_distance | default: '4' }}px;
-    --card-hover-scale: {{ settings.card_hover_scale | default: '102' }}%;
-    --enable-hover-animations: {{ settings.enable_hover_animations | default: true }};
-    --enable-scroll-animations: {{ settings.enable_scroll_animations | default: true }};
+    /* Spacing Overrides */
+    --space-base: {{ settings.spacing_base | default: 16 }}px;
+    --container-width-override: {{ settings.container_width_override | default: 1200 }}px;
     
-    /* Legacy compatibility */
-    --page-width: {{ settings.container_max_width | default: '1200px' }};
-    --page-margin: {{ settings.container_padding | default: '16px' }};
-    --color-background: {{ settings.colors_background | default: '#FFFFFF' }};
-    --color-foreground: {{ settings.colors_text_primary | default: '#333333' }};
-    --style-border-radius-inputs: {{ settings.border_radius_md | default: '8px' }};
+    /* Search Settings */
+    --search-results-per-page: {{ settings.search_results_per_page | default: 24 }};
+    --search-filters-enabled: {{ settings.show_search_filters | default: true }};
+    --search-predictive-enabled: {{ settings.enable_predictive_search | default: true }};
+    
+    /* Cart Behavior Settings */
+    --cart-behavior: {{ settings.cart_behavior | default: 'drawer' }};
+    --cart-ajax-enabled: {{ settings.enable_ajax_cart | default: true }};
+    --cart-free-shipping-threshold: {{ settings.free_shipping_threshold | default: 7500 }};
+    
+    /* Performance Settings */
+    --animations-enabled: {{ settings.enable_animations | default: true }};
+    --hover-effects-enabled: {{ settings.enable_hover_effects | default: true }};
+    --lazy-loading-enabled: {{ settings.enable_lazy_loading | default: true }};
   }
-{% endstyle %}
+  
+  /* Cart Settings CSS Variable Updates */
+  .cart-drawer,
+  .cart-page,
+  .mini-cart {
+    --cart-background: var(--cart-bg-color);
+    --cart-text: var(--cart-text-color);
+    --cart-button: var(--cart-button-color);
+    --cart-button-hover: var(--cart-button-hover-color);
+  }
+  
+  /* Typography Font Loading */
+  @font-face {
+    font-family: '{{ settings.type_primary_font.family }}';
+    src: url('{{ settings.type_primary_font | font_url }}') format('woff2');
+    font-display: swap;
+  }
+  
+  @font-face {
+    font-family: '{{ settings.type_secondary_font.family }}';
+    src: url('{{ settings.type_secondary_font | font_url }}') format('woff2');
+    font-display: swap;
+  }
+  
+  /* Body Typography */
+  body {
+    font-family: var(--type-primary-font), var(--font-family-primary);
+    font-size: var(--font-size-base);
+    color: var(--color-text-primary);
+    background-color: var(--color-background);
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--type-secondary-font), var(--font-family-secondary);
+  }
+  
+  /* Performance and Animation Controls */
+  {% unless settings.enable_animations %}
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  {% endunless %}
+  
+  {% unless settings.enable_hover_effects %}
+  .hover-effect,
+  .card:hover,
+  .button:hover {
+    transform: none !important;
+  }
+  {% endunless %}
+  
+  /* Quick Buy Feature Control */
+  {% unless settings.enable_quickbuy %}
+  .collection__product-quickbuy,
+  .product__quickbuy,
+  [data-quickbuy] {
+    display: none !important;
+  }
+  {% endunless %}
+  
+  /* Buy Now Feature Control */
+  {% unless settings.enable_buy_now %}
+  .product__buy-now-wrapper,
+  .product__payment-buttons {
+    display: none !important;
+  }
+  {% endunless %}
+</style>

@@ -189,16 +189,48 @@
   --container-xl: 1280px;
   --container-2xl: 1536px;
   
-  /* === Z-INDEX === */
+  /* === Z-INDEX SYSTEM === */
   
-  --z-dropdown: 1000;
-  --z-sticky: 1020;
-  --z-fixed: 1030;
-  --z-modal-backdrop: 1040;
-  --z-modal: 1050;
-  --z-popover: 1060;
-  --z-tooltip: 1070;
-  --z-toast: 1080;
+  /* Base z-index values - Higher numbers = higher priority */
+  --z-base: 0;
+  --z-below: -1;
+  --z-dropdown: 10;
+  --z-sticky: 20;
+  --z-fixed: 30;
+  --z-modal-backdrop: 40;
+  --z-modal: 50;
+  --z-popover: 60;
+  --z-tooltip: 70;
+  --z-cart-drawer: 80;
+  --z-header: 90;
+  --z-search-overlay: 95;
+  --z-notification: 100;
+  --z-maximum: 999;
+  
+  /* Component-specific z-index values */
+  --z-product-card: 1;
+  --z-product-card-hover: 2;
+  --z-collection-filter: 5;
+  --z-search-suggestions: 15;
+  --z-mobile-menu: 25;
+  --z-cookie-banner: 35;
+  --z-loading-overlay: 45;
+  --z-video-overlay: 55;
+  --z-image-zoom: 65;
+  --z-wishlist-button: 75;
+  --z-floating-action: 85;
+  --z-scroll-to-top: 95;
+  
+  /* Legacy z-index values for backward compatibility */
+  --z-dropdown-legacy: 1000;
+  --z-sticky-legacy: 1020;
+  --z-fixed-legacy: 1030;
+  --z-modal-backdrop-legacy: 1040;
+  --z-modal-legacy: 1050;
+  --z-popover-legacy: 1060;
+  --z-tooltip-legacy: 1070;
+  --z-toast-legacy: 1080;
+  --z-cart-drawer-legacy: 9999;
   
   /* === ANIMATIONS & INTERACTIONS === */
   
@@ -237,6 +269,59 @@
   --input-padding-x: 1rem;
   --input-border-radius: var(--radius-base);
   
+  /* === CART SPECIFIC VARIABLES === */
+  
+  /* Cart Colors */
+  --cart-background: var(--cart-background-color, var(--color-natural-white));
+  --cart-text: var(--cart-text-color, var(--color-natural-black));
+  --cart-button: var(--cart-button-color, var(--color-thunder-green));
+  --cart-button-hover: var(--cart-button-hover-color, var(--color-navy-night));
+  --cart-border: var(--color-border);
+  
+  /* Cart Drawer */
+  --cart-drawer-width: 420px;
+  --cart-drawer-width-mobile: 100vw;
+  --cart-drawer-z-index: var(--z-cart-drawer);
+  --cart-drawer-backdrop-z-index: var(--z-modal-backdrop);
+  --cart-drawer-overlay-z-index: var(--z-modal-backdrop);
+  
+  /* Cart Items */
+  --cart-item-padding: var(--space-4);
+  --cart-item-gap: var(--space-3);
+  --cart-item-image-size: 80px;
+  --cart-item-image-size-mobile: 60px;
+  
+  /* Cart Buttons */
+  --cart-button-height: var(--button-height-base);
+  --cart-button-padding: var(--space-3) var(--space-6);
+  --cart-button-radius: var(--radius-base);
+  --cart-button-font-weight: var(--font-weight-semibold);
+  
+  /* Cart Quantity Controls */
+  --cart-quantity-height: 2rem;
+  --cart-quantity-width: 2rem;
+  --cart-quantity-border-radius: var(--radius-sm);
+  
+  /* Cart Free Shipping Bar */
+  --cart-shipping-bar-height: 3rem;
+  --cart-shipping-bar-radius: var(--radius-base);
+  --cart-shipping-bar-bg: var(--color-sustainability-bg);
+  --cart-shipping-bar-border: var(--color-sustainability-border);
+  
+  /* Cart Trust Signals */
+  --cart-trust-signal-gap: var(--space-2);
+  --cart-trust-signal-font-size: var(--font-size-sm);
+  --cart-trust-signal-color: var(--color-text-secondary);
+  
+  /* Cart Animations */
+  --cart-drawer-transition: transform var(--duration-300) var(--ease-out);
+  --cart-item-transition: all var(--duration-200) var(--ease-out);
+  --cart-button-transition: all var(--duration-150) var(--ease-out);
+  
+  /* Cart Responsive Breakpoints */
+  --cart-mobile-breakpoint: 768px;
+  --cart-tablet-breakpoint: 1024px;
+  
   /* === SUSTAINABILITY THEME === */
   
   /* Sustainability Badge */
@@ -249,6 +334,27 @@
   --color-tree-fiber: #8fbc8f;
   --color-sugarcane: #f0e68c;
   --color-recycled: #d3d3d3;
+  
+  /* === SEARCH SYSTEM Z-INDEX === */
+  
+  /* Search Overlay */
+  --search-overlay-z-index: var(--z-search-overlay);
+  --search-suggestions-z-index: var(--z-search-suggestions);
+  --search-filters-z-index: var(--z-collection-filter);
+  --search-mobile-filters-z-index: var(--z-mobile-menu);
+  
+  /* === NOTIFICATION SYSTEM === */
+  
+  /* Notification Colors */
+  --notification-success-bg: var(--color-success);
+  --notification-warning-bg: var(--color-warning);
+  --notification-error-bg: var(--color-error);
+  --notification-info-bg: var(--color-info);
+  --notification-text: var(--color-text-inverse);
+  
+  /* Notification Z-Index */
+  --notification-z-index: var(--z-notification);
+  --notification-toast-z-index: var(--z-tooltip);
 }
 
 /* === DARK MODE SUPPORT === */

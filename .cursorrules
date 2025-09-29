@@ -1,167 +1,86 @@
-# Allbirds Design Reference Rule
+# Shopify Liquid 2.0 Theme Development Rules
 
-## Overview
-This Shopify Liquid theme project uses [Allbirds.com](https://www.allbirds.com/) as the primary design reference. All design decisions, component implementations, and styling should align with Allbirds' design principles and visual identity.
+## Agent Configuration
+- Always use Shopify Liquid 2.0 best practices and modern architecture
+- Prioritize performance optimization and Core Web Vitals
+- Ensure WCAG 2.1 accessibility compliance
+- Follow Allbirds design system principles from the repo rules
+- Update all locale files (en, pt-br, es) for any new content
+- Include complete solutions with all necessary files and dependencies
 
-## Design Philosophy
-- **Minimalism First**: Clean, uncluttered layouts with generous white space
-- **Natural Materials**: Earthy color palette and organic textures
-- **Sustainability Focus**: Prominent environmental messaging and eco-friendly badges
-- **Comfort-Driven UX**: Effortless navigation and interaction design
-- **Bold Simplicity**: Confident use of typography and strategic color application
+## Performance Standards
+- Implement critical CSS optimization
+- Use lazy loading for images and non-critical resources
+- Follow mobile-first responsive design principles
+- Optimize for Core Web Vitals (LCP, FID, CLS)
+- Minimize JavaScript and CSS bundle sizes
+- Use modern image formats (WebP, AVIF) with fallbacks
 
-## Visual Identity Standards
+## Code Quality Standards
+- Use semantic HTML with proper ARIA labels
+- Implement proper Liquid syntax with escaping
+- Create comprehensive schema configurations
+- Follow Shopify's JSON template architecture
+- Include proper error handling and fallbacks
+- Write clean, maintainable, and documented code
 
-### Color Palette
-- **Primary**: Natural White (#ffffff), Natural Black (#000000)
-- **Secondary**: Stony Cream (#f5f5f0), Warm Gray (#6c6c6c)
-- **Accent**: Thunder Green (#2d5016), Navy Night (#1a1a2e)
-- **Sustainability**: Green accents (#28a745) with subtle backgrounds
-- **Use CSS variables**: Always reference `--color-*` variables from `allbirds-design-system.css`
+## File Structure Awareness
+- sections/ - Dynamic sections with JSON templates and proper schema
+- blocks/ - Reusable block components with validation
+- snippets/ - Shared code snippets with performance optimization
+- locales/ - Multi-language support (en, pt-br, es) with cultural adaptation
+- assets/ - Optimized CSS, JS, and images with modern formats
+- templates/ - Page template configurations following Shopify 2.0
 
-### Typography
-- **Headlines**: Bold, large, with tight letter spacing (-0.03em)
-- **Body Text**: Clean, readable, with relaxed line height (1.5)
-- **Buttons**: Semibold weight for clear hierarchy
-- **Responsive**: Use `clamp()` functions for fluid scaling
+## Design System Integration
+- Use Allbirds design principles (minimalism, sustainability, comfort)
+- Implement CSS custom properties from the design system
+- Follow consistent spacing and typography patterns
+- Maintain color consistency with brand guidelines
+- Create reusable components following Allbirds patterns
 
-### Layout Principles
-- **Generous Spacing**: Use `--space-*` variables consistently
-- **Clean Grids**: Structured layouts with consistent gaps
-- **Mobile-First**: Design for mobile, enhance for desktop
-- **Container Widths**: Use `--container-*` variables for responsive containers
+## Accessibility Requirements
+- Implement keyboard navigation support
+- Use proper heading hierarchy (h1-h6)
+- Include alt text for all images
+- Ensure sufficient color contrast ratios
+- Provide focus indicators and screen reader support
+- Test with accessibility tools and real users
 
-## Component Guidelines
+## Modern Shopify Features
+- Utilize Online Store 2.0 architecture
+- Implement dynamic sections and blocks
+- Support app blocks integration
+- Use metafields for custom content
+- Implement advanced cart functionality
+- Create search optimization features
 
-### Navigation
-- Clean header with minimal distractions
-- Mega menu with organized categories
-- Mobile-friendly hamburger navigation
-- Prominent search functionality
+## Development Workflow
+- Always test on mobile devices first
+- Validate Liquid syntax before deployment
+- Check performance with Lighthouse
+- Test accessibility with screen readers
+- Verify all translations are working
+- Ensure cross-browser compatibility
 
-### Product Cards
-- Large, high-quality images as primary focus
-- Minimal text overlay (name, price, sustainability badge)
-- Clean pricing display
-- Subtle hover effects with elevation
-- Consistent aspect ratios for grid layouts
+## Response Format
+When providing solutions, always include:
+1. Overview of implementation
+2. Performance optimization notes
+3. Accessibility features implemented
+4. Mobile considerations
+5. Required translation updates
+6. Testing recommendations
+7. File structure changes needed
 
-### Hero Sections
-- Bold, impactful messaging with large typography
-- High-quality lifestyle imagery
-- Clear call-to-action buttons with strong contrast
-- Minimal text - let visuals tell the story
-
-### Sustainability Elements
-- Prominent environmental messaging throughout
-- Material transparency information
-- Carbon footprint awareness
-- Trust-building elements (B Corp certification)
-
-## Implementation Standards
-
-### CSS Architecture
-1. **Design System First**: Always use `allbirds-design-system.css` variables
-2. **Component-Based**: Create reusable components following Allbirds patterns
-3. **Responsive Design**: Mobile-first approach with fluid typography
-4. **Performance**: Optimized images and minimal JavaScript
-
-### Content Strategy
-- **Messaging Tone**: Conversational yet professional
-- **Sustainability Focus**: Highlight environmental benefits without being preachy
-- **Comfort Emphasis**: Focus on quality and natural materials
-- **Inclusive Language**: Welcoming and accessible
-
-### Quality Assurance
-- **Color Consistency**: Use design system variables exclusively
-- **Typography Hierarchy**: Follow Allbirds' font weight and size patterns
-- **Spacing Standards**: Apply consistent spacing using `--space-*` variables
-- **Accessibility**: High contrast ratios and keyboard navigation
-- **Performance**: Fast loading times and optimized assets
-
-## Reference Files
-- `DESIGN_REFERENCE.md` - Comprehensive design guidelines
-- `ALLBIRDS_CONTEXT.md` - Implementation context and examples
-- `assets/allbirds-design-system.css` - Complete CSS variable system
-- Existing sections: `allbirds-hero.liquid`, `allbirds-product-cards.liquid`, `allbirds-sustainability.liquid`
-
-## Success Criteria
-- Visual consistency with Allbirds.com design
-- Prominent sustainability messaging
-- Clean, minimal aesthetic
-- Excellent mobile experience
-- Fast loading performance
-- Accessibility compliance
-
-## When to Reference
-- Creating new sections or components
-- Updating existing styles
-- Making design decisions
-- Implementing responsive layouts
-- Adding sustainability features
-- Optimizing user experience
-
----
-
-## Translation Management Rule
-
-### Multi-Language Support
-This theme supports three languages: English (en), Portuguese Brazil (pt-br), and Spanish (es). When creating or modifying components, you MUST update all locale files.
-
-### Required Translation Files
-- `locales/en.default.json` - English translations (primary)
-- `locales/en.default.schema.json` - English schema translations
-- `locales/pt-br.json` - Portuguese Brazil translations
-- `locales/pt-br.schema.json` - Portuguese Brazil schema translations
-- `locales/es.json` - Spanish translations
-- `locales/es.schema.json` - Spanish schema translations
-
-### Translation Workflow
-When adding new components or text content:
-
-1. **Always add to English first** - Use clear, concise English text
-2. **Update all locale files** - Add the same key to all 6 locale files
-3. **Maintain consistent structure** - Keep the same JSON hierarchy across all files
-4. **Use appropriate translations** - Provide culturally appropriate translations, not literal word-for-word
-
-### Translation Guidelines
-
-#### Portuguese (Brazil) - pt-br
-- Use Brazilian Portuguese conventions
-- Consider cultural context for e-commerce terms
-- Use "carrinho" for cart, "finalizar compra" for checkout
-- Formal tone appropriate for business context
-
-#### Spanish - es
-- Use neutral Spanish suitable for all Spanish-speaking markets
-- Use "carrito" for cart, "finalizar compra" for checkout
-- Maintain professional business tone
-
-### Schema Translations
-For schema translations (`.schema.json` files):
-- Translate section names, setting labels, and help text
-- Keep technical terms consistent across languages
-- Maintain the same key structure as English
-
-### Quality Assurance
-- **Consistency**: All locale files must have identical key structures
-- **Completeness**: Never leave missing translations - use English as fallback
-- **Cultural Appropriateness**: Adapt content for target markets
-- **Technical Accuracy**: Maintain e-commerce terminology standards
-
-### When to Update Translations
-- Creating new sections or components
-- Adding new text content or labels
-- Modifying existing component text
-- Updating schema settings or labels
-- Adding new navigation items or menu labels
-
-### Translation Key Naming
-- Use descriptive, hierarchical keys (e.g., `sections.hero.title`)
-- Group related translations logically
-- Follow existing naming conventions
-- Use snake_case for multi-word keys
-
----
-
-*This rule ensures all development work aligns with Allbirds' design principles and maintains visual consistency throughout the theme.*
+## Quality Assurance Checklist
+- ✅ Follows Shopify 2.0 best practices
+- ✅ Optimized for performance
+- ✅ Accessibility compliant (WCAG 2.1)
+- ✅ Maintains design system consistency
+- ✅ Includes proper error handling
+- ✅ Supports all target languages
+- ✅ Tested across devices and browsers
+- ✅ Validates Liquid syntax
+- ✅ Implements modern features
+- ✅ Follows mobile-first approach

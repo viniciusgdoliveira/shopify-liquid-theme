@@ -1,0 +1,479 @@
+{% comment %}
+  Error Handling Snippet
+  Provides comprehensive error handling and fallbacks for theme sections and blocks
+{% endcomment %}
+
+{% liquid
+  assign error_context = error_context | default: 'general'
+  assign error_type = error_type | default: 'unknown'
+  assign error_message = error_message | default: 'An error occurred'
+  assign fallback_content = fallback_content | default: ''
+  assign show_error_details = show_error_details | default: false
+%}
+
+{% comment %} Error handling for different contexts {% endcomment %}
+{% case error_context %}
+  {% when 'product' %}
+    {% assign error_title = 'Product Error' %}
+    {% assign error_description = 'There was an issue loading the product information.' %}
+    {% assign fallback_content = '<p>Please try refreshing the page or contact support if the problem persists.</p>' %}
+  {% when 'collection' %}
+    {% assign error_title = 'Collection Error' %}
+    {% assign error_description = 'There was an issue loading the collection.' %}
+    {% assign fallback_content = '<p>Please try refreshing the page or browse our other collections.</p>' %}
+  {% when 'cart' %}
+    {% assign error_title = 'Cart Error' %}
+    {% assign error_description = 'There was an issue with your cart.' %}
+    {% assign fallback_content = '<p>Please try again or contact support if the problem persists.</p>' %}
+  {% when 'checkout' %}
+    {% assign error_title = 'Checkout Error' %}
+    {% assign error_description = 'There was an issue processing your order.' %}
+    {% assign fallback_content = '<p>Please try again or contact support for assistance.</p>' %}
+  {% when 'search' %}
+    {% assign error_title = 'Search Error' %}
+    {% assign error_description = 'There was an issue with your search.' %}
+    {% assign fallback_content = '<p>Please try a different search term or browse our categories.</p>' %}
+  {% when 'form' %}
+    {% assign error_title = 'Form Error' %}
+    {% assign error_description = 'There was an issue submitting your form.' %}
+    {% assign fallback_content = '<p>Please check your information and try again.</p>' %}
+  {% when 'image' %}
+    {% assign error_title = 'Image Error' %}
+    {% assign error_description = 'There was an issue loading the image.' %}
+    {% assign fallback_content = '<div class="image-placeholder"><svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="#f5f5f5"/><path d="M30 40h40v20H30z" fill="#ddd"/><circle cx="40" cy="50" r="8" fill="#ddd"/></svg></div>' %}
+  {% when 'video' %}
+    {% assign error_title = 'Video Error' %}
+    {% assign error_description = 'There was an issue loading the video.' %}
+    {% assign fallback_content = '<div class="video-placeholder"><svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="#f5f5f5"/><polygon points="35,25 35,75 75,50" fill="#ddd"/></svg></div>' %}
+  {% when 'payment' %}
+    {% assign error_title = 'Payment Error' %}
+    {% assign error_description = 'There was an issue processing your payment.' %}
+    {% assign fallback_content = '<p>Please try a different payment method or contact support.</p>' %}
+  {% when 'shipping' %}
+    {% assign error_title = 'Shipping Error' %}
+    {% assign error_description = 'There was an issue calculating shipping.' %}
+    {% assign fallback_content = '<p>Please try again or contact support for assistance.</p>' %}
+  {% when 'inventory' %}
+    {% assign error_title = 'Inventory Error' %}
+    {% assign error_description = 'There was an issue checking product availability.' %}
+    {% assign fallback_content = '<p>Please try again or contact support for availability.</p>' %}
+  {% else %}
+    {% assign error_title = 'Error' %}
+    {% assign error_description = error_message %}
+{% endcase %}
+
+{% comment %} Error severity levels {% endcomment %}
+{% case error_type %}
+  {% when 'critical' %}
+    {% assign error_class = 'error-critical' %}
+    {% assign error_icon = 'error' %}
+  {% when 'warning' %}
+    {% assign error_class = 'error-warning' %}
+    {% assign error_icon = 'warning' %}
+  {% when 'info' %}
+    {% assign error_class = 'error-info' %}
+    {% assign error_icon = 'info' %}
+  {% when 'success' %}
+    {% assign error_class = 'error-success' %}
+    {% assign error_icon = 'success' %}
+  {% else %}
+    {% assign error_class = 'error-general' %}
+    {% assign error_icon = 'error' %}
+{% endcase %}
+
+<div class="error-handler {{ error_class }}" role="alert" aria-live="polite">
+  <div class="error-handler__content">
+    <div class="error-handler__icon" aria-hidden="true">
+      {% case error_icon %}
+        {% when 'error' %}
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+            <line x1="15" y1="9" x2="9" y2="15" stroke="currentColor" stroke-width="2"/>
+            <line x1="9" y1="9" x2="15" y2="15" stroke="currentColor" stroke-width="2"/>
+          </svg>
+        {% when 'warning' %}
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L2 20h20L12 2z" stroke="currentColor" stroke-width="2" fill="none"/>
+            <line x1="12" y1="8" x2="12" y2="12" stroke="currentColor" stroke-width="2"/>
+            <line x1="12" y1="16" x2="12.01" y2="16" stroke="currentColor" stroke-width="2"/>
+          </svg>
+        {% when 'info' %}
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+            <line x1="12" y1="16" x2="12" y2="12" stroke="currentColor" stroke-width="2"/>
+            <line x1="12" y1="8" x2="12.01" y2="8" stroke="currentColor" stroke-width="2"/>
+          </svg>
+        {% when 'success' %}
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+            <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2" fill="none"/>
+          </svg>
+      {% endcase %}
+    </div>
+    
+    <div class="error-handler__text">
+      <h3 class="error-handler__title">{{ error_title }}</h3>
+      <p class="error-handler__description">{{ error_description }}</p>
+      
+      {% if show_error_details and error_message != blank %}
+        <details class="error-handler__details">
+          <summary>Error Details</summary>
+          <pre class="error-handler__details-content">{{ error_message }}</pre>
+        </details>
+      {% endif %}
+      
+      {% if fallback_content != blank %}
+        <div class="error-handler__fallback">
+          {{ fallback_content }}
+        </div>
+      {% endif %}
+    </div>
+    
+    <div class="error-handler__actions">
+      <button type="button" class="error-handler__retry" onclick="window.location.reload()">
+        Try Again
+      </button>
+      <button type="button" class="error-handler__dismiss" onclick="this.closest('.error-handler').style.display='none'">
+        Dismiss
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+.error-handler {
+  position: relative;
+  padding: 16px;
+  margin: 16px 0;
+  border-radius: 8px;
+  border: 1px solid;
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
+
+.error-critical {
+  border-color: #d32f2f;
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.error-warning {
+  border-color: #f57c00;
+  background-color: #fff3e0;
+  color: #e65100;
+}
+
+.error-info {
+  border-color: #1976d2;
+  background-color: #e3f2fd;
+  color: #1565c0;
+}
+
+.error-success {
+  border-color: #388e3c;
+  background-color: #e8f5e8;
+  color: #2e7d32;
+}
+
+.error-general {
+  border-color: #757575;
+  background-color: #f5f5f5;
+  color: #424242;
+}
+
+.error-handler__content {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.error-handler__icon {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.error-handler__text {
+  flex: 1;
+}
+
+.error-handler__title {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.error-handler__description {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.error-handler__details {
+  margin: 12px 0;
+}
+
+.error-handler__details summary {
+  cursor: pointer;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.error-handler__details-content {
+  background-color: rgba(0,0,0,0.05);
+  padding: 8px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 12px;
+  overflow-x: auto;
+  margin: 0;
+}
+
+.error-handler__fallback {
+  margin: 12px 0;
+}
+
+.error-handler__actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.error-handler__retry,
+.error-handler__dismiss {
+  padding: 8px 16px;
+  border: 1px solid;
+  border-radius: 4px;
+  background-color: transparent;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.error-handler__retry {
+  border-color: currentColor;
+  color: currentColor;
+}
+
+.error-handler__retry:hover {
+  background-color: currentColor;
+  color: white;
+}
+
+.error-handler__dismiss {
+  border-color: transparent;
+  color: currentColor;
+  opacity: 0.7;
+}
+
+.error-handler__dismiss:hover {
+  opacity: 1;
+}
+
+.image-placeholder,
+.video-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  min-height: 100px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .error-handler {
+    padding: 12px;
+    margin: 12px 0;
+  }
+  
+  .error-handler__content {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .error-handler__actions {
+    flex-direction: column;
+  }
+  
+  .error-handler__retry,
+  .error-handler__dismiss {
+    width: 100%;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .error-handler__retry,
+  .error-handler__dismiss {
+    transition: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .error-handler {
+    border-width: 2px;
+  }
+  
+  .error-handler__retry,
+  .error-handler__dismiss {
+    border-width: 2px;
+  }
+}
+</style>
+
+<script>
+(function() {
+  'use strict';
+  
+  // Error handling class
+  class ErrorHandler {
+    constructor() {
+      this.errors = [];
+      this.init();
+    }
+    
+    init() {
+      this.setupGlobalErrorHandling();
+      this.setupNetworkErrorHandling();
+      this.setupFormErrorHandling();
+    }
+    
+    setupGlobalErrorHandling() {
+      // Handle JavaScript errors
+      window.addEventListener('error', (event) => {
+        this.handleError({
+          type: 'javascript',
+          message: event.message,
+          filename: event.filename,
+          lineno: event.lineno,
+          colno: event.colno,
+          error: event.error
+        });
+      });
+      
+      // Handle unhandled promise rejections
+      window.addEventListener('unhandledrejection', (event) => {
+        this.handleError({
+          type: 'promise',
+          message: event.reason,
+          error: event.reason
+        });
+      });
+    }
+    
+    setupNetworkErrorHandling() {
+      // Handle fetch errors
+      const originalFetch = window.fetch;
+      window.fetch = async (...args) => {
+        try {
+          const response = await originalFetch(...args);
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          }
+          return response;
+        } catch (error) {
+          this.handleError({
+            type: 'network',
+            message: error.message,
+            url: args[0],
+            error: error
+          });
+          throw error;
+        }
+      };
+    }
+    
+    setupFormErrorHandling() {
+      // Handle form submission errors
+      document.addEventListener('submit', (event) => {
+        const form = event.target;
+        if (form.tagName === 'FORM') {
+          form.addEventListener('error', (errorEvent) => {
+            this.handleError({
+              type: 'form',
+              message: 'Form submission failed',
+              form: form,
+              error: errorEvent
+            });
+          });
+        }
+      });
+    }
+    
+    handleError(errorInfo) {
+      this.errors.push(errorInfo);
+      this.displayError(errorInfo);
+      this.logError(errorInfo);
+    }
+    
+    displayError(errorInfo) {
+      const errorElement = document.createElement('div');
+      errorElement.className = 'error-handler error-critical';
+      errorElement.setAttribute('role', 'alert');
+      errorElement.setAttribute('aria-live', 'polite');
+      
+      errorElement.innerHTML = `
+        <div class="error-handler__content">
+          <div class="error-handler__icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+              <line x1="15" y1="9" x2="9" y2="15" stroke="currentColor" stroke-width="2"/>
+              <line x1="9" y1="9" x2="15" y2="15" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </div>
+          <div class="error-handler__text">
+            <h3 class="error-handler__title">System Error</h3>
+            <p class="error-handler__description">An unexpected error occurred. Please try refreshing the page.</p>
+            <details class="error-handler__details">
+              <summary>Error Details</summary>
+              <pre class="error-handler__details-content">${JSON.stringify(errorInfo, null, 2)}</pre>
+            </details>
+          </div>
+          <div class="error-handler__actions">
+            <button type="button" class="error-handler__retry" onclick="window.location.reload()">
+              Refresh Page
+            </button>
+            <button type="button" class="error-handler__dismiss" onclick="this.closest('.error-handler').remove()">
+              Dismiss
+            </button>
+          </div>
+        </div>
+      `;
+      
+      // Add to page
+      document.body.appendChild(errorElement);
+      
+      // Auto-dismiss after 10 seconds
+      setTimeout(() => {
+        if (errorElement.parentNode) {
+          errorElement.remove();
+        }
+      }, 10000);
+    }
+    
+    logError(errorInfo) {
+      // Log to console in development
+      if (window.location.hostname === 'localhost' || window.location.hostname.includes('myshopify.com')) {
+        console.error('Error Handler:', errorInfo);
+      }
+      
+      // Send to analytics if available
+      if (window.gtag) {
+        window.gtag('event', 'exception', {
+          description: errorInfo.message,
+          fatal: false
+        });
+      }
+    }
+  }
+  
+  // Initialize error handler
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => new ErrorHandler());
+  } else {
+    new ErrorHandler();
+  }
+})();
+</script>

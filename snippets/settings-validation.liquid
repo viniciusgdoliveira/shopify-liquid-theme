@@ -1,0 +1,617 @@
+{% comment %}
+  Settings Schema Validation
+  Validates theme settings and provides recommendations
+{% endcomment %}
+
+{% liquid
+  assign validation_results = ''
+  assign validation_errors = ''
+  assign validation_warnings = ''
+  assign validation_info = ''
+  
+  # Validate color settings
+  assign color_settings = 'colors_primary,colors_secondary,colors_accent,colors_background,colors_text'
+  assign color_array = color_settings | split: ','
+  
+  for color_setting in color_array
+    assign color_value = settings[color_setting]
+    if color_value != blank
+      unless color_value contains '#' or color_value contains 'rgb' or color_value contains 'hsl' or color_value contains 'var('
+        assign validation_errors = validation_errors | append: 'Invalid color format for ' | append: color_setting | append: ': ' | append: color_value | append: '; '
+      endunless
+    endif
+  endfor
+  
+  # Validate font settings
+  assign font_settings = 'type_primary_font,type_secondary_font'
+  assign font_array = font_settings | split: ','
+  
+  for font_setting in font_array
+    assign font_value = settings[font_setting]
+    if font_value != blank
+      unless font_value contains '_' or font_value contains ' ' or font_value contains 'var('
+        assign validation_warnings = validation_warnings | append: 'Invalid font format for ' | append: font_setting | append: ': ' | append: font_value | append: '; '
+      endunless
+    endif
+  endfor
+  
+  # Validate range settings
+  assign range_settings = 'font_size_base,container_padding,spacing_md,container_max_width'
+  assign range_array = range_settings | split: ','
+  
+  for range_setting in range_array
+    assign range_value = settings[range_setting]
+    if range_value != blank
+      assign range_number = range_value | plus: 0
+      if range_number < 0
+        assign validation_warnings = validation_warnings | append: 'Negative value for ' | append: range_setting | append: ': ' | append: range_value | append: '; '
+      endif
+    endif
+  endfor
+  
+  # Validate URL settings
+  assign url_settings = 'theme_documentation_url,theme_support_url'
+  assign url_array = url_settings | split: ','
+  
+  for url_setting in url_array
+    assign url_value = settings[url_setting]
+    if url_value != blank
+      unless url_value contains 'http' or url_value contains 'mailto:' or url_value contains 'tel:'
+        assign validation_warnings = validation_warnings | append: 'Invalid URL format for ' | append: url_setting | append: ': ' | append: url_value | append: '; '
+      endunless
+    endif
+  endfor
+  
+  # Validate boolean settings
+  assign boolean_settings = 'enable_animations,enable_lazy_loading,enable_fluid_typography'
+  assign boolean_array = boolean_settings | split: ','
+  
+  for boolean_setting in boolean_array
+    assign boolean_value = settings[boolean_setting]
+    if boolean_value != blank
+      unless boolean_value == true or boolean_value == false or boolean_value == 'true' or boolean_value == 'false'
+        assign validation_warnings = validation_warnings | append: 'Invalid boolean value for ' | append: boolean_setting | append: ': ' | append: boolean_value | append: '; '
+      endunless
+    endif
+  endfor
+  
+  # Validate select settings
+  assign select_settings = 'container_width,text_alignment,button_style'
+  assign select_array = select_settings | split: ','
+  
+  for select_setting in select_array
+    assign select_value = settings[select_setting]
+    if select_value != blank
+      assign valid_options = ''
+      case select_setting
+        when 'container_width'
+          assign valid_options = 'full-width,page-width,narrow'
+        when 'text_alignment'
+          assign valid_options = 'left,center,right,justify'
+        when 'button_style'
+          assign valid_options = 'primary,secondary,outline,text'
+      endcase
+      
+      unless valid_options contains select_value
+        assign validation_warnings = validation_warnings | append: 'Invalid option for ' | append: select_setting | append: ': ' | append: select_value | append: '; '
+      endunless
+    endif
+  endfor
+  
+  # Validate image settings
+  assign image_settings = 'logo,background_image,meta_image'
+  assign image_array = image_settings | split: ','
+  
+  for image_setting in image_array
+    assign image_value = settings[image_setting]
+    if image_value != blank
+      unless image_value contains 'shopify' or image_value contains 'cdn' or image_value contains 'http'
+        assign validation_warnings = validation_warnings | append: 'Invalid image URL for ' | append: image_setting | append: ': ' | append: image_value | append: '; '
+      endunless
+    endif
+  endfor
+  
+  # Validate required settings
+  assign required_settings = 'type_primary_font,colors_primary,colors_background'
+  assign required_array = required_settings | split: ','
+  
+  for required_setting in required_array
+    assign required_value = settings[required_setting]
+    if required_value == blank
+      assign validation_errors = validation_errors | append: 'Missing required setting: ' | append: required_setting | append: '; '
+    endif
+  endfor
+  
+  # Validate performance settings
+  assign performance_settings = 'enable_lazy_loading,enable_animations,image_quality'
+  assign performance_array = performance_settings | split: ','
+  
+  for performance_setting in performance_array
+    assign performance_value = settings[performance_setting]
+    if performance_setting == 'enable_lazy_loading' and performance_value == false
+      assign validation_warnings = validation_warnings | append: 'Lazy loading is disabled. This may impact Core Web Vitals performance.; '
+    endif
+    if performance_setting == 'image_quality' and performance_value > 90
+      assign validation_warnings = validation_warnings | append: 'High image quality setting may impact performance. Consider using 80-90% for better loading times.; '
+    endif
+  endfor
+  
+  # Validate accessibility settings
+  assign accessibility_settings = 'focus_outline_width,touch_target_size,reading_line_length'
+  assign accessibility_array = accessibility_settings | split: ','
+  
+  for accessibility_setting in accessibility_array
+    assign accessibility_value = settings[accessibility_setting]
+    if accessibility_setting == 'focus_outline_width' and accessibility_value < 2
+      assign validation_warnings = validation_warnings | append: 'Focus outline width should be at least 2px for accessibility.; '
+    endif
+    if accessibility_setting == 'touch_target_size' and accessibility_value < 44
+      assign validation_warnings = validation_warnings | append: 'Touch target size should be at least 44px for accessibility.; '
+    endif
+    if accessibility_setting == 'reading_line_length' and (accessibility_value < 45 or accessibility_value > 75)
+      assign validation_warnings = validation_warnings | append: 'Reading line length should be between 45-75 characters for optimal readability.; '
+    endif
+  endfor
+  
+  # Validate responsive settings
+  assign responsive_settings = 'breakpoint_sm,breakpoint_md,breakpoint_lg,breakpoint_xl'
+  assign responsive_array = responsive_settings | split: ','
+  
+  assign breakpoint_values = ''
+  for responsive_setting in responsive_array
+    assign responsive_value = settings[responsive_setting]
+    if responsive_value != blank
+      assign breakpoint_values = breakpoint_values | append: responsive_value | append: ','
+    endif
+  endfor
+  
+  assign breakpoint_array = breakpoint_values | split: ','
+  for i in (0..breakpoint_array.size)
+    assign current_value = breakpoint_array[i] | plus: 0
+    assign next_value = breakpoint_array[i | plus: 1] | plus: 0
+    if current_value > 0 and next_value > 0 and current_value >= next_value
+      assign validation_errors = validation_errors | append: 'Breakpoint ' | append: responsive_array[i] | append: ' (' | append: current_value | append: 'px) must be less than ' | append: responsive_array[i | plus: 1] | append: ' (' | append: next_value | append: 'px); '
+    endif
+  endfor
+  
+  # Validate color contrast
+  assign primary_color = settings.colors_primary
+  assign background_color = settings.colors_background
+  
+  if primary_color != blank and background_color != blank
+    # This would need JavaScript to calculate actual contrast ratio
+    assign validation_info = validation_info | append: 'Consider checking color contrast ratio between primary and background colors for accessibility compliance.; '
+  endif
+  
+  # Validate theme info
+  assign theme_name = settings.theme_name
+  assign theme_version = settings.theme_version
+  assign theme_author = settings.theme_author
+  
+  if theme_name == blank
+    assign validation_errors = validation_errors | append: 'Theme name is required; '
+  endif
+  if theme_version == blank
+    assign validation_errors = validation_errors | append: 'Theme version is required; '
+  endif
+  if theme_author == blank
+    assign validation_errors = validation_errors | append: 'Theme author is required; '
+  endif
+%}
+
+{% if validation_errors != blank or validation_warnings != blank or validation_info != blank %}
+  <div class="settings-validation" style="display: none;" 
+       data-validation-errors="{{ validation_errors | escape }}" 
+       data-validation-warnings="{{ validation_warnings | escape }}"
+       data-validation-info="{{ validation_info | escape }}">
+    <!-- Validation results stored in data attributes for JavaScript processing -->
+  </div>
+{% endif %}
+
+<script>
+(function() {
+  'use strict';
+  
+  // Settings validation class
+  class SettingsValidator {
+    constructor() {
+      this.errors = [];
+      this.warnings = [];
+      this.info = [];
+      this.init();
+    }
+    
+    init() {
+      this.loadValidationResults();
+      this.validateCurrentSettings();
+      this.setupRealTimeValidation();
+    }
+    
+    loadValidationResults() {
+      const validationElement = document.querySelector('.settings-validation');
+      if (validationElement) {
+        const errors = validationElement.dataset.validationErrors;
+        const warnings = validationElement.dataset.validationWarnings;
+        const info = validationElement.dataset.validationInfo;
+        
+        if (errors) {
+          this.errors = errors.split('; ').filter(error => error.trim() !== '');
+        }
+        
+        if (warnings) {
+          this.warnings = warnings.split('; ').filter(warning => warning.trim() !== '');
+        }
+        
+        if (info) {
+          this.info = info.split('; ').filter(info => info.trim() !== '');
+        }
+        
+        this.displayResults();
+      }
+    }
+    
+    validateCurrentSettings() {
+      // Validate color contrast ratios
+      this.validateColorContrast();
+      
+      // Validate responsive breakpoints
+      this.validateBreakpoints();
+      
+      // Validate performance settings
+      this.validatePerformanceSettings();
+      
+      // Validate accessibility settings
+      this.validateAccessibilitySettings();
+    }
+    
+    validateColorContrast() {
+      const primaryColor = this.getSettingValue('colors_primary');
+      const backgroundColor = this.getSettingValue('colors_background');
+      
+      if (primaryColor && backgroundColor) {
+        const contrastRatio = this.calculateContrastRatio(primaryColor, backgroundColor);
+        
+        if (contrastRatio < 4.5) {
+          this.warnings.push(`Low color contrast ratio: ${contrastRatio.toFixed(2)}. WCAG AA requires at least 4.5:1`);
+        } else if (contrastRatio < 7) {
+          this.info.push(`Color contrast ratio: ${contrastRatio.toFixed(2)}. Consider 7:1 for WCAG AAA compliance`);
+        }
+      }
+    }
+    
+    validateBreakpoints() {
+      const breakpoints = [
+        'breakpoint_sm',
+        'breakpoint_md', 
+        'breakpoint_lg',
+        'breakpoint_xl'
+      ];
+      
+      const values = breakpoints.map(bp => this.getSettingValue(bp)).filter(val => val !== null);
+      
+      for (let i = 1; i < values.length; i++) {
+        if (values[i] <= values[i-1]) {
+          this.errors.push(`Breakpoint ${breakpoints[i]} (${values[i]}px) must be greater than ${breakpoints[i-1]} (${values[i-1]}px)`);
+        }
+      }
+    }
+    
+    validatePerformanceSettings() {
+      const imageQuality = this.getSettingValue('image_quality');
+      const lazyLoading = this.getSettingValue('enable_lazy_loading');
+      const animations = this.getSettingValue('enable_animations');
+      
+      if (imageQuality && imageQuality > 90) {
+        this.warnings.push('High image quality setting may impact performance. Consider using 80-90% for better loading times.');
+      }
+      
+      if (lazyLoading === false) {
+        this.warnings.push('Lazy loading is disabled. This may impact Core Web Vitals performance.');
+      }
+      
+      if (animations === false) {
+        this.info.push('Animations are disabled. This may improve performance but reduce visual appeal.');
+      }
+    }
+    
+    validateAccessibilitySettings() {
+      const focusOutlineWidth = this.getSettingValue('focus_outline_width');
+      const touchTargetSize = this.getSettingValue('touch_target_size');
+      const readingLineLength = this.getSettingValue('reading_line_length');
+      
+      if (focusOutlineWidth && focusOutlineWidth < 2) {
+        this.warnings.push('Focus outline width should be at least 2px for accessibility.');
+      }
+      
+      if (touchTargetSize && touchTargetSize < 44) {
+        this.warnings.push('Touch target size should be at least 44px for accessibility.');
+      }
+      
+      if (readingLineLength && (readingLineLength < 45 || readingLineLength > 75)) {
+        this.warnings.push('Reading line length should be between 45-75 characters for optimal readability.');
+      }
+    }
+    
+    setupRealTimeValidation() {
+      // Monitor for theme editor changes
+      if (window.Shopify && window.Shopify.theme) {
+        window.Shopify.theme.on('setting:change', (setting) => {
+          this.validateSetting(setting);
+        });
+      }
+    }
+    
+    validateSetting(setting) {
+      const { id, value } = setting;
+      
+      switch (id) {
+        case 'colors_primary':
+        case 'colors_secondary':
+        case 'colors_accent':
+          this.validateColor(value, id);
+          break;
+        case 'type_primary_font':
+        case 'type_secondary_font':
+          this.validateFont(value, id);
+          break;
+        case 'container_max_width':
+          this.validateContainerWidth(value);
+          break;
+        case 'enable_lazy_loading':
+          this.validateLazyLoading(value);
+          break;
+        case 'image_quality':
+          this.validateImageQuality(value);
+          break;
+      }
+    }
+    
+    validateColor(color, settingId) {
+      if (!this.isValidColor(color)) {
+        this.addError(`Invalid color format for ${settingId}: ${color}`);
+      }
+    }
+    
+    validateFont(font, settingId) {
+      if (!this.isValidFont(font)) {
+        this.addError(`Invalid font format for ${settingId}: ${font}`);
+      }
+    }
+    
+    validateContainerWidth(width) {
+      const widthNumber = parseInt(width);
+      if (widthNumber < 320 || widthNumber > 1920) {
+        this.addWarning(`Container width ${width}px may not be optimal for all devices. Consider values between 320px and 1920px.`);
+      }
+    }
+    
+    validateLazyLoading(enabled) {
+      if (enabled === false) {
+        this.addWarning('Lazy loading is disabled. This may impact Core Web Vitals performance.');
+      }
+    }
+    
+    validateImageQuality(quality) {
+      if (quality > 90) {
+        this.addWarning('High image quality setting may impact performance. Consider using 80-90% for better loading times.');
+      }
+    }
+    
+    isValidColor(color) {
+      const hexPattern = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+      const rgbPattern = /^rgb\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*\)$/;
+      const rgbaPattern = /^rgba\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*[\d.]+\s*\)$/;
+      const hslPattern = /^hsl\(\s*\d+\s*,\s*\d+%\s*,\s*\d+%\s*\)$/;
+      const varPattern = /^var\(--[a-zA-Z0-9-_]+\)$/;
+      
+      return hexPattern.test(color) || rgbPattern.test(color) || rgbaPattern.test(color) || hslPattern.test(color) || varPattern.test(color);
+    }
+    
+    isValidFont(font) {
+      return font && font.length > 0 && !font.includes('undefined');
+    }
+    
+    calculateContrastRatio(color1, color2) {
+      const rgb1 = this.hexToRgb(color1);
+      const rgb2 = this.hexToRgb(color2);
+      
+      if (!rgb1 || !rgb2) return 0;
+      
+      const lum1 = this.getLuminance(rgb1);
+      const lum2 = this.getLuminance(rgb2);
+      
+      const brightest = Math.max(lum1, lum2);
+      const darkest = Math.min(lum1, lum2);
+      
+      return (brightest + 0.05) / (darkest + 0.05);
+    }
+    
+    hexToRgb(hex) {
+      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+      } : null;
+    }
+    
+    getLuminance(rgb) {
+      const { r, g, b } = rgb;
+      const [rs, gs, bs] = [r, g, b].map(c => {
+        c = c / 255;
+        return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+      });
+      return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
+    }
+    
+    getSettingValue(settingId) {
+      // This would need to be implemented based on how settings are accessed
+      // For now, return null as placeholder
+      return null;
+    }
+    
+    addError(message) {
+      this.errors.push(message);
+      this.displayResults();
+    }
+    
+    addWarning(message) {
+      this.warnings.push(message);
+      this.displayResults();
+    }
+    
+    addInfo(message) {
+      this.info.push(message);
+      this.displayResults();
+    }
+    
+    displayResults() {
+      if (this.errors.length > 0 || this.warnings.length > 0 || this.info.length > 0) {
+        this.createValidationPanel();
+      }
+    }
+    
+    createValidationPanel() {
+      // Remove existing panel
+      const existingPanel = document.querySelector('.settings-validation-panel');
+      if (existingPanel) {
+        existingPanel.remove();
+      }
+      
+      // Create new panel
+      const panel = document.createElement('div');
+      panel.className = 'settings-validation-panel';
+      panel.innerHTML = this.generatePanelHTML();
+      
+      // Add to page
+      document.body.appendChild(panel);
+    }
+    
+    generatePanelHTML() {
+      let html = '<div class="validation-panel">';
+      html += '<h3>Theme Settings Validation</h3>';
+      
+      if (this.errors.length > 0) {
+        html += '<div class="validation-errors">';
+        html += '<h4>Errors:</h4>';
+        html += '<ul>';
+        this.errors.forEach(error => {
+          html += `<li>${error}</li>`;
+        });
+        html += '</ul>';
+        html += '</div>';
+      }
+      
+      if (this.warnings.length > 0) {
+        html += '<div class="validation-warnings">';
+        html += '<h4>Warnings:</h4>';
+        html += '<ul>';
+        this.warnings.forEach(warning => {
+          html += `<li>${warning}</li>`;
+        });
+        html += '</ul>';
+        html += '</div>';
+      }
+      
+      if (this.info.length > 0) {
+        html += '<div class="validation-info">';
+        html += '<h4>Recommendations:</h4>';
+        html += '<ul>';
+        this.info.forEach(info => {
+          html += `<li>${info}</li>`;
+        });
+        html += '</ul>';
+        html += '</div>';
+      }
+      
+      html += '</div>';
+      return html;
+    }
+  }
+  
+  // Initialize validator
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => new SettingsValidator());
+  } else {
+    new SettingsValidator();
+  }
+})();
+</script>
+
+<style>
+.settings-validation-panel {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 10000;
+  max-width: 400px;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.validation-panel {
+  padding: 20px;
+}
+
+.validation-panel h3 {
+  margin: 0 0 15px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.validation-errors {
+  margin-bottom: 15px;
+}
+
+.validation-errors h4 {
+  color: #d32f2f;
+  margin: 0 0 8px 0;
+  font-size: 14px;
+}
+
+.validation-warnings h4 {
+  color: #f57c00;
+  margin: 0 0 8px 0;
+  font-size: 14px;
+}
+
+.validation-info h4 {
+  color: #1976d2;
+  margin: 0 0 8px 0;
+  font-size: 14px;
+}
+
+.validation-panel ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.validation-panel li {
+  margin-bottom: 5px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.validation-errors li {
+  color: #d32f2f;
+}
+
+.validation-warnings li {
+  color: #f57c00;
+}
+
+.validation-info li {
+  color: #1976d2;
+}
+
+/* Hide validation panel in production */
+@media (max-width: 768px) {
+  .settings-validation-panel {
+    display: none;
+  }
+}
+</style>

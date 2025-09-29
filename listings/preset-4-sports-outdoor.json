@@ -1,0 +1,23 @@
+{
+  "name": "Sports & Outdoor",
+  "description": "Ideal for athletic brands, outdoor gear, sports equipment, and adventure companies. Features dynamic design with action imagery.",
+  "industry": "sports-outdoor",
+  "catalog_size": "large",
+  "demo_store_url": "https://sports-outdoor-demo.myshopify.com",
+  "preview_images": [
+    "sports-outdoor-homepage.jpg",
+    "sports-outdoor-product.jpg",
+    "sports-outdoor-collection.jpg"
+  ],
+  "features": [
+    "Action photography",
+    "Product performance details",
+    "Size guides",
+    "Dynamic layouts",
+    "Adventure-focused content"
+  ],
+  "target_audience": "Athletic brands, outdoor gear retailers, sports equipment stores, adventure companies",
+  "color_scheme": "Bold oranges and blues",
+  "typography": "Strong, energetic fonts",
+  "layout": "Dynamic with action-focused imagery"
+}

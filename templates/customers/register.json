@@ -1,0 +1,16 @@
+{
+  "sections": {
+    "main": {
+      "type": "customer-register",
+      "settings": {
+        "enable_newsletter_signup": true,
+        "require_phone": false,
+        "show_terms_conditions": true,
+        "enable_social_login": false
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}
